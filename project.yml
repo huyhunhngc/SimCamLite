@@ -1,0 +1,96 @@
+name: SimCamLite
+options:
+  bundleIdPrefix: dev.ifateam.simcamlite
+  deploymentTarget:
+    iOS: "16.0"
+    macOS: "14.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    CODE_SIGN_IDENTITY: "-"
+    CODE_SIGN_STYLE: Manual
+    DEVELOPMENT_TEAM: ""
+    ENABLE_USER_SCRIPT_SANDBOXING: NO
+    CLANG_ENABLE_OBJC_ARC: YES
+targets:
+  SimCamLiteInject:
+    type: framework
+    platform: iOS
+    sources:
+      - path: Inject
+        excludes:
+          - SCLRuntimeMRC.m
+      - path: Inject/SCLRuntimeMRC.m
+        compilerFlags: [-fno-objc-arc]
+      - path: Shared
+        buildPhase: none
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: dev.ifateam.simcamlite.inject
+        CODE_SIGN_IDENTITY: Apple Development
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: 43W6X55RFR
+        PROVISIONING_PROFILE_SPECIFIER: ""
+        SUPPORTED_PLATFORMS: iphonesimulator
+        GENERATE_INFOPLIST_FILE: YES
+        HEADER_SEARCH_PATHS: $(SRCROOT)/Shared
+        DEFINES_MODULE: NO
+        SKIP_INSTALL: YES
+        GCC_WARN_UNUSED_VARIABLE: YES
+    dependencies:
+      - sdk: AVFoundation.framework
+      - sdk: CoreMedia.framework
+      - sdk: CoreVideo.framework
+      - sdk: CoreImage.framework
+      - sdk: UIKit.framework
+      - sdk: ImageIO.framework
+      - sdk: QuartzCore.framework
+  SimCamLiteLoader:
+    type: library.dynamic
+    platform: iOS
+    sources:
+      - Loader
+    settings:
+      base:
+        SUPPORTED_PLATFORMS: iphonesimulator
+        EXECUTABLE_PREFIX: ""
+        PRODUCT_NAME: SimCamLiteLoader
+        SKIP_INSTALL: YES
+  SimCamLite:
+    type: application
+    platform: macOS
+    sources:
+      - App
+      - HostBridge
+      - path: Shared
+        buildPhase: none
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: dev.ifateam.simcamlite
+        PRODUCT_NAME: SimCamLite
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_NSCameraUsageDescription: SimCamLite uses the Mac camera as a video source for iOS Simulator apps.
+        INFOPLIST_KEY_CFBundleDisplayName: SimCamLite
+        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.developer-tools
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        SWIFT_VERSION: "5.0"
+        SWIFT_OBJC_BRIDGING_HEADER: HostBridge/SimCamLite-Bridging-Header.h
+        HEADER_SEARCH_PATHS: $(SRCROOT)/Shared
+        ENABLE_APP_SANDBOX: NO
+        ENABLE_HARDENED_RUNTIME: NO
+        COMBINE_HIDPI_IMAGES: YES
+    postBuildScripts:
+      - name: Embed SimCamLiteInject
+        script: '"$SRCROOT/scripts/embed-inject.sh"'
+        basedOnDependencyAnalysis: false
+schemes:
+  SimCamLite:
+    build:
+      targets:
+        SimCamLite: all
+  SimCamLiteInject:
+    build:
+      targets:
+        SimCamLiteInject: all
+        SimCamLiteLoader: all
