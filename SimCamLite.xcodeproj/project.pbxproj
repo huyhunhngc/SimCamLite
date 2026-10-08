@@ -60,6 +60,7 @@
 		0EBB76D87F1D0C2A72054A8E /* SCLFrameReader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SCLFrameReader.h; sourceTree = "<group>"; };
 		1506237C51DDA2ED0ACDC1C1 /* SCLRuntimeMRC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SCLRuntimeMRC.m; sourceTree = "<group>"; };
 		16B17B5F178E4F87A4A5EB30 /* MacCameraSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacCameraSource.swift; sourceTree = "<group>"; };
+		1803E8F8416581C467C7E07E /* SimCamLite.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SimCamLite.entitlements; sourceTree = "<group>"; };
 		182DBBF36E364DCF1250AFEE /* VideoSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoSource.swift; sourceTree = "<group>"; };
 		1B83CBCF3C8BAF2A7CCB0061 /* SCLSessionState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SCLSessionState.h; sourceTree = "<group>"; };
 		20013AB0A51781A5B3E1DE35 /* SCLFakes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SCLFakes.h; sourceTree = "<group>"; };
@@ -243,6 +244,7 @@
 		FAB8FAFC0BB316D0C23E4465 /* App */ = {
 			isa = PBXGroup;
 			children = (
+				1803E8F8416581C467C7E07E /* SimCamLite.entitlements */,
 				00A2001B56444E878A6185E2 /* SimCamLiteApp.swift */,
 				0F2FAD87D0F226B5DFE4B4EA /* Engine */,
 				E76F3791A59F106BFF4BF946 /* Menu */,
@@ -356,8 +358,7 @@
 						ProvisioningStyle = Manual;
 					};
 					E41CDE613BF7A831B72B88E5 = {
-						DevelopmentTeam = "";
-						ProvisioningStyle = Manual;
+						DevelopmentTeam = 43W6X55RFR;
 					};
 				};
 			};
@@ -463,10 +464,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = App/SimCamLite.entitlements;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 43W6X55RFR;
 				ENABLE_APP_SANDBOX = NO;
-				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/Shared";
 				INFOPLIST_KEY_CFBundleDisplayName = SimCamLite;
@@ -479,6 +484,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.ifateam.simcamlite;
 				PRODUCT_NAME = SimCamLite;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SWIFT_OBJC_BRIDGING_HEADER = "HostBridge/SimCamLite-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -708,10 +714,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = App/SimCamLite.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 43W6X55RFR;
 				ENABLE_APP_SANDBOX = NO;
-				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/Shared";
 				INFOPLIST_KEY_CFBundleDisplayName = SimCamLite;
@@ -724,6 +734,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.ifateam.simcamlite;
 				PRODUCT_NAME = SimCamLite;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SWIFT_OBJC_BRIDGING_HEADER = "HostBridge/SimCamLite-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;

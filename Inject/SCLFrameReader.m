@@ -108,6 +108,19 @@
     return buffer;
 }
 
+- (uint64_t)frameCounterForStream:(int)stream {
+    if (stream < 0 || stream >= SCL_STREAM_COUNT) {
+        return 0;
+    }
+    @synchronized (self) {
+        SCLSharedHeader *header = [self header];
+        if (!header || SCLNowNs() - header->hostHeartbeatNs >= SCL_HOST_TIMEOUT_NS) {
+            return 0;
+        }
+        return header->streams[stream].frameCounter;
+    }
+}
+
 - (CVPixelBufferRef)copyFrameForStream:(int)stream {
     if (stream < 0 || stream >= SCL_STREAM_COUNT) {
         return NULL;

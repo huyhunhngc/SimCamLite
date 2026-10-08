@@ -12,8 +12,10 @@ static const void *SCLVideoSettingsKey = &SCLVideoSettingsKey;
 static const void *SCLOutputContextKey = &SCLOutputContextKey;
 static const void *SCLPreviewContentKey = &SCLPreviewContentKey;
 static const void *SCLPreviewBusyKey = &SCLPreviewBusyKey;
+static const void *SCLPreviewFrameKey = &SCLPreviewFrameKey;
 
 static const double SCLFrameRate = 30;
+static const double SCLPollRate = 120;
 static const CGFloat SCLPreviewMaxEdge = 1280;
 
 void SCLSetVideoDataDelegate(AVCaptureVideoDataOutput *output, id delegate, dispatch_queue_t queue) {
@@ -179,7 +181,7 @@ static CIImage *SCLOriented(CIImage *image, CGFloat angle, BOOL mirrored) {
         if (anyRunning && !self->_timer) {
             self->_lastTickNs = SCLNowNs();
             self->_timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, self->_queue);
-            uint64_t interval = (uint64_t)(NSEC_PER_SEC / SCLFrameRate);
+            uint64_t interval = (uint64_t)(NSEC_PER_SEC / SCLPollRate);
             dispatch_source_set_timer(self->_timer, dispatch_time(DISPATCH_TIME_NOW, 0), interval, interval / 10);
             __weak SCLFramePump *weakSelf = self;
             dispatch_source_set_event_handler(self->_timer, ^{
@@ -208,6 +210,14 @@ static CIImage *SCLOriented(CIImage *image, CGFloat angle, BOOL mirrored) {
             continue;
         }
         [device sclStepRampWithInterval:interval];
+        uint64_t counter = [SCLFrameReader.shared frameCounterForStream:device.sclStream];
+        BOOL fresh = counter != 0 ? counter != state.lastFrameCounter : now - state.lastDeliveryNs >= NSEC_PER_SEC / SCLFrameRate;
+        if (!fresh && device == state.lastDevice) {
+            continue;
+        }
+        state.lastFrameCounter = counter;
+        state.lastDeliveryNs = now;
+        state.lastDevice = device;
         CGSize size = SCLPresetSize(state.preset);
         CIImage *sensor = [self sensorImageForDevice:device size:size];
         state.latestSensorImage = sensor;
@@ -275,7 +285,7 @@ static CIImage *SCLOriented(CIImage *image, CGFloat angle, BOOL mirrored) {
         crop.size.height = extent.size.width / aspect;
         crop.origin.y += (extent.size.height - crop.size.height) / 2;
     }
-    CGFloat zoom = device.sclSensorCrop;
+    CGFloat zoom = device.sclFrameCrop;
     if (zoom > 1) {
         crop = CGRectInset(crop, crop.size.width * (1 - 1 / zoom) / 2, crop.size.height * (1 - 1 / zoom) / 2);
     }
@@ -393,12 +403,20 @@ static CALayerContentsGravity SCLGravity(AVLayerVideoGravity gravity) {
         CGFloat scale = SCLPreviewMaxEdge / longEdge;
         image = SCLNormalized([image imageByApplyingTransform:CGAffineTransformMakeScale(scale, scale)]);
     }
-    CGImageRef cgImage = [_context createCGImage:image fromRect:image.extent format:kCIFormatRGBA8 colorSpace:_colorSpace];
-    if (!cgImage) {
+    SCLOutputContext *context = objc_getAssociatedObject(layer, SCLOutputContextKey);
+    if (!context) {
+        context = [SCLOutputContext new];
+        objc_setAssociatedObject(layer, SCLOutputContextKey, context, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+    size_t width = (size_t)lround(image.extent.size.width);
+    size_t height = (size_t)lround(image.extent.size.height);
+    CVPixelBufferRef buffer = [context makeBufferWithFormat:kCVPixelFormatType_32BGRA width:width height:height];
+    if (!buffer) {
         return;
     }
+    [_context render:image toCVPixelBuffer:buffer bounds:CGRectMake(0, 0, width, height) colorSpace:_colorSpace];
     objc_setAssociatedObject(layer, SCLPreviewBusyKey, @YES, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    id contents = CFBridgingRelease(cgImage);
+    id frame = CFBridgingRelease(buffer);
     __weak AVCaptureVideoPreviewLayer *weakLayer = layer;
     dispatch_async(dispatch_get_main_queue(), ^{
         AVCaptureVideoPreviewLayer *strongLayer = weakLayer;
@@ -419,7 +437,8 @@ static CALayerContentsGravity SCLGravity(AVLayerVideoGravity gravity) {
         }
         content.frame = strongLayer.bounds;
         content.contentsGravity = SCLGravity(strongLayer.videoGravity);
-        content.contents = contents;
+        content.contents = (__bridge id)CVPixelBufferGetIOSurface((__bridge CVPixelBufferRef)frame);
+        objc_setAssociatedObject(content, SCLPreviewFrameKey, frame, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
         [CATransaction commit];
         objc_setAssociatedObject(strongLayer, SCLPreviewBusyKey, @NO, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     });

@@ -26,6 +26,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) int sclStream;
 @property (nonatomic, readonly) CGFloat sclSensorCrop;
+@property (nonatomic) CGFloat sclReferenceCrop;
+@property (nonatomic, readonly) CGFloat sclFrameCrop;
 @property (nonatomic, readonly) float sclExposureBias;
 @property (nonatomic, readonly) NSString *sclLensModel;
 @property (nonatomic, readonly) double sclFocalLength;

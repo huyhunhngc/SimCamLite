@@ -49,6 +49,10 @@ final class VideoSource: FrameSource {
         player.pause()
     }
 
+    func hasNewFrame(at time: CFTimeInterval) -> Bool? {
+        output.hasNewPixelBuffer(forItemTime: output.itemTime(forHostTime: time))
+    }
+
     func currentImage(at time: CFTimeInterval) -> CIImage? {
         let itemTime = output.itemTime(forHostTime: CACurrentMediaTime())
         lock.lock()

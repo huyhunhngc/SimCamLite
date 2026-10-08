@@ -78,8 +78,18 @@ targets:
         SWIFT_OBJC_BRIDGING_HEADER: HostBridge/SimCamLite-Bridging-Header.h
         HEADER_SEARCH_PATHS: $(SRCROOT)/Shared
         ENABLE_APP_SANDBOX: NO
-        ENABLE_HARDENED_RUNTIME: NO
+        ENABLE_HARDENED_RUNTIME: YES
+        CODE_SIGN_ENTITLEMENTS: App/SimCamLite.entitlements
+        DEVELOPMENT_TEAM: 43W6X55RFR
+        PROVISIONING_PROFILE_SPECIFIER: ""
         COMBINE_HIDPI_IMAGES: YES
+      configs:
+        Debug:
+          CODE_SIGN_STYLE: Automatic
+          CODE_SIGN_IDENTITY: Apple Development
+        Release:
+          CODE_SIGN_STYLE: Manual
+          CODE_SIGN_IDENTITY: Developer ID Application
     postBuildScripts:
       - name: Embed SimCamLiteInject
         script: '"$SRCROOT/scripts/embed-inject.sh"'

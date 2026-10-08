@@ -232,6 +232,9 @@ static SCLFakeDevice *SCLMakeDevice(AVCaptureDeviceType type, AVCaptureDevicePos
             }
             SCLFakeDevice *dualWide = SCLMakeDevice(AVCaptureDeviceTypeBuiltInDualWideCamera, back, @"back.dualwide", @"Back Dual Wide Camera", 1, 20, @[@2], @[ultra, wide], 0.5);
             [devices addObject:dualWide];
+            for (SCLFakeDevice *device in devices) {
+                device.sclReferenceCrop = 2;
+            }
         }
 
         _front = SCLMakeDevice(AVCaptureDeviceTypeBuiltInWideAngleCamera, AVCaptureDevicePositionFront, @"front", @"Front Camera", 1, 5, @[], @[], 1);

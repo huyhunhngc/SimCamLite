@@ -5,6 +5,11 @@ protocol FrameSource: AnyObject {
     func start()
     func stop()
     func currentImage(at time: CFTimeInterval) -> CIImage?
+    func hasNewFrame(at time: CFTimeInterval) -> Bool?
+}
+
+extension FrameSource {
+    func hasNewFrame(at time: CFTimeInterval) -> Bool? { nil }
 }
 
 enum SourceKind: String, CaseIterable, Identifiable {

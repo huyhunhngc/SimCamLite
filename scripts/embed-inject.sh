@@ -12,4 +12,10 @@ rm -rf "$DEST"
 mkdir -p "$DEST"
 cp -R "$PRODUCTS/SimCamLiteInject.framework" "$DEST/"
 cp "$PRODUCTS/SimCamLiteLoader.dylib" "$DEST/"
-codesign -fs - "$DEST/SimCamLiteLoader.dylib" "$DEST/SimCamLiteInject.framework" >/dev/null
+rm -rf "$DEST/SimCamLiteInject.framework/Headers"
+IDENTITY="${EXPANDED_CODE_SIGN_IDENTITY:--}"
+SIGN_FLAGS=(--force --sign "$IDENTITY" --options runtime)
+if [ "$IDENTITY" != "-" ]; then
+  SIGN_FLAGS+=(--timestamp)
+fi
+codesign "${SIGN_FLAGS[@]}" "$DEST/SimCamLiteLoader.dylib" "$DEST/SimCamLiteInject.framework" >/dev/null

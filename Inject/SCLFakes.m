@@ -138,6 +138,7 @@ static NSValue *SCLDimensionsValue(int32_t width, int32_t height) {
     _format = [[SCLFakeFormat alloc] sclInitWithMaxZoom:maxZoom];
     _zoom = 1;
     _rampTarget = 1;
+    _sclReferenceCrop = 1;
     _focusMode = AVCaptureFocusModeContinuousAutoFocus;
     _focusPoint = CGPointMake(0.5, 0.5);
     _exposureMode = AVCaptureExposureModeContinuousAutoExposure;
@@ -163,6 +164,10 @@ static NSValue *SCLDimensionsValue(int32_t width, int32_t height) {
     @synchronized (self) {
         return MAX(1, _zoom * _baseCrop);
     }
+}
+
+- (CGFloat)sclFrameCrop {
+    return MAX(1, self.sclSensorCrop / MAX(1, _sclReferenceCrop));
 }
 
 - (float)sclExposureBias {

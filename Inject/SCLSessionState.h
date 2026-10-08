@@ -10,6 +10,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (atomic) BOOL running;
 @property (atomic, copy, nullable) AVCaptureSessionPreset preset;
 @property (atomic, strong, nullable) CIImage *latestSensorImage;
+@property (nonatomic) uint64_t lastFrameCounter;
+@property (nonatomic) uint64_t lastDeliveryNs;
+@property (nonatomic, weak, nullable) SCLFakeDevice *lastDevice;
 @property (nonatomic, readonly, nullable) SCLFakeDevice *activeDevice;
 @property (nonatomic, readonly) NSArray<SCLFakeDeviceInput *> *fakeInputs;
 @property (nonatomic, readonly) NSArray<AVCaptureOutput *> *managedOutputs;
