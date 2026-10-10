@@ -24,6 +24,7 @@
 		55DDA91BFD3BFF291974885D /* SCLFrameReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 0EBB76D87F1D0C2A72054A8E /* SCLFrameReader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		611EAF940298E03F5DC8B075 /* StatusMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9735D6FFF96FAFFDF05E9B4 /* StatusMenuController.swift */; };
 		632C9DAC690CA87947695412 /* ImageSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5B11F0D31FE3D85AEF6BCDF /* ImageSource.swift */; };
+		664EB085FEDDA52D5F9C1F6B /* SimCamLite.icon in Resources */ = {isa = PBXBuildFile; fileRef = B9A9278B21198BE5EF25253B /* SimCamLite.icon */; };
 		6B0BCBC3502D3B2EA514D30A /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6AF87958C68B63C72C4CC2C2 /* QuartzCore.framework */; };
 		6EB2803F90F3D1B8826C2B38 /* RecentFiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE743BE879218CD3E91EFD2 /* RecentFiles.swift */; };
 		7649E28C94011D393929EA89 /* SCLFramePump.h in Headers */ = {isa = PBXBuildFile; fileRef = C81FFBA4A54C738CC9C0F10B /* SCLFramePump.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -92,9 +93,10 @@
 		A14EF0D69A34E1424A31B038 /* PermissionsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsModel.swift; sourceTree = "<group>"; };
 		A1DF3248FE28CABA9CE2DC25 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		A76F67B3007192824B87436C /* SCLHostBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SCLHostBridge.h; sourceTree = "<group>"; };
-		AE2B371EF7FC9585B615CFBA /* SimCamLiteLoader.dylib */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "compiled.mach-o.dylib"; path = SimCamLiteLoader.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		AE2B371EF7FC9585B615CFBA /* SimCamLiteLoader.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = SimCamLiteLoader.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		AFA7712FEFCE424A90E1004D /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		B4A8DA944A3F414BC89A69E0 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		B9A9278B21198BE5EF25253B /* SimCamLite.icon */ = {isa = PBXFileReference; lastKnownFileType = wrapper.icon; path = SimCamLite.icon; sourceTree = "<group>"; };
 		BD2CDEF2F111868F5775B1B7 /* FrameSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameSource.swift; sourceTree = "<group>"; };
 		C81FFBA4A54C738CC9C0F10B /* SCLFramePump.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SCLFramePump.h; sourceTree = "<group>"; };
 		C8A307D72DD75EF15B94D6C6 /* SimulatorManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulatorManager.swift; sourceTree = "<group>"; };
@@ -245,6 +247,7 @@
 			isa = PBXGroup;
 			children = (
 				1803E8F8416581C467C7E07E /* SimCamLite.entitlements */,
+				B9A9278B21198BE5EF25253B /* SimCamLite.icon */,
 				00A2001B56444E878A6185E2 /* SimCamLiteApp.swift */,
 				0F2FAD87D0F226B5DFE4B4EA /* Engine */,
 				E76F3791A59F106BFF4BF946 /* Menu */,
@@ -327,6 +330,7 @@
 			buildConfigurationList = 9074204E835D81C492726C9E /* Build configuration list for PBXNativeTarget "SimCamLite" */;
 			buildPhases = (
 				71B56AE4B770834FBB6580A1 /* Sources */,
+				182E9D0CB62B8ED1076FBD4C /* Resources */,
 				1B87C359299B4BB37A82A7C7 /* Embed SimCamLiteInject */,
 			);
 			buildRules = (
@@ -347,7 +351,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 1430;
+				LastUpgradeCheck = 2660;
 				TargetAttributes = {
 					3F51C4C908CF203D9F7BA1E3 = {
 						DevelopmentTeam = 43W6X55RFR;
@@ -382,6 +386,17 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		182E9D0CB62B8ED1076FBD4C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				664EB085FEDDA52D5F9C1F6B /* SimCamLite.icon in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
 		1B87C359299B4BB37A82A7C7 /* Embed SimCamLiteInject */ = {
@@ -463,18 +478,19 @@
 		2097D50343A1CD69A7E16402 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = SimCamLite;
 				CODE_SIGN_ENTITLEMENTS = App/SimCamLite.entitlements;
-				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = 43W6X55RFR;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/Shared";
-				INFOPLIST_KEY_CFBundleDisplayName = SimCamLite;
+				INFOPLIST_KEY_CFBundleDisplayName = "SimCam Lite";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_NSCameraUsageDescription = "SimCamLite uses the Mac camera as a video source for iOS Simulator apps.";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -544,6 +560,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_NS_ASSERTIONS = NO;
@@ -562,6 +579,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
@@ -621,6 +639,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -646,6 +665,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -655,7 +675,7 @@
 		7CC2ED7EEB3F720B166ED3AB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = NO;
@@ -684,7 +704,7 @@
 		AE25AA4B44AA61F2B788599F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = NO;
@@ -713,18 +733,19 @@
 		DC94E5D89FD2BFED45928AD5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = SimCamLite;
 				CODE_SIGN_ENTITLEMENTS = App/SimCamLite.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = 43W6X55RFR;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/Shared";
-				INFOPLIST_KEY_CFBundleDisplayName = SimCamLite;
+				INFOPLIST_KEY_CFBundleDisplayName = "SimCam Lite";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
 				INFOPLIST_KEY_NSCameraUsageDescription = "SimCamLite uses the Mac camera as a video source for iOS Simulator apps.";
 				LD_RUNPATH_SEARCH_PATHS = (

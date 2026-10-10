@@ -60,7 +60,12 @@ targets:
     type: application
     platform: macOS
     sources:
-      - App
+      - path: App
+        excludes:
+          - SimCamLite.icon
+      - path: App/SimCamLite.icon
+        type: file
+        buildPhase: resources
       - HostBridge
       - path: Shared
         buildPhase: none
@@ -68,6 +73,7 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: dev.ifateam.simcamlite
         PRODUCT_NAME: SimCamLite
+        ASSETCATALOG_COMPILER_APPICON_NAME: SimCamLite
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_NSCameraUsageDescription: SimCamLite uses the Mac camera as a video source for iOS Simulator apps.
         INFOPLIST_KEY_CFBundleDisplayName: SimCamLite
