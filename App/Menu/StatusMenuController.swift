@@ -43,7 +43,12 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
 
     func menuNeedsUpdate(_ menu: NSMenu) {
         menu.removeAllItems()
+        CLIInstaller.shared.refresh()
         menu.addItem(.sectionHeader(title: "SimCamLite Camera Control"))
+        menu.addItem(item(model.isStreaming ? "Stop Streaming" : "Start Streaming",
+                          symbol: model.isStreaming ? "stop.fill" : "play.fill") { [model] in
+            model.isStreaming ? model.stopStreaming() : model.startStreaming()
+        })
         menu.addItem(.separator())
 
         if model.frontSeparate {
@@ -68,12 +73,14 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
 
         menu.addItem(item("Open SimCamLite…", key: ",") { [onOpenMain] in onOpenMain() })
         menu.addItem(item(permissionsTitle) { [onOpenPermissions] in onOpenPermissions() })
+        menu.addItem(item(CLIInstaller.shared.menuTitle, symbol: "terminal") { CLIInstaller.shared.installInteractively() })
         menu.addItem(.separator())
         menu.addItem(item("Quit SimCamLite", key: "q") { NSApp.terminate(nil) })
     }
 
     private var permissionsTitle: String {
         let needsAttention = model.permissions.cameraBlocked || !model.injectInstalled || model.simulators.toolsAvailable == false
+            || CLIInstaller.shared.isStale
         return needsAttention ? "Permissions & Setup… ⚠︎" : "Permissions & Setup…"
     }
 
@@ -184,9 +191,15 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
             menu.addItem(disabledItem("Xcode simulator tools unavailable"))
             return
         }
+        let injectAll = item("Inject into Every Simulator", state: simulators.injectsAllSimulators) {
+            Task { await simulators.setInjectsAllSimulators(!simulators.injectsAllSimulators) }
+        }
+        injectAll.toolTip = "Enable injection on every simulator as it boots"
+        injectAll.isEnabled = model.injectInstalled
         if simulators.devices.isEmpty {
             menu.addItem(disabledItem("No booted simulator"))
             menu.addItem(item("Open Simulator", symbol: "iphone") { simulators.openSimulatorApp() })
+            menu.addItem(injectAll)
             return
         }
         for device in simulators.devices {
@@ -196,6 +209,7 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
             deviceItem.toolTip = enabled ? "SimCamLite is injected into apps launched on this simulator" : "Injection is off for this simulator"
             menu.addItem(deviceItem)
         }
+        menu.addItem(injectAll)
     }
 
     private func simulatorMenu(for device: SimulatorDevice) -> NSMenu {
@@ -209,7 +223,8 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         }
         toggle.isEnabled = injectAvailable
         menu.addItem(toggle)
-        menu.addItem(disabledItem("Apps opened after enabling use SimCamLite"))
+        menu.addItem(disabledItem(simulators.isInjectionRemembered(device.udid)
+            ? "Restored after the simulator restarts" : "Apps opened after enabling use SimCamLite"))
         menu.addItem(.separator())
 
         menu.addItem(.sectionHeader(title: "Launch with SimCamLite"))

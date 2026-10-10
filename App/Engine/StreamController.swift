@@ -13,6 +13,8 @@ final class StreamController: ObservableObject {
     var onChange: (() -> Void)?
     var onCameraPermissionNeeded: (() -> Void)?
     weak var permissions: PermissionsModel?
+    /// False while streaming is stopped: sources stay idle (Mac camera off) until `activate()`.
+    private(set) var isActive = true
 
     init(label: String) {
         self.label = label
@@ -87,12 +89,22 @@ final class StreamController: ObservableObject {
         self.kind = kind
         errorMessage = nil
         isPaused = false
-        newSource.start()
+        if isActive { newSource.start() }
         onChange?()
     }
 
+    func activate() {
+        isActive = true
+        if !(isPaused && videoSource != nil) { source.start() }
+    }
+
+    func deactivate() {
+        isActive = false
+        source.stop()
+    }
+
     private func applyPause() {
-        guard let video = videoSource else { return }
+        guard isActive, let video = videoSource else { return }
         if isPaused {
             video.stop()
         } else {

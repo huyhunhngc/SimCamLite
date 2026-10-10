@@ -27,14 +27,37 @@ Mở `build/SimCamLite.app`. Khi khởi động, app copy `SimCamLiteLoader.dyli
    xcrun simctl spawn booted launchctl setenv DYLD_INSERT_LIBRARIES /Users/Shared/SimCamLite/SimCamLiteLoader.dylib
    ```
    Mọi app mở sau đó được inject. Loader chỉ nạp framework vào app của người dùng, bỏ qua process hệ thống.
+
+   Biến `launchctl setenv` mất khi simulator shutdown, nên SimCamLite **nhớ** lựa chọn này (theo UDID) và tự bật lại mỗi khi simulator đó boot, miễn là app đang chạy (kiểm tra mỗi 3 giây; khi mở app, simulator đang boot cũng được khôi phục). *Inject into every simulator as it boots* (panel Simulator, menu bar › Simulators › *Inject into Every Simulator*, hoặc `simcam inject auto on`) áp dụng cho mọi simulator, kể cả chưa từng bật. Tắt toggle (hoặc `simcam inject off`) thì quên simulator đó. App mở ngay trong vài giây đầu sau boot có thể chưa được inject.
 2. **Một app** — nút *Launch* trong danh sách Apps (tương đương):
    ```bash
    SIMCTL_CHILD_DYLD_INSERT_LIBRARIES=/Users/Shared/SimCamLite/SimCamLiteLoader.dylib xcrun simctl launch --terminate-running-process booted <bundle-id>
    ```
-3. **Chạy từ Xcode** — Edit Scheme › Run › Arguments › Environment Variables:
+3. **Chạy từ Xcode** — khi đã bật cách 1, thường **không cần** biến trong scheme: Xcode Run launch app qua CoreSimulator (như `simctl launch --wait-for-debugger`) rồi attach debugger, và app launch theo đường này nhận môi trường `launchctl` của simulator (đã kiểm tra: `simctl launch` và `simctl launch --wait-for-debugger` + `lldb` attach đều nạp `SimCamLiteLoader.dylib`). Ngoại lệ: `lldb` tự spawn process (`process launch` trên platform `ios-simulator`) **không** nhận biến này. Nếu app không xuất hiện ở *Connected apps*, thêm vào Edit Scheme › Run › Arguments › Environment Variables:
    `DYLD_INSERT_LIBRARIES` = `/Users/Shared/SimCamLite/SimCamLiteLoader.dylib` (nút copy trong panel Simulator).
 
 Tắt host app → app iOS vẫn chạy và hiển thị khung "SimCamLite – Host app is not running".
+
+## CLI (`simcam`)
+
+`simcam` nằm trong `SimCamLite.app/Contents/MacOS/simcam`; cài vào PATH bằng menu **Install Command Line Tool…** (menu bar hoặc menu app, cũng có trong Permissions & Setup) — app tạo symlink `/usr/local/bin/simcam` (hỏi mật khẩu admin nếu cần, hoặc dùng `~/.local/bin`) và tự phát hiện symlink cũ trỏ tới bản app đã di chuyển. Khi phát triển có thể dùng `scripts/install-cli.sh`. CLI điều khiển chính app đang chạy qua socket `~/Library/Application Support/SimCamLite/control.sock`, nên GUI và CLI luôn cùng một trạng thái. Lệnh cần engine sẽ tự mở app ở chế độ nền.
+
+| Lệnh | Mô tả |
+| --- | --- |
+| `simcam start [--fps 30\|60]` / `stop` / `quit` | Bắt đầu / dừng phát (app vẫn chạy) / thoát app |
+| `simcam status [--json]` | Trạng thái, nguồn, app đang kết nối |
+| `simcam fps 60`, `simcam profile triple\|dual\|single` | Frame rate, device profile |
+| `simcam source [--front] pattern\|camera\|<file>` | Đặt nguồn (mặc định back); `--front follow` để front dùng lại nguồn back |
+| `simcam source camera --device "FaceTime"` | Chọn Mac camera (`simcam cameras` để liệt kê) |
+| `simcam adjust [--front] --fit --rotate 90 --mirror` | Fill/Fit, xoay, mirror |
+| `simcam pause` / `resume [--front]` | Pause video |
+| `simcam devices [--booted]` | Danh sách simulator iOS |
+| `simcam boot ["iPhone 17 Pro"] [--runtime 26.5] [--wait] [--inject]` | Mở Simulator / boot theo tên hoặc UDID |
+| `simcam apps`, `simcam launch <bundle-id\|tên app>` | Liệt kê / launch app kèm inject |
+| `simcam inject on\|off\|status [--all] [--persist]` | Inject vào mọi app của simulator; `--persist` để app tự bật lại sau khi simulator khởi động lại (`off` cũng quên simulator) |
+| `simcam inject auto on\|off\|status` | Tự inject mọi simulator khi boot (cùng cài đặt với GUI) |
+
+Lệnh simulator nhận `--device <tên|UDID>` khi có nhiều simulator đang boot. `simcam help <lệnh>` để xem chi tiết; completion zsh: `simcam --generate-completion-script zsh`.
 
 ## Phát triển
 
@@ -49,6 +72,8 @@ xcrun simctl spawn booted log stream --predicate 'subsystem == "dev.ifateam.simc
 | `Loader/` | Dylib nhỏ, chỉ `dlopen` framework cho app người dùng |
 | `Inject/` | Fake AVFoundation objects, swizzle, frame pump, photo capture |
 | `HostBridge/` | C API ghi frame/heartbeat cho app macOS |
-| `App/` | App macOS SwiftUI: nguồn hình, render pipeline, quản lý simulator |
+| `App/` | App macOS SwiftUI: nguồn hình, render pipeline, quản lý simulator, control server cho CLI |
+| `Common/` | Giao thức + socket dùng chung giữa app và CLI |
+| `CLI/` | Công cụ dòng lệnh `simcam` |
 
 Giới hạn hiện tại: chưa hỗ trợ `AVCaptureMovieFileOutput`, audio, metadata output (QR), multi-cam.

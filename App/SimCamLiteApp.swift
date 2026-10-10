@@ -13,6 +13,7 @@ struct SimCamLiteApp: App {
                 Button("Open SimCamLite…") { delegate.showMainWindow() }
                     .keyboardShortcut(",")
                 Button("Permissions & Setup…") { delegate.showPermissions() }
+                Button("Install Command Line Tool…") { CLIInstaller.shared.installInteractively() }
             }
         }
     }
@@ -22,12 +23,21 @@ struct SimCamLiteApp: App {
 final class AppDelegate: NSObject, NSApplicationDelegate {
     let model = AppModel()
     private var statusMenu: StatusMenuController?
+    private var controlServer: ControlServer?
     private var mainWindow: NSWindow?
     private var permissionsWindow: NSWindow?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         model.onShowPermissions = { [weak self] in self?.showPermissions() }
         model.start()
+        let handler = ControlHandler(model: model)
+        let server = ControlServer { await handler.handle($0) }
+        do {
+            try server.start()
+            controlServer = server
+        } catch {
+            NSLog("SimCamLite: CLI control unavailable: \(error.localizedDescription)")
+        }
         statusMenu = StatusMenuController(
             model: model,
             onOpenMain: { [weak self] in self?.showMainWindow() },
@@ -36,6 +46,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationWillTerminate(_ notification: Notification) {
+        controlServer?.stop()
         model.stop()
     }
 

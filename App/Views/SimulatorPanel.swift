@@ -35,6 +35,14 @@ struct SimulatorPanel: View {
                 set: { value in Task { await simulators.setInjection(value) } }
             ))
             .disabled(simulators.selectedUDID == nil || !model.injectInstalled)
+            .help("Stays on after the simulator restarts while SimCamLite is running")
+
+            Toggle("Inject into every simulator as it boots", isOn: Binding(
+                get: { simulators.injectsAllSimulators },
+                set: { value in Task { await simulators.setInjectsAllSimulators(value) } }
+            ))
+            .disabled(!model.injectInstalled)
+            .help("Also covers simulators never enabled before. Apps launched from Xcode pick it up too.")
 
             HStack {
                 Text(simulators.xcodeEnvironment)

@@ -5,6 +5,10 @@ options:
     iOS: "16.0"
     macOS: "14.0"
   createIntermediateGroups: true
+packages:
+  ArgumentParser:
+    url: https://github.com/apple/swift-argument-parser
+    from: 1.5.0
 settings:
   base:
     CODE_SIGN_IDENTITY: "-"
@@ -67,8 +71,15 @@ targets:
         type: file
         buildPhase: resources
       - HostBridge
+      - Common
       - path: Shared
         buildPhase: none
+    dependencies:
+      - target: simcam
+        embed: true
+        codeSign: true
+        copy:
+          destination: executables
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: dev.ifateam.simcamlite
@@ -100,11 +111,45 @@ targets:
       - name: Embed SimCamLiteInject
         script: '"$SRCROOT/scripts/embed-inject.sh"'
         basedOnDependencyAnalysis: false
+  simcam:
+    type: tool
+    platform: macOS
+    sources:
+      - CLI
+      - Common
+      - App/Engine/SimulatorManager.swift
+      - App/Engine/InjectInstaller.swift
+      - path: Shared
+        buildPhase: none
+    dependencies:
+      - package: ArgumentParser
+    settings:
+      base:
+        PRODUCT_NAME: simcam
+        PRODUCT_BUNDLE_IDENTIFIER: dev.ifateam.simcamlite.cli
+        SWIFT_VERSION: "5.0"
+        SWIFT_OBJC_BRIDGING_HEADER: CLI/simcam-Bridging-Header.h
+        HEADER_SEARCH_PATHS: $(SRCROOT)/Shared
+        ENABLE_HARDENED_RUNTIME: YES
+        DEVELOPMENT_TEAM: 43W6X55RFR
+        PROVISIONING_PROFILE_SPECIFIER: ""
+        SKIP_INSTALL: YES
+      configs:
+        Debug:
+          CODE_SIGN_STYLE: Automatic
+          CODE_SIGN_IDENTITY: Apple Development
+        Release:
+          CODE_SIGN_STYLE: Manual
+          CODE_SIGN_IDENTITY: Developer ID Application
 schemes:
   SimCamLite:
     build:
       targets:
         SimCamLite: all
+  simcam:
+    build:
+      targets:
+        simcam: all
   SimCamLiteInject:
     build:
       targets:

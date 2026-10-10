@@ -10,3 +10,4 @@ rm -rf "$ROOT/build/SimCamLite.app"
 mkdir -p "$ROOT/build"
 cp -R "$APP" "$ROOT/build/"
 echo "$ROOT/build/SimCamLite.app"
+echo "CLI: scripts/install-cli.sh or the app menu Install Command Line Tool… (symlinks simcam onto PATH)" >&2

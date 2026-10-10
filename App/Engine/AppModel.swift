@@ -42,6 +42,7 @@ final class AppModel: ObservableObject {
     let frontPreview = PreviewFeed()
     @Published private(set) var clients: [ConnectedClient] = []
     @Published private(set) var sharedMemoryReady = false
+    @Published private(set) var isStreaming = false
     @Published private(set) var injectInstalled = false
     @Published var installError: String?
     @Published var toast: String?
@@ -78,11 +79,30 @@ final class AppModel: ObservableObject {
     func start() {
         installInject()
         sharedMemoryReady = scl_host_open()
-        back.source.start()
-        front.source.start()
+        startStreaming()
+        Task { await simulators.refresh() }
+        simulators.startMonitoring()
+    }
+
+    func startStreaming() {
+        guard !isStreaming else { return }
+        if !sharedMemoryReady {
+            sharedMemoryReady = scl_host_open()
+        }
+        back.activate()
+        front.activate()
         syncPipeline()
         pipeline.start()
-        Task { await simulators.refresh() }
+        isStreaming = true
+    }
+
+    /// Stops rendering; the heartbeat goes stale so iOS apps show "Host app is not running".
+    func stopStreaming() {
+        guard isStreaming else { return }
+        pipeline.stop()
+        back.deactivate()
+        front.deactivate()
+        isStreaming = false
     }
 
     func installInject() {
@@ -101,9 +121,7 @@ final class AppModel: ObservableObject {
     }
 
     func stop() {
-        pipeline.stop()
-        back.source.stop()
-        front.source.stop()
+        stopStreaming()
     }
 
     private func syncPipeline() {

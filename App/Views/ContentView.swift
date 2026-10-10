@@ -80,9 +80,21 @@ struct StatusBar: View {
 
     var body: some View {
         HStack(spacing: 16) {
-            Label(model.sharedMemoryReady ? "Streaming \(model.frameRate.title)" : "Shared memory unavailable",
-                  systemImage: model.sharedMemoryReady ? "dot.radiowaves.left.and.right" : "exclamationmark.triangle")
-                .foregroundStyle(model.sharedMemoryReady ? .green : .red)
+            Button {
+                model.isStreaming ? model.stopStreaming() : model.startStreaming()
+            } label: {
+                Image(systemName: model.isStreaming ? "stop.fill" : "play.fill")
+            }
+            .help(model.isStreaming ? "Stop streaming" : "Start streaming")
+            Group {
+                if !model.sharedMemoryReady {
+                    Label("Shared memory unavailable", systemImage: "exclamationmark.triangle").foregroundStyle(.red)
+                } else if model.isStreaming {
+                    Label("Streaming \(model.frameRate.title)", systemImage: "dot.radiowaves.left.and.right").foregroundStyle(.green)
+                } else {
+                    Label("Stopped", systemImage: "pause.circle").foregroundStyle(.secondary)
+                }
+            }
             Label(model.injectInstalled ? "Inject library installed" : "Inject library missing",
                   systemImage: model.injectInstalled ? "checkmark.seal" : "xmark.seal")
                 .foregroundStyle(model.injectInstalled ? Color.secondary : Color.red)

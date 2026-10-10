@@ -5,6 +5,7 @@ struct PermissionsView: View {
     @ObservedObject var model: AppModel
     @ObservedObject var permissions: PermissionsModel
     @ObservedObject var simulators: SimulatorModel
+    @ObservedObject private var cli = CLIInstaller.shared
     var onDone: () -> Void
 
     var body: some View {
@@ -44,6 +45,14 @@ struct PermissionsView: View {
                     action: { model.installInject() }
                 )
                 SetupRow(
+                    symbol: "terminal",
+                    title: "Command line tool",
+                    detail: cliDetail,
+                    state: cliState,
+                    actionTitle: cli.isStale ? "FIX" : "INSTALL",
+                    action: { cli.installInteractively() }
+                )
+                SetupRow(
                     symbol: "iphone",
                     title: "Booted simulator",
                     detail: simulators.devices.isEmpty
@@ -74,7 +83,25 @@ struct PermissionsView: View {
         .frame(width: 520)
         .onAppear {
             permissions.refresh()
+            cli.refresh()
             Task { await simulators.refresh() }
+        }
+    }
+
+    private var cliState: SetupRow.State {
+        switch cli.status {
+        case .installed: .done
+        case .stale: .required
+        case .notInstalled: .optional
+        }
+    }
+
+    private var cliDetail: String {
+        switch cli.status {
+        case .installed(let path) where path == CLIInstaller.userPath: "simcam is linked in ~/.local/bin. Make sure it is on your PATH."
+        case .installed(let path): "simcam is available in \((path as NSString).deletingLastPathComponent)."
+        case .stale(let path, _): "\(path) points to an old copy of SimCamLite."
+        case .notInstalled: "Links simcam into /usr/local/bin to control SimCamLite from Terminal."
         }
     }
 
