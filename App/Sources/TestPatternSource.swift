@@ -8,6 +8,11 @@ final class TestPatternSource: FrameSource {
     private lazy var background: CGImage? = makeBackground()
     private let colorSpace = CGColorSpace(name: CGColorSpace.sRGB)!
     private var frameIndex: UInt64 = 0
+    private let formatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm:ss.SSS"
+        return formatter
+    }()
 
     init(label: String) {
         self.label = label
@@ -27,8 +32,6 @@ final class TestPatternSource: FrameSource {
         context.setFillColor(NSColor.systemYellow.cgColor)
         context.fillEllipse(in: CGRect(x: ballX - 70, y: 300, width: 140, height: 140))
 
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm:ss.SSS"
         drawText(formatter.string(from: Date()), at: CGPoint(x: size.width / 2, y: 620), size: 110, weight: .bold, in: context)
         drawText("frame \(frameIndex)", at: CGPoint(x: size.width / 2, y: 520), size: 60, weight: .regular, in: context)
 

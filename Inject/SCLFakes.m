@@ -9,6 +9,19 @@ static NSValue *SCLDimensionsValue(int32_t width, int32_t height) {
     return [NSValue valueWithBytes:&dimensions objCType:@encode(CMVideoDimensions)];
 }
 
+static CMTime SCLClampedFrameDuration(CMTime duration) {
+    if (!CMTIME_IS_NUMERIC(duration) || CMTimeGetSeconds(duration) <= 0) {
+        return CMTimeMake(1, 30);
+    }
+    if (CMTimeCompare(duration, CMTimeMake(1, 60)) < 0) {
+        return CMTimeMake(1, 60);
+    }
+    if (CMTimeCompare(duration, CMTimeMake(1, 1)) > 0) {
+        return CMTimeMake(1, 1);
+    }
+    return duration;
+}
+
 #pragma mark - Frame rate range
 
 @implementation SCLFakeFrameRateRange
@@ -244,10 +257,33 @@ static NSValue *SCLDimensionsValue(int32_t width, int32_t height) {
 - (NSArray<AVCaptureDeviceFormat *> *)formats { return @[_format]; }
 - (AVCaptureDeviceFormat *)activeFormat { return _format; }
 - (void)setActiveFormat:(AVCaptureDeviceFormat *)activeFormat {}
-- (CMTime)activeVideoMinFrameDuration { return _minFrameDuration; }
-- (void)setActiveVideoMinFrameDuration:(CMTime)duration { _minFrameDuration = duration; }
-- (CMTime)activeVideoMaxFrameDuration { return _maxFrameDuration; }
-- (void)setActiveVideoMaxFrameDuration:(CMTime)duration { _maxFrameDuration = duration; }
+- (CMTime)activeVideoMinFrameDuration {
+    @synchronized (self) {
+        return _minFrameDuration;
+    }
+}
+
+- (void)setActiveVideoMinFrameDuration:(CMTime)duration {
+    @synchronized (self) {
+        _minFrameDuration = SCLClampedFrameDuration(duration);
+    }
+}
+
+- (CMTime)activeVideoMaxFrameDuration {
+    @synchronized (self) {
+        return _maxFrameDuration;
+    }
+}
+
+- (void)setActiveVideoMaxFrameDuration:(CMTime)duration {
+    @synchronized (self) {
+        _maxFrameDuration = SCLClampedFrameDuration(duration);
+    }
+}
+
+- (CMTime)sclFrameDuration {
+    return self.activeVideoMinFrameDuration;
+}
 - (AVCaptureDeviceFormat *)activeDepthDataFormat { return nil; }
 - (void)setActiveDepthDataFormat:(AVCaptureDeviceFormat *)format {}
 - (AVCaptureColorSpace)activeColorSpace { return AVCaptureColorSpace_sRGB; }
@@ -649,9 +685,20 @@ static NSValue *SCLDimensionsValue(int32_t width, int32_t height) {
     }
 }
 
-- (CMTime)videoMinFrameDuration { return CMTimeMake(1, 30); }
+- (CMTime)videoMinFrameDuration {
+    AVCaptureSession *session = _session;
+    SCLFakeDevice *device = session ? SCLStateForSession(session, NO).activeDevice : nil;
+    return device ? device.activeVideoMinFrameDuration : CMTimeMake(1, 30);
+}
+
 - (void)setVideoMinFrameDuration:(CMTime)duration {}
-- (CMTime)videoMaxFrameDuration { return CMTimeMake(1, 30); }
+
+- (CMTime)videoMaxFrameDuration {
+    AVCaptureSession *session = _session;
+    SCLFakeDevice *device = session ? SCLStateForSession(session, NO).activeDevice : nil;
+    return device ? device.activeVideoMaxFrameDuration : CMTimeMake(1, 30);
+}
+
 - (void)setVideoMaxFrameDuration:(CMTime)duration {}
 - (BOOL)isVideoMinFrameDurationSupported { return NO; }
 - (BOOL)isVideoMaxFrameDurationSupported { return NO; }

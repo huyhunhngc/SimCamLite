@@ -59,6 +59,7 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
             model.frontSeparate.toggle()
         })
         menu.addItem(submenuItem("Device profile", submenu: deviceProfileMenu()))
+        menu.addItem(submenuItem("Frame rate", submenu: frameRateMenu()))
         menu.addItem(.separator())
 
         addSimulatorSection(to: menu)
@@ -164,6 +165,15 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         }
         menu.addItem(.separator())
         menu.addItem(disabledItem("Applies to apps launched afterwards"))
+        return menu
+    }
+
+    private func frameRateMenu() -> NSMenu {
+        let menu = NSMenu()
+        menu.autoenablesItems = false
+        for rate in FrameRate.allCases {
+            menu.addItem(item(rate.title, state: model.frameRate == rate) { [model] in model.frameRate = rate })
+        }
         return menu
     }
 

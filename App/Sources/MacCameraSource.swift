@@ -7,6 +7,8 @@ final class MacCameraSource: NSObject, FrameSource, AVCaptureVideoDataOutputSamp
     private let queue = DispatchQueue(label: "dev.ifateam.simcamlite.maccamera")
     private let lock = NSLock()
     private var latest: CIImage?
+    private var frameCount: UInt64 = 0
+    private var consumedCount: UInt64 = 0
     private var configured = false
     private(set) var deviceName: String
 
@@ -34,9 +36,16 @@ final class MacCameraSource: NSObject, FrameSource, AVCaptureVideoDataOutputSamp
         queue.async { self.session.stopRunning() }
     }
 
+    func hasNewFrame(at time: CFTimeInterval) -> Bool? {
+        lock.lock()
+        defer { lock.unlock() }
+        return frameCount != consumedCount
+    }
+
     func currentImage(at time: CFTimeInterval) -> CIImage? {
         lock.lock()
         defer { lock.unlock() }
+        consumedCount = frameCount
         return latest
     }
 
@@ -48,6 +57,7 @@ final class MacCameraSource: NSObject, FrameSource, AVCaptureVideoDataOutputSamp
             session.sessionPreset = .high
             if session.canAddInput(input) {
                 session.addInput(input)
+                Self.preferHighFrameRate(device)
             }
             let output = AVCaptureVideoDataOutput()
             output.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA]
@@ -64,11 +74,34 @@ final class MacCameraSource: NSObject, FrameSource, AVCaptureVideoDataOutputSamp
         }
     }
 
+    /// Switches to the largest format that can run at 60 fps, if the camera has one; otherwise keeps the preset.
+    private static func preferHighFrameRate(_ device: AVCaptureDevice) {
+        let target = CMTime(value: 1, timescale: 60)
+        func duration(in range: AVFrameRateRange) -> CMTime? {
+            guard range.maxFrameRate >= 59.9 else { return nil }
+            return range.minFrameDuration <= target && target <= range.maxFrameDuration ? target : range.minFrameDuration
+        }
+        func area(_ format: AVCaptureDevice.Format) -> Int {
+            let dimensions = CMVideoFormatDescriptionGetDimensions(format.formatDescription)
+            return Int(dimensions.width) * Int(dimensions.height)
+        }
+        let candidates = device.formats.compactMap { format in
+            format.videoSupportedFrameRateRanges.lazy.compactMap(duration).first.map { (format, $0) }
+        }
+        guard let (format, duration) = candidates.max(by: { area($0.0) < area($1.0) }),
+              CMVideoFormatDescriptionGetDimensions(format.formatDescription).width >= 1280,
+              (try? device.lockForConfiguration()) != nil else { return }
+        device.activeFormat = format
+        device.activeVideoMinFrameDuration = duration
+        device.unlockForConfiguration()
+    }
+
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         guard let buffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
         let image = CIImage(cvPixelBuffer: buffer)
         lock.lock()
         latest = image
+        frameCount &+= 1
         lock.unlock()
     }
 }

@@ -32,6 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) NSString *sclLensModel;
 @property (nonatomic, readonly) double sclFocalLength;
 @property (nonatomic, strong, readonly) SCLFakeDeviceInput *sclInput;
+@property (nonatomic, readonly) CMTime sclFrameDuration;
 
 - (void)sclStepRampWithInterval:(NSTimeInterval)interval;
 

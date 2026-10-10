@@ -11,7 +11,7 @@ brew install xcodegen
 scripts/build.sh            # → build/SimCamLite.app
 ```
 
-Mở `build/SimCamLite.app`. Khi khởi động, app copy `SimCamLiteLoader.dylib` và `SimCamLiteInject.framework` vào `/Users/Shared/SimCamLite/` và bắt đầu phát 30 fps vào `/Users/Shared/SimCamLite/frames.shm`.
+Mở `build/SimCamLite.app`. Khi khởi động, app copy `SimCamLiteLoader.dylib` và `SimCamLiteInject.framework` vào `/Users/Shared/SimCamLite/` và bắt đầu phát 30 fps (chọn 60 fps ở thanh trạng thái hoặc menu bar) vào `/Users/Shared/SimCamLite/frames.shm`.
 
 ## Sử dụng
 

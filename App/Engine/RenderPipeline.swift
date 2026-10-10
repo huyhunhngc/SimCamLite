@@ -30,6 +30,7 @@ final class RenderPipeline: @unchecked Sendable {
         var backOptions = RenderOptions()
         var frontOptions = RenderOptions()
         var deviceProfile: UInt32 = UInt32(SCLDeviceProfileTriple)
+        var frameRate: Double = 30
     }
 
     var onPreview: ((CGImage?, CGImage?) -> Void)?
@@ -41,11 +42,9 @@ final class RenderPipeline: @unchecked Sendable {
     private var config = Config()
     private var timer: DispatchSourceTimer?
     private var lastWrite: [Int32: CFTimeInterval] = [:]
-    private var lastPreview: CFTimeInterval = 0
     private var backPreview: CGImage?
     private var frontPreview: CGImage?
     private var lastClients: CFTimeInterval = 0
-    private static let frameInterval: CFTimeInterval = 1.0 / 30
     private static let pollInterval: CFTimeInterval = 1.0 / 120
     private static let idleInterval: CFTimeInterval = 0.1
 
@@ -79,9 +78,9 @@ final class RenderPipeline: @unchecked Sendable {
         let time = CACurrentMediaTime()
         let backStream = Int32(SCLStreamBack)
         let frontStream = Int32(SCLStreamFront)
-        let backDue = isDue(config.backSource, stream: backStream, at: time)
-        let frontDue = config.frontFollowsBack ? backDue : isDue(config.frontSource, stream: frontStream, at: time)
-        let previewDue = (backDue || frontDue) && time - lastPreview >= Self.idleInterval - Self.pollInterval
+        let frameInterval = 1 / config.frameRate
+        let backDue = isDue(config.backSource, stream: backStream, at: time, frameInterval: frameInterval)
+        let frontDue = config.frontFollowsBack ? backDue : isDue(config.frontSource, stream: frontStream, at: time, frameInterval: frameInterval)
 
         autoreleasepool {
             var back: CIImage?
@@ -102,8 +101,7 @@ final class RenderPipeline: @unchecked Sendable {
                 renderer.write(front, stream: frontStream)
                 lastWrite[frontStream] = time
             }
-            if previewDue, let onPreview {
-                lastPreview = time
+            if backDue || frontDue, let onPreview {
                 if let back { backPreview = renderer.preview(back) }
                 if let front { frontPreview = config.frontFollowsBack ? backPreview : renderer.preview(front) }
                 let backPreview = backPreview
@@ -119,9 +117,9 @@ final class RenderPipeline: @unchecked Sendable {
         }
     }
 
-    private func isDue(_ source: FrameSource?, stream: Int32, at time: CFTimeInterval) -> Bool {
+    private func isDue(_ source: FrameSource?, stream: Int32, at time: CFTimeInterval, frameInterval: CFTimeInterval) -> Bool {
         let elapsed = time - (lastWrite[stream] ?? 0)
-        let threshold = Self.frameInterval - Self.pollInterval / 2
+        let threshold = frameInterval - Self.pollInterval / 2
         guard let hasNew = source?.hasNewFrame(at: time) else { return elapsed >= threshold }
         return (hasNew && elapsed >= threshold) || elapsed >= Self.idleInterval
     }

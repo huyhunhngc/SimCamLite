@@ -14,8 +14,7 @@ static const void *SCLPreviewContentKey = &SCLPreviewContentKey;
 static const void *SCLPreviewBusyKey = &SCLPreviewBusyKey;
 static const void *SCLPreviewFrameKey = &SCLPreviewFrameKey;
 
-static const double SCLFrameRate = 30;
-static const double SCLPollRate = 120;
+static const double SCLPollRate = 240;
 static const CGFloat SCLPreviewMaxEdge = 1280;
 
 void SCLSetVideoDataDelegate(AVCaptureVideoDataOutput *output, id delegate, dispatch_queue_t queue) {
@@ -211,7 +210,11 @@ static CIImage *SCLOriented(CIImage *image, CGFloat angle, BOOL mirrored) {
         }
         [device sclStepRampWithInterval:interval];
         uint64_t counter = [SCLFrameReader.shared frameCounterForStream:device.sclStream];
-        BOOL fresh = counter != 0 ? counter != state.lastFrameCounter : now - state.lastDeliveryNs >= NSEC_PER_SEC / SCLFrameRate;
+        uint64_t frameNs = (uint64_t)(CMTimeGetSeconds(device.sclFrameDuration) * NSEC_PER_SEC);
+        uint64_t elapsed = now - state.lastDeliveryNs;
+        // Deliver new host frames no faster than the app's activeVideoMinFrameDuration; allow one poll tick of jitter.
+        BOOL due = elapsed + (uint64_t)(NSEC_PER_SEC / SCLPollRate) >= frameNs;
+        BOOL fresh = counter != 0 ? due && counter != state.lastFrameCounter : elapsed >= frameNs;
         if (!fresh && device == state.lastDevice) {
             continue;
         }
@@ -351,7 +354,7 @@ static CIImage *SCLOriented(CIImage *image, CGFloat angle, BOOL mirrored) {
     CMVideoFormatDescriptionRef formatDescription = NULL;
     CMVideoFormatDescriptionCreateForImageBuffer(kCFAllocatorDefault, buffer, &formatDescription);
     CMSampleTimingInfo timing = {
-        .duration = CMTimeMake(1, (int32_t)SCLFrameRate),
+        .duration = device.sclFrameDuration,
         .presentationTimeStamp = CMClockGetTime(CMClockGetHostTimeClock()),
         .decodeTimeStamp = kCMTimeInvalid,
     };

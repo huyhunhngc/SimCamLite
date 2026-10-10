@@ -11,7 +11,7 @@ struct ContentView: View {
                     VStack(alignment: .leading, spacing: 8) {
                         Toggle("Front camera uses back source", isOn: $model.frontFollowsBack)
                         if model.frontFollowsBack {
-                            PreviewImage(image: model.frontPreview)
+                            PreviewImage(feed: model.frontPreview)
                                 .overlay(alignment: .topLeading) { Badge(text: "Front") }
                             Spacer(minLength: 0)
                         } else {
@@ -57,12 +57,12 @@ struct Badge: View {
 }
 
 struct PreviewImage: View {
-    let image: CGImage?
+    @ObservedObject var feed: PreviewFeed
 
     var body: some View {
         ZStack {
             Rectangle().fill(.black)
-            if let image {
+            if let image = feed.image {
                 Image(decorative: image, scale: 1)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
@@ -80,7 +80,7 @@ struct StatusBar: View {
 
     var body: some View {
         HStack(spacing: 16) {
-            Label(model.sharedMemoryReady ? "Streaming 30 fps" : "Shared memory unavailable",
+            Label(model.sharedMemoryReady ? "Streaming \(model.frameRate.title)" : "Shared memory unavailable",
                   systemImage: model.sharedMemoryReady ? "dot.radiowaves.left.and.right" : "exclamationmark.triangle")
                 .foregroundStyle(model.sharedMemoryReady ? .green : .red)
             Label(model.injectInstalled ? "Inject library installed" : "Inject library missing",
@@ -88,6 +88,11 @@ struct StatusBar: View {
                 .foregroundStyle(model.injectInstalled ? Color.secondary : Color.red)
                 .help(model.installError ?? InjectInstaller.loaderPath)
             Spacer()
+            Picker("Frame rate", selection: $model.frameRate) {
+                ForEach(FrameRate.allCases) { Text($0.title).tag($0) }
+            }
+            .frame(maxWidth: 160)
+            .help("Maximum rate sent to the simulator. Apps receive up to their activeVideoMinFrameDuration.")
             Picker("Device profile", selection: $model.deviceProfile) {
                 ForEach(DeviceProfile.allCases) { Text($0.title).tag($0) }
             }

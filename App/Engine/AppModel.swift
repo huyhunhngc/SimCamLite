@@ -17,14 +17,29 @@ enum DeviceProfile: UInt32, CaseIterable, Identifiable {
     }
 }
 
+enum FrameRate: Int, CaseIterable, Identifiable {
+    case fps30 = 30
+    case fps60 = 60
+
+    var id: Int { rawValue }
+    var title: String { "\(rawValue) fps" }
+}
+
+/// Kept separate from AppModel so per-frame preview updates only redraw the preview images.
+@MainActor
+final class PreviewFeed: ObservableObject {
+    @Published fileprivate(set) var image: CGImage?
+}
+
 @MainActor
 final class AppModel: ObservableObject {
     let back = StreamController(label: "Back")
     let front = StreamController(label: "Front")
     @Published var frontFollowsBack = true { didSet { syncPipeline() } }
     @Published var deviceProfile: DeviceProfile = .triple { didSet { syncPipeline() } }
-    @Published private(set) var backPreview: CGImage?
-    @Published private(set) var frontPreview: CGImage?
+    @Published var frameRate: FrameRate = .fps30 { didSet { syncPipeline() } }
+    let backPreview = PreviewFeed()
+    let frontPreview = PreviewFeed()
     @Published private(set) var clients: [ConnectedClient] = []
     @Published private(set) var sharedMemoryReady = false
     @Published private(set) var injectInstalled = false
@@ -51,8 +66,8 @@ final class AppModel: ObservableObject {
 
         pipeline.onPreview = { [weak self] backImage, frontImage in
             MainActor.assumeIsolated {
-                self?.backPreview = backImage
-                self?.frontPreview = frontImage
+                self?.backPreview.image = backImage
+                self?.frontPreview.image = frontImage
             }
         }
         pipeline.onClients = { [weak self] clients in
@@ -98,6 +113,7 @@ final class AppModel: ObservableObject {
         let frontOptions = front.options
         let follows = frontFollowsBack
         let profile = deviceProfile.rawValue
+        let rate = Double(frameRate.rawValue)
         pipeline.update { config in
             config.backSource = backSource
             config.frontSource = frontSource
@@ -105,6 +121,7 @@ final class AppModel: ObservableObject {
             config.frontOptions = frontOptions
             config.frontFollowsBack = follows
             config.deviceProfile = profile
+            config.frameRate = rate
         }
     }
 

@@ -5,7 +5,7 @@ import UniformTypeIdentifiers
 struct StreamPanel: View {
     let title: String
     @ObservedObject var stream: StreamController
-    let preview: CGImage?
+    let preview: PreviewFeed
     @State private var importing = false
     @State private var dropTargeted = false
     @State private var cameras: [AVCaptureDevice] = []
@@ -13,7 +13,7 @@ struct StreamPanel: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(title).font(.headline)
-            PreviewImage(image: preview)
+            PreviewImage(feed: preview)
                 .overlay {
                     if dropTargeted {
                         RoundedRectangle(cornerRadius: 10).stroke(Color.accentColor, lineWidth: 3)
