@@ -146,11 +146,11 @@ DMG_NAME="SimCamLite-$VERSION.dmg"
 
 # MARK: Publish
 
-echo "Uploading to GitHub Release $TAG…"
+echo "Uploading to GitHub Release ${TAG}…"
 cp "$DMG" "$WORK/$DMG_NAME"
 gh release upload "$TAG" "$ZIP" "$WORK/$DMG_NAME" --repo "$REPO" --clobber
 
-echo "Uploading to R2 bucket $BUCKET…"
+echo "Uploading to R2 bucket ${BUCKET}…"
 wrangler r2 object put "$BUCKET/releases/$(basename "$ZIP")" --file "$ZIP" --remote \
   --content-type "application/zip" --cache-control "public, max-age=31536000, immutable"
 wrangler r2 object put "$BUCKET/releases/$DMG_NAME" --file "$WORK/$DMG_NAME" --remote \
