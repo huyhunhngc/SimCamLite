@@ -42,17 +42,40 @@ struct SimulatorPanel: View {
                 set: { value in Task { await simulators.setInjectsAllSimulators(value) } }
             ))
             .disabled(!model.injectInstalled)
-            .help("Also covers simulators never enabled before. Apps launched from Xcode pick it up too.")
+            .help("Also covers simulators never enabled before. Xcode Run replaces it: set up the project below.")
 
+            Divider()
+
+            HStack {
+                Text("Run from Xcode").font(.subheadline.weight(.semibold))
+                Spacer()
+                Button("Set Up Project…") { simulators.setUpXcodeProject() }
+                    .controlSize(.small)
+                    .help("Adds the loader to the Run environment of the project's iOS app schemes, so the camera works while debugging")
+            }
+            ForEach(simulators.xcodeProjects, id: \.self) { path in
+                HStack {
+                    Text(URL(fileURLWithPath: path).lastPathComponent)
+                        .font(.caption)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                        .help(path)
+                    Spacer()
+                    Button { simulators.removeXcodeProject(path) } label: { Image(systemName: "minus.circle") }
+                        .buttonStyle(.borderless)
+                        .help("Remove SimCamLite from this project's schemes")
+                }
+            }
             HStack {
                 Text(simulators.xcodeEnvironment)
                     .font(.caption.monospaced())
+                    .foregroundStyle(.secondary)
                     .lineLimit(1)
                     .truncationMode(.middle)
                     .textSelection(.enabled)
                 Button { simulators.copyXcodeEnvironment() } label: { Image(systemName: "doc.on.doc") }
                     .buttonStyle(.borderless)
-                    .help("Copy for Xcode scheme › Run › Environment Variables")
+                    .help("Manual fallback: paste into Edit Scheme › Run › Arguments › Environment Variables (iOS schemes only)")
             }
 
             Divider()

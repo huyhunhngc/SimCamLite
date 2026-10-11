@@ -239,6 +239,7 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
             menu.addItem(launch)
         }
         menu.addItem(.separator())
+        menu.addItem(item("Set Up Xcode Project…", symbol: "hammer") { simulators.setUpXcodeProject() })
         menu.addItem(item("Copy Xcode Environment Variable", symbol: "doc.on.doc") { simulators.copyXcodeEnvironment() })
         return menu
     }

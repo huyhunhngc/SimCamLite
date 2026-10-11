@@ -6,7 +6,7 @@ enum InjectionPreferences {
     private static let rememberedKey = "injection.rememberedUDIDs"
     private static let allSimulatorsKey = "injection.allSimulators"
 
-    private static var defaults: UserDefaults {
+    static var defaults: UserDefaults {
         if Bundle.main.bundleIdentifier == ControlPaths.appBundleID { return .standard }
         return UserDefaults(suiteName: ControlPaths.appBundleID) ?? .standard
     }

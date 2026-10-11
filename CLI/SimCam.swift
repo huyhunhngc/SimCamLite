@@ -11,7 +11,7 @@ struct SimCam: AsyncParsableCommand {
         subcommands: [
             Start.self, Stop.self, Quit.self, Status.self, Fps.self, Profile.self,
             Source.self, Adjust.self, Pause.self, Resume.self, Cameras.self,
-            Devices.self, Boot.self, Apps.self, Launch.self, Inject.self,
+            Devices.self, Boot.self, Apps.self, Launch.self, Inject.self, Xcode.self,
         ]
     )
 }

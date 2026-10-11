@@ -49,7 +49,10 @@
 		ADAB5B9D866FB09DD27F1C16 /* ControlHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A1CA3587E34BD2188F04E2 /* ControlHandler.swift */; };
 		B05C81BA8EDBAD66D450D6FD /* StreamController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A3B270966D3F49A62A48896 /* StreamController.swift */; };
 		B36F530CF748822C7AA85630 /* SCLRuntime.m in Sources */ = {isa = PBXBuildFile; fileRef = 208F4D528D3D0151BA4129A7 /* SCLRuntime.m */; };
+		B78E1050D6924B2CFA393BD0 /* XcodeCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F3742797BB5EF80E6BABDAD /* XcodeCommand.swift */; };
+		BA04089D8CC41558ECD91981 /* XcodeSchemeSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1475F6926C33DE680A307986 /* XcodeSchemeSetup.swift */; };
 		BE7E40C125E035B34AC0838F /* PermissionsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A14EF0D69A34E1424A31B038 /* PermissionsModel.swift */; };
+		C33431CED794550B3C204BD3 /* XcodeSchemeSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1475F6926C33DE680A307986 /* XcodeSchemeSetup.swift */; };
 		C6C751A0F90D0E64E4817F5E /* FrameRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28681B6CCDC0E282A66D2049 /* FrameRenderer.swift */; };
 		C855FCEA283D230CF98E4A19 /* SimCam.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32575ECC78E187EC3C50CB56 /* SimCam.swift */; };
 		C86D925C32B9E2A2C7A12721 /* ControlSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B437F0ACB993E4DA541FD17 /* ControlSocket.swift */; };
@@ -101,6 +104,7 @@
 		0758D9CA1980E86FF76D9C6C /* PermissionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsView.swift; sourceTree = "<group>"; };
 		0CB5406B1A96F9EFFCB8A20F /* InjectInstaller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InjectInstaller.swift; sourceTree = "<group>"; };
 		0EBB76D87F1D0C2A72054A8E /* SCLFrameReader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SCLFrameReader.h; sourceTree = "<group>"; };
+		1475F6926C33DE680A307986 /* XcodeSchemeSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XcodeSchemeSetup.swift; sourceTree = "<group>"; };
 		1506237C51DDA2ED0ACDC1C1 /* SCLRuntimeMRC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SCLRuntimeMRC.m; sourceTree = "<group>"; };
 		16B17B5F178E4F87A4A5EB30 /* MacCameraSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacCameraSource.swift; sourceTree = "<group>"; };
 		1803E8F8416581C467C7E07E /* SimCamLite.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SimCamLite.entitlements; sourceTree = "<group>"; };
@@ -111,7 +115,7 @@
 		208F4D528D3D0151BA4129A7 /* SCLRuntime.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SCLRuntime.m; sourceTree = "<group>"; };
 		2222CDF77B9300B99F2A6E29 /* SCLHooks.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SCLHooks.m; sourceTree = "<group>"; };
 		25AC084340C9FA898F535C35 /* InjectionPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InjectionPreferences.swift; sourceTree = "<group>"; };
-		2767F24C1B669AB209DFBC8F /* simcam */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = text; path = simcam; sourceTree = BUILT_PRODUCTS_DIR; };
+		2767F24C1B669AB209DFBC8F /* simcam */ = {isa = PBXFileReference; includeInIndex = 0; path = simcam; sourceTree = BUILT_PRODUCTS_DIR; };
 		27E2A7E4FE2097AA4337E955 /* SCLFramePump.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SCLFramePump.m; sourceTree = "<group>"; };
 		28681B6CCDC0E282A66D2049 /* FrameRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameRenderer.swift; sourceTree = "<group>"; };
 		29EA138942F93C947137F40C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -136,6 +140,7 @@
 		81E38129EFA3156B579079B5 /* ControlServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlServer.swift; sourceTree = "<group>"; };
 		835EBFBE9B3D4309EBC230BA /* SCLHostBridge.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = SCLHostBridge.c; sourceTree = "<group>"; };
 		83E47F05F36455806B627FDA /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
+		8F3742797BB5EF80E6BABDAD /* XcodeCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XcodeCommand.swift; sourceTree = "<group>"; };
 		90AEB11CCC6473BF9EC26A20 /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = System/Library/Frameworks/CoreImage.framework; sourceTree = SDKROOT; };
 		9A3B270966D3F49A62A48896 /* StreamController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamController.swift; sourceTree = "<group>"; };
 		9E8C31081FEDA5851CA2B912 /* SCLHooks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SCLHooks.h; sourceTree = "<group>"; };
@@ -298,6 +303,7 @@
 				C6FF1ED0268E050B14C889A9 /* simcam-Bridging-Header.h */,
 				32575ECC78E187EC3C50CB56 /* SimCam.swift */,
 				1D22B2A76C2A5E019B627D46 /* SimulatorCommands.swift */,
+				8F3742797BB5EF80E6BABDAD /* XcodeCommand.swift */,
 			);
 			path = CLI;
 			sourceTree = "<group>";
@@ -316,6 +322,7 @@
 				FFF28CD8390BB5DD6191668F /* ControlProtocol.swift */,
 				5B437F0ACB993E4DA541FD17 /* ControlSocket.swift */,
 				25AC084340C9FA898F535C35 /* InjectionPreferences.swift */,
+				1475F6926C33DE680A307986 /* XcodeSchemeSetup.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -475,6 +482,7 @@
 						DevelopmentTeam = 43W6X55RFR;
 					};
 					3F51C4C908CF203D9F7BA1E3 = {
+						DevelopmentTeam = 43W6X55RFR;
 						ProvisioningStyle = Automatic;
 					};
 					A04B83BE3494BF6A838DFFAD = {
@@ -573,6 +581,8 @@
 				C855FCEA283D230CF98E4A19 /* SimCam.swift in Sources */,
 				95D35D545CFB9DF5BE4458E7 /* SimulatorCommands.swift in Sources */,
 				661BCE9FD0E2D75CB746BB65 /* SimulatorManager.swift in Sources */,
+				B78E1050D6924B2CFA393BD0 /* XcodeCommand.swift in Sources */,
+				C33431CED794550B3C204BD3 /* XcodeSchemeSetup.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -607,6 +617,7 @@
 				D463DEF16583DFACD1867A98 /* StreamPanel.swift in Sources */,
 				E16ECF2D31526DFD0D8026AB /* TestPatternSource.swift in Sources */,
 				DCD03A7C99C64D54FAFDE3A5 /* VideoSource.swift in Sources */,
+				BA04089D8CC41558ECD91981 /* XcodeSchemeSetup.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

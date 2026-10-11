@@ -15,6 +15,8 @@ final class SimulatorModel: ObservableObject {
     @Published private(set) var isBusy = false
     @Published var message: String?
     @Published private(set) var injectsAllSimulators = InjectionPreferences.injectsAllSimulators
+    /// Projects whose schemes load SimCamLite when run from Xcode.
+    @Published private(set) var xcodeProjects = XcodeSchemeSetup.projects
     private var isRefreshing = false
     private var monitor: Task<Void, Never>?
     /// Booted simulators whose injection was already restored; a device leaving this set and booting again is re-checked.
@@ -105,6 +107,51 @@ final class SimulatorModel: ObservableObject {
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(xcodeEnvironment, forType: .string)
         message = "Copied \(xcodeEnvironment)"
+    }
+
+    /// Asks for an .xcodeproj / .xcworkspace and adds the loader to its iOS app schemes, so Xcode Run keeps the camera.
+    func setUpXcodeProject() {
+        let panel = NSOpenPanel()
+        panel.title = "Set Up Xcode Project"
+        panel.message = "Choose the project or workspace you run from Xcode. Its iOS app schemes get "
+            + "\(XcodeSchemeSetup.variable) in Run › Environment Variables."
+        panel.prompt = "Set Up"
+        panel.canChooseDirectories = true
+        panel.treatsFilePackagesAsDirectories = false
+        panel.allowsMultipleSelection = false
+        NSApp.activate(ignoringOtherApps: true)
+        guard panel.runModal() == .OK, let url = panel.url else { return }
+        do {
+            let container = try XcodeSchemeSetup.container(in: url)
+            let changed = try XcodeSchemeSetup.setEnabled(true, in: container)
+            let schemes = try XcodeSchemeSetup.schemes(in: container)
+            let enabled = schemes.filter(\.isEnabled).map(\.name)
+            let skipped = schemes.filter { !$0.isEnabled && $0.skipReason != nil }.map { "\($0.name) (\($0.skipReason!))" }
+            var text = enabled.isEmpty
+                ? "No iOS app scheme in \(container.lastPathComponent)."
+                : "\(container.lastPathComponent): \(enabled.joined(separator: ", ")) \(changed.isEmpty ? "already set up" : "set up"). Stop and Run again in Xcode."
+            if !skipped.isEmpty { text += " Skipped: \(skipped.joined(separator: ", "))." }
+            message = text
+        } catch {
+            message = error.localizedDescription
+        }
+        xcodeProjects = XcodeSchemeSetup.projects
+    }
+
+    func removeXcodeProject(_ path: String) {
+        let url = URL(fileURLWithPath: path)
+        do {
+            if FileManager.default.fileExists(atPath: path) {
+                try XcodeSchemeSetup.setEnabled(false, in: url)
+            } else {
+                XcodeSchemeSetup.remember(url, false)
+            }
+            message = "Removed SimCamLite from \(url.lastPathComponent) schemes"
+        } catch {
+            XcodeSchemeSetup.remember(url, false)
+            message = error.localizedDescription
+        }
+        xcodeProjects = XcodeSchemeSetup.projects
     }
 
     func openSimulatorApp() {

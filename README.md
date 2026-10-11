@@ -33,8 +33,15 @@ Mở `build/SimCamLite.app`. Khi khởi động, app copy `SimCamLiteLoader.dyli
    ```bash
    SIMCTL_CHILD_DYLD_INSERT_LIBRARIES=/Users/Shared/SimCamLite/SimCamLiteLoader.dylib xcrun simctl launch --terminate-running-process booted <bundle-id>
    ```
-3. **Chạy từ Xcode** — khi đã bật cách 1, thường **không cần** biến trong scheme: Xcode Run launch app qua CoreSimulator (như `simctl launch --wait-for-debugger`) rồi attach debugger, và app launch theo đường này nhận môi trường `launchctl` của simulator (đã kiểm tra: `simctl launch` và `simctl launch --wait-for-debugger` + `lldb` attach đều nạp `SimCamLiteLoader.dylib`). Ngoại lệ: `lldb` tự spawn process (`process launch` trên platform `ios-simulator`) **không** nhận biến này. Nếu app không xuất hiện ở *Connected apps*, thêm vào Edit Scheme › Run › Arguments › Environment Variables:
-   `DYLD_INSERT_LIBRARIES` = `/Users/Shared/SimCamLite/SimCamLiteLoader.dylib` (nút copy trong panel Simulator).
+3. **Chạy từ Xcode (giữ debugger)** — Xcode Run tự set `DYLD_INSERT_LIBRARIES` (Main Thread Checker, `libLogRedirect`…), biến này **ghi đè** biến `launchctl setenv` của simulator nên cách 1 không có tác dụng. Thiết lập **một lần cho mỗi project**:
+   - Panel Simulator › *Run from Xcode* › **Set Up Project…** (hoặc menu bar › Simulators › *Set Up Xcode Project…*), chọn `.xcworkspace`/`.xcodeproj`. Hoặc dùng CLI trong thư mục project:
+     ```bash
+     simcam xcode setup
+     ```
+   - SimCamLite thêm `DYLD_INSERT_LIBRARIES` = `/Users/Shared/SimCamLite/SimCamLiteLoader.dylib` vào Run › Environment Variables của các scheme chạy **app iOS** (đọc `SDKROOT`/`SUPPORTED_PLATFORMS` của target). Scheme macOS/Mac Catalyst bị **bỏ qua**: dyld trên macOS sẽ kill process khi gặp loader của simulator. Nếu scheme đã có biến này thì loader được nối thêm bằng `:`.
+   - Sau đó Stop và Run lại trong Xcode. Xcode nối giá trị này với thư viện của nó, debugger hoạt động bình thường. Commit vào scheme shared cũng an toàn: máy không cài SimCamLite thì dyld của simulator bỏ qua thư viện thiếu.
+   - Gỡ: nút ⊖ cạnh project trong panel, hoặc `simcam xcode remove` (scheme trở lại nguyên trạng). Xem trạng thái: `simcam xcode status`.
+   - Scheme chưa có file (Xcode tự tạo, chưa lưu): mở Product › Scheme › Manage Schemes… một lần rồi chạy lại. Scheme không xác định được platform: thêm `--force` hoặc tự thêm biến (nút copy trong panel) vào Edit Scheme › Run › Arguments › Environment Variables.
 
 Tắt host app → app iOS vẫn chạy và hiển thị khung "SimCamLite – Host app is not running".
 
@@ -56,6 +63,7 @@ Tắt host app → app iOS vẫn chạy và hiển thị khung "SimCamLite – H
 | `simcam apps`, `simcam launch <bundle-id\|tên app>` | Liệt kê / launch app kèm inject |
 | `simcam inject on\|off\|status [--all] [--persist]` | Inject vào mọi app của simulator; `--persist` để app tự bật lại sau khi simulator khởi động lại (`off` cũng quên simulator) |
 | `simcam inject auto on\|off\|status` | Tự inject mọi simulator khi boot (cùng cài đặt với GUI) |
+| `simcam xcode setup\|remove\|status [path] [--scheme …]` | Thêm/gỡ loader trong scheme iOS để app chạy từ Xcode (có debugger) nạp SimCamLite |
 
 Lệnh simulator nhận `--device <tên|UDID>` khi có nhiều simulator đang boot. `simcam help <lệnh>` để xem chi tiết; completion zsh: `simcam --generate-completion-script zsh`.
 
