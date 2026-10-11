@@ -7,6 +7,8 @@
 #   --keychain-account NAME  login Keychain account of the Sparkle EdDSA key (default: simcamlite)
 #   --bucket NAME            Cloudflare R2 bucket (default: simcamupdates)
 #   --no-layout              skip the DMG Finder layout (no Automation prompt)
+#   --tap REPO               Homebrew tap to update (default: huyhunhngc/homebrew-tap)
+#   --no-homebrew            don't update the Homebrew cask
 #
 # Before running: bump MARKETING_VERSION and CURRENT_PROJECT_VERSION in project.yml, update
 # .github/RELEASE_NOTES.md, push to main and let GitHub Actions create the draft release.
@@ -22,6 +24,8 @@ TAG=""
 ACCOUNT="simcamlite"
 BUCKET="simcamupdates"
 DMG_FLAGS=()
+TAP="huyhunhngc/homebrew-tap"
+HOMEBREW=1
 
 fail() { echo "error: $1" >&2; exit 1; }
 
@@ -32,7 +36,9 @@ while [ $# -gt 0 ]; do
     --keychain-account) ACCOUNT="$2"; shift 2 ;;
     --bucket) BUCKET="$2"; shift 2 ;;
     --no-layout) DMG_FLAGS+=(--no-layout); shift ;;
-    -h|--help) sed -n '2,15p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    --tap) TAP="$2"; shift 2 ;;
+    --no-homebrew) HOMEBREW=0; shift ;;
+    -h|--help) sed -n '2,16p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
     *) fail "unknown option $1" ;;
   esac
 done
@@ -62,6 +68,8 @@ ORIGIN="$(git -C "$ROOT" remote get-url origin 2>/dev/null || true)"
 REPO="$(sed -E 's#^(https://github\.com/|git@github\.com:|ssh://git@github\.com/)##; s#\.git$##' <<<"$ORIGIN")"
 [[ -n "$ORIGIN" && "$REPO" != "$ORIGIN" && "$REPO" == */* ]] || fail "git remote 'origin' must be a GitHub repository"
 gh auth status --hostname github.com >/dev/null
+[ "$HOMEBREW" = 0 ] || gh repo view "$TAP" --json name >/dev/null 2>&1 \
+  || fail "Homebrew tap $TAP not found; create it or pass --no-homebrew"
 
 notarize() {
   local file="$1" result
@@ -164,8 +172,12 @@ wrangler r2 object put "$BUCKET/appcast.xml" --file "$APPCAST" --remote \
 
 gh release edit "$TAG" --repo "$REPO" --title "SimCam Lite $VERSION" --notes-file "$NOTES" --draft=false --latest
 
+# The cask points at the GitHub Release DMG, so it is updated once the release is public.
+[ "$HOMEBREW" = 0 ] || "$ROOT/scripts/update-homebrew-cask.sh" --version "$VERSION" --dmg "$WORK/$DMG_NAME" --tap "$TAP"
+
 echo
 echo "Published SimCam Lite $VERSION"
 echo "  Appcast: $BASE_URL/appcast.xml"
 echo "  Update:  $BASE_URL/releases/$(basename "$ZIP")"
 echo "  DMG:     $BASE_URL/releases/$DMG_NAME"
+[ "$HOMEBREW" = 0 ] || echo "  Brew:    brew install --cask ${TAP%%/*}/${TAP#*/homebrew-}/simcam-lite"

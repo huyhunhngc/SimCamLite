@@ -76,7 +76,12 @@ For contributors, or if you want to change the code. You need Xcode 26 or newer 
 
 ### Option 3: Homebrew
 
-Coming soon.
+```bash
+brew install --cask huyhunhngc/tap/simcam-lite
+```
+
+This installs SimCam Lite in Applications and puts `simcam` on your PATH. The app updates itself, so you don't need
+`brew upgrade`.
 
 ## Getting started
 
@@ -89,7 +94,8 @@ usual. See [How injection works](docs/injection.md) for the details.
 
 ## Command line
 
-The `simcam` command comes with the app, but it needs a one-time install before Terminal can find it:
+The `simcam` command comes with the app. If you installed with Homebrew it's already on your PATH; otherwise it needs a
+one-time install before Terminal can find it:
 
 1. Open SimCam Lite.
 2. Choose **Install Command Line Tool…** from any of these places:

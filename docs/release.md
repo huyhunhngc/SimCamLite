@@ -12,6 +12,8 @@ the Cloudflare R2 bucket `simcamupdates` at `https://simcamupdates.ifateam.dev`.
    - `SIMCAM_NOTARY_*`: an App Store Connect API key for `notarytool`; put the `.p8` in `Config/`.
 2. Create the R2 bucket, attach the custom domain, and log in with `wrangler login`.
 3. Install `gh` and `wrangler`, and `gh auth login`.
+4. The Homebrew tap [`huyhunhngc/homebrew-tap`](https://github.com/huyhunhngc/homebrew-tap) holds
+   `Casks/simcam-lite.rb`, rendered from `homebrew/simcam-lite.rb`. Edit the template here, not the tap.
 
 Without `Environment.xcconfig` the app still builds; the feed URL is empty and the updater stays off.
 
@@ -26,7 +28,8 @@ Without `Environment.xcconfig` the app still builds; the feed URL is empty and t
    draft release `v<version>`.
 4. Run `scripts/release-from-archive.sh`. It archives, exports with Developer ID, notarizes and staples the app and the
    DMG, signs the Sparkle zip, regenerates `appcast.xml` from `build/sparkle-releases/`, uploads everything to R2 and
-   GitHub, and publishes the release.
+   GitHub, publishes the release, and updates the Homebrew cask (`scripts/update-homebrew-cask.sh`; skip with
+   `--no-homebrew`).
 
 Keep `build/sparkle-releases/`: it is the history the appcast is generated from.
 
