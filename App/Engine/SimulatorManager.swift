@@ -14,6 +14,7 @@ struct SimulatorDevice: Identifiable, Hashable {
 struct SimulatorApp: Identifiable, Hashable {
     let bundleID: String
     let name: String
+    var bundleURL: URL?
     var id: String { bundleID }
 }
 
@@ -112,7 +113,8 @@ enum SimulatorManager {
         return plist.compactMap { bundleID, info in
             guard (info["ApplicationType"] as? String) == "User" else { return nil }
             let name = (info["CFBundleDisplayName"] as? String) ?? (info["CFBundleName"] as? String) ?? bundleID
-            return SimulatorApp(bundleID: bundleID, name: name)
+            let bundle = (info["Bundle"] as? String).flatMap(URL.init(string:))
+            return SimulatorApp(bundleID: bundleID, name: name, bundleURL: bundle)
         }
         .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
     }

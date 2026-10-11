@@ -1,4 +1,5 @@
 import AppKit
+import AVFoundation
 import Combine
 
 enum DeviceProfile: UInt32, CaseIterable, Identifiable {
@@ -13,6 +14,15 @@ enum DeviceProfile: UInt32, CaseIterable, Identifiable {
         case .triple: "Triple (0.5x · 1x · 3x)"
         case .dualWide: "Dual Wide (0.5x · 1x)"
         case .single: "Single wide"
+        }
+    }
+
+    /// Fits the toolbar; the menu shows `title`.
+    var shortTitle: String {
+        switch self {
+        case .triple: "Triple"
+        case .dualWide: "Dual Wide"
+        case .single: "Single"
         }
     }
 }
@@ -79,9 +89,40 @@ final class AppModel: ObservableObject {
     func start() {
         installInject()
         sharedMemoryReady = scl_host_open()
+        restoreSettings()
         startStreaming()
         Task { await simulators.refresh() }
         simulators.startMonitoring()
+        objectWillChange
+            .debounce(for: .milliseconds(500), scheduler: RunLoop.main)
+            .sink { [weak self] _ in self?.saveSettings() }
+            .store(in: &cancellables)
+    }
+
+    private func restoreSettings() {
+        guard let settings = AppSettings.load() else { return }
+        frameRate = FrameRate(rawValue: settings.frameRate) ?? .fps30
+        deviceProfile = DeviceProfile(name: settings.deviceProfile) ?? .triple
+        frontFollowsBack = settings.frontFollowsBack
+        for (stream, saved) in [(back, settings.back), (front, settings.front)] {
+            stream.options = saved.options
+            if case .camera = saved.source, AVCaptureDevice.authorizationStatus(for: .video) != .authorized {
+                continue // never prompt for camera access at launch
+            }
+            if saved.source != .pattern { stream.use(saved.source) }
+        }
+        simulators.preferredUDID = settings.selectedUDID
+    }
+
+    func saveSettings() {
+        AppSettings(
+            frameRate: frameRate.rawValue,
+            deviceProfile: deviceProfile.name,
+            frontFollowsBack: frontFollowsBack,
+            back: .init(source: back.spec, options: back.options),
+            front: .init(source: front.spec, options: front.options),
+            selectedUDID: simulators.selectedUDID ?? simulators.preferredUDID
+        ).save()
     }
 
     func startStreaming() {
@@ -121,6 +162,7 @@ final class AppModel: ObservableObject {
     }
 
     func stop() {
+        saveSettings()
         stopStreaming()
     }
 
@@ -155,7 +197,7 @@ final class AppModel: ObservableObject {
         }
     }
 
-    private func showToast(_ message: String) {
+    func showToast(_ message: String) {
         toast = message
         Task {
             try? await Task.sleep(for: .seconds(2))

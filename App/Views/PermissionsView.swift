@@ -55,10 +55,10 @@ struct PermissionsView: View {
                 SetupRow(
                     symbol: "iphone",
                     title: "Booted simulator",
-                    detail: simulators.devices.isEmpty
+                    detail: simulators.bootedDevices.isEmpty
                         ? "Boot a simulator, then launch your app from the SimCamLite menu."
-                        : simulators.devices.map(\.name).joined(separator: ", "),
-                    state: simulators.devices.isEmpty ? .optional : .done,
+                        : simulators.bootedDevices.map(\.name).joined(separator: ", "),
+                    state: simulators.bootedDevices.isEmpty ? .optional : .done,
                     actionTitle: "OPEN SIMULATOR",
                     action: {
                         simulators.openSimulatorApp()

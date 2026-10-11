@@ -78,26 +78,7 @@ final class ControlHandler {
 
     private func setSource(_ spec: SourceSpec, on target: StreamTarget) -> ControlResponse {
         let stream = stream(for: target)
-        stream.errorMessage = nil
-        switch spec {
-        case .pattern:
-            stream.useTestPattern()
-        case .file(let path):
-            let url = URL(fileURLWithPath: (path as NSString).expandingTildeInPath).standardizedFileURL
-            guard FileManager.default.fileExists(atPath: url.path) else { return .failure("File not found: \(url.path)") }
-            stream.useFile(url)
-        case .camera(let query):
-            let devices = MacCameraSource.availableDevices
-            let device: AVCaptureDevice? = if let query {
-                devices.first { $0.uniqueID == query } ?? devices.first { $0.localizedName.localizedCaseInsensitiveContains(query) }
-            } else {
-                devices.first
-            }
-            guard let device else {
-                return .failure(query.map { "No Mac camera matches '\($0)'" } ?? "No Mac camera found")
-            }
-            stream.useCamera(device)
-        }
+        stream.use(spec)
         if let error = stream.errorMessage {
             return .failure(error)
         }

@@ -10,13 +10,14 @@ enum XcodeSchemeSetup {
     static let variable = "DYLD_INSERT_LIBRARIES"
     private static let projectsKey = "xcode.projects"
 
-    struct Scheme {
+    struct Scheme: Identifiable, Hashable {
         let name: String
         let url: URL
         let isShared: Bool
         /// Why the scheme is left alone; nil when it runs an iOS app.
         let skipReason: String?
         let isEnabled: Bool
+        var id: String { url.path }
     }
 
     struct SetupError: LocalizedError {

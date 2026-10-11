@@ -11,12 +11,16 @@ brew install xcodegen
 scripts/build.sh            # → build/SimCamLite.app
 ```
 
-Mở `build/SimCamLite.app`. Khi khởi động, app copy `SimCamLiteLoader.dylib` và `SimCamLiteInject.framework` vào `/Users/Shared/SimCamLite/` và bắt đầu phát 30 fps (chọn 60 fps ở thanh trạng thái hoặc menu bar) vào `/Users/Shared/SimCamLite/frames.shm`.
+Mở `build/SimCamLite.app`. Khi khởi động, app copy `SimCamLiteLoader.dylib` và `SimCamLiteInject.framework` vào `/Users/Shared/SimCamLite/` và bắt đầu phát 30 fps (chọn 60 fps trên toolbar hoặc menu bar) vào `/Users/Shared/SimCamLite/frames.shm`.
+
+Cửa sổ chính mở mỗi khi khởi động app (trừ khi CLI mở app ở chế độ nền). Sidebar gồm **Camera**, **Simulator** và **Run from Xcode**; toolbar có nút Start/Stop, trạng thái stream, fps và device profile. Mọi tuỳ chọn (nguồn back/front, Fill/xoay/mirror, fps, profile, *Same as back*, simulator đang chọn) được lưu và khôi phục khi mở lại app. Nguồn Mac camera chỉ được khôi phục nếu đã cấp quyền camera; file không còn tồn tại thì quay về test pattern.
 
 ## Sử dụng
 
-- **Back camera / Front camera**: bấm *Pattern*, *File…* (ảnh hoặc video), *Mac camera*, hoặc kéo-thả file vào khung preview. Tuỳ chọn Fill/Fit, xoay 90°, mirror, pause video.
-- **Front camera uses back source**: bỏ chọn để dùng nguồn riêng cho camera trước.
+- **Back camera / Front camera**: bấm *Pattern*, *File…* (ảnh hoặc video), *QR…*, *Mac camera*, hoặc kéo-thả file vào khung preview. Tuỳ chọn Fill/Fit, xoay 90°, mirror, pause video.
+- **QR code**: *QR…* tạo mã QR từ link hoặc text (tự điền link đang có trong clipboard, nhớ 8 mã gần nhất) để test tính năng quét QR mà không cần chụp ảnh mã. Menu bar › *QR Code from Clipboard*, hoặc `simcam source qr "https://example.com"`.
+- **Same as back**: tắt để dùng nguồn riêng cho camera trước.
+- **Simulator**: liệt kê mọi simulator (như Devices & Simulators của Xcode), simulator đang chạy ở trên cùng. Chọn simulator đang tắt và bấm **Boot**; bật injection trước khi boot thì injection tự bật khi nó chạy. Danh sách Apps hiển thị icon app.
 - **Device profile**: Triple (0.5x · 1x · 3x), Dual Wide, Single. Áp dụng cho app mở sau khi đổi.
 - **Connected apps**: app nào đang dùng SimCamLite, camera đang dùng, số frame, số ảnh đã chụp.
 
@@ -34,7 +38,7 @@ Mở `build/SimCamLite.app`. Khi khởi động, app copy `SimCamLiteLoader.dyli
    SIMCTL_CHILD_DYLD_INSERT_LIBRARIES=/Users/Shared/SimCamLite/SimCamLiteLoader.dylib xcrun simctl launch --terminate-running-process booted <bundle-id>
    ```
 3. **Chạy từ Xcode (giữ debugger)** — Xcode Run tự set `DYLD_INSERT_LIBRARIES` (Main Thread Checker, `libLogRedirect`…), biến này **ghi đè** biến `launchctl setenv` của simulator nên cách 1 không có tác dụng. Thiết lập **một lần cho mỗi project**:
-   - Panel Simulator › *Run from Xcode* › **Set Up Project…** (hoặc menu bar › Simulators › *Set Up Xcode Project…*), chọn `.xcworkspace`/`.xcodeproj`. Hoặc dùng CLI trong thư mục project:
+   - Mục **Run from Xcode** trên sidebar có checklist (Xcode → loader → project → Run) › **Set Up Project…**, hoặc kéo-thả `.xcworkspace`/`.xcodeproj` vào đó (menu bar › Simulators › *Set Up Xcode Project…* cũng được). Mỗi project hiện các scheme với toggle bật/tắt và lý do bị bỏ qua. Hoặc dùng CLI trong thư mục project:
      ```bash
      simcam xcode setup
      ```
@@ -54,8 +58,9 @@ Tắt host app → app iOS vẫn chạy và hiển thị khung "SimCamLite – H
 | `simcam start [--fps 30\|60]` / `stop` / `quit` | Bắt đầu / dừng phát (app vẫn chạy) / thoát app |
 | `simcam status [--json]` | Trạng thái, nguồn, app đang kết nối |
 | `simcam fps 60`, `simcam profile triple\|dual\|single` | Frame rate, device profile |
-| `simcam source [--front] pattern\|camera\|<file>` | Đặt nguồn (mặc định back); `--front follow` để front dùng lại nguồn back |
+| `simcam source [--front] pattern\|camera\|qr\|<file>` | Đặt nguồn (mặc định back); `--front follow` để front dùng lại nguồn back |
 | `simcam source camera --device "FaceTime"` | Chọn Mac camera (`simcam cameras` để liệt kê) |
+| `simcam source [--front] qr "<link hoặc text>"` | Nguồn là mã QR tạo từ link/text |
 | `simcam adjust [--front] --fit --rotate 90 --mirror` | Fill/Fit, xoay, mirror |
 | `simcam pause` / `resume [--front]` | Pause video |
 | `simcam devices [--booted]` | Danh sách simulator iOS |

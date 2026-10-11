@@ -22,6 +22,8 @@ enum SourceSpec: Codable, Equatable {
     case file(path: String)
     /// Matches a Mac camera by unique ID or by a case-insensitive part of its name; nil picks the first camera.
     case camera(query: String?)
+    /// A QR code generated from the text, e.g. a URL to test a scanner.
+    case qr(text: String)
 }
 
 enum ControlRequest: Codable {

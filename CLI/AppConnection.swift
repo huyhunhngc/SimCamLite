@@ -34,6 +34,7 @@ enum AppConnection {
         }
         let configuration = NSWorkspace.OpenConfiguration()
         configuration.activates = false
+        configuration.arguments = ["--background"]
         configuration.addsToRecentItems = false
         do {
             _ = try await NSWorkspace.shared.openApplication(at: url, configuration: configuration)

@@ -1,6 +1,6 @@
 import CoreImage
 
-struct RenderOptions: Equatable {
+struct RenderOptions: Equatable, Codable {
     var fill = true
     var rotation = 0
     var mirror = false

@@ -17,6 +17,7 @@ enum SourceKind: String, CaseIterable, Identifiable {
     case image
     case video
     case macCamera
+    case qrCode
 
     var id: String { rawValue }
 
@@ -26,6 +27,7 @@ enum SourceKind: String, CaseIterable, Identifiable {
         case .image: "Image"
         case .video: "Video"
         case .macCamera: "Mac camera"
+        case .qrCode: "QR code"
         }
     }
 
@@ -35,6 +37,7 @@ enum SourceKind: String, CaseIterable, Identifiable {
         case .image: "photo"
         case .video: "film"
         case .macCamera: "web.camera"
+        case .qrCode: "qrcode"
         }
     }
 }

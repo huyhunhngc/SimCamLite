@@ -104,6 +104,14 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         }
         menu.addItem(fileItem)
 
+        let qrItem = item("QR Code from Clipboard", symbol: SourceKind.qrCode.symbol, state: stream.kind == .qrCode) {
+            guard let text = NSPasteboard.general.string(forType: .string) else { return }
+            stream.useQRCode(text)
+        }
+        qrItem.isEnabled = NSPasteboard.general.string(forType: .string)?.isEmpty == false
+        qrItem.toolTip = "Show the copied link or text as a QR code"
+        menu.addItem(qrItem)
+
         menu.addItem(submenuItem("Adjust", symbol: "slider.horizontal.3", submenu: adjustMenu(for: stream)))
 
         if stream.kind == .video {
@@ -196,13 +204,13 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         }
         injectAll.toolTip = "Enable injection on every simulator as it boots"
         injectAll.isEnabled = model.injectInstalled
-        if simulators.devices.isEmpty {
+        if simulators.bootedDevices.isEmpty {
             menu.addItem(disabledItem("No booted simulator"))
             menu.addItem(item("Open Simulator", symbol: "iphone") { simulators.openSimulatorApp() })
             menu.addItem(injectAll)
             return
         }
-        for device in simulators.devices {
+        for device in simulators.bootedDevices {
             let enabled = simulators.isInjectionEnabled(device.udid)
             let deviceItem = submenuItem("\(device.name) (\(device.runtime))", submenu: simulatorMenu(for: device))
             deviceItem.image = Self.dot(enabled ? .systemGreen : .systemOrange)

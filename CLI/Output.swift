@@ -58,6 +58,7 @@ enum Output {
         switch kind {
         case "testPattern": "pattern"
         case "macCamera": "camera"
+        case "qrCode": "qr"
         default: kind
         }
     }

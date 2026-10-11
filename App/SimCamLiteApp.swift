@@ -43,6 +43,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             onOpenMain: { [weak self] in self?.showMainWindow() },
             onOpenPermissions: { [weak self] in self?.showPermissions() }
         )
+        // `simcam` starts the app with --background; opened by the user it shows the window.
+        if !ProcessInfo.processInfo.arguments.contains("--background") {
+            showMainWindow()
+        }
     }
 
     func applicationWillTerminate(_ notification: Notification) {
@@ -62,9 +66,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func showMainWindow() {
         if mainWindow == nil {
             let root = ContentView(model: model)
-                .frame(minWidth: 980, minHeight: 680)
-            mainWindow = makeWindow(title: "SimCamLite", autosave: "MainWindow", content: root,
-                                    style: [.titled, .closable, .miniaturizable, .resizable])
+                .frame(minWidth: 900, minHeight: 640)
+            let window = makeWindow(title: "SimCamLite", autosave: "MainWindow", content: root,
+                                    style: [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView],
+                                    bridgesToolbar: true)
+            window.toolbarStyle = .unified
+            // The toolbar's run destination takes the title's place, as in Xcode; the title still names the window in menus.
+            window.titleVisibility = .hidden
+            window.minSize = NSSize(width: 900, height: 640)
+            mainWindow = window
         }
         present(mainWindow)
     }
@@ -80,8 +90,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         present(permissionsWindow)
     }
 
-    private func makeWindow<Content: View>(title: String, autosave: String, content: Content, style: NSWindow.StyleMask) -> NSWindow {
-        let window = NSWindow(contentViewController: NSHostingController(rootView: content))
+    private func makeWindow<Content: View>(title: String, autosave: String, content: Content, style: NSWindow.StyleMask,
+                                         bridgesToolbar: Bool = false) -> NSWindow {
+        let host = NSHostingController(rootView: content)
+        // Lets SwiftUI `.toolbar` drive this AppKit window.
+        if bridgesToolbar {
+            host.sceneBridgingOptions = [.toolbars]
+            // The window keeps its own (autosaved) size; content min sizes must not grow or clip it.
+            host.sizingOptions = []
+        }
+        let window = NSWindow(contentViewController: host)
         window.title = title
         window.styleMask = style
         window.isReleasedWhenClosed = false

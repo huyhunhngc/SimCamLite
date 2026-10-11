@@ -103,6 +103,7 @@ struct Source: AsyncParsableCommand {
         SOURCE is one of:
           pattern        test pattern
           camera         a Mac camera (pick one with --device, see `simcam cameras`)
+          qr <text>      a QR code generated from a link or text
           follow         front only: use the back camera source again
           <path>         an image or video file (videos loop)
         Setting a front source makes the front camera independent from the back camera.
@@ -112,8 +113,11 @@ struct Source: AsyncParsableCommand {
     @Flag(exclusivity: .exclusive)
     var target: StreamTarget = .back
 
-    @Argument(help: "pattern | camera | follow | <path>")
+    @Argument(help: "pattern | camera | qr | follow | <path>")
     var source: String
+
+    @Argument(help: "Link or text to encode, for the 'qr' source")
+    var text: String?
 
     @Option(help: "Mac camera name (partial match) or unique ID")
     var device: String?
@@ -125,6 +129,12 @@ struct Source: AsyncParsableCommand {
         if device != nil, source != "camera" {
             throw ValidationError("--device requires the 'camera' source")
         }
+        if source == "qr", text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true {
+            throw ValidationError("'qr' needs the link or text to encode, e.g. simcam source qr https://example.com")
+        }
+        if text != nil, source != "qr" {
+            throw ValidationError("Unexpected argument '\(text!)'")
+        }
     }
 
     func run() async throws {
@@ -132,6 +142,7 @@ struct Source: AsyncParsableCommand {
         case "follow": .followBack(true)
         case "pattern": .setSource(target: target, source: .pattern)
         case "camera": .setSource(target: target, source: .camera(query: device))
+        case "qr": .setSource(target: target, source: .qr(text: text ?? ""))
         default: .setSource(target: target, source: .file(path: Self.absolutePath(source)))
         }
         Output.message(try await AppConnection.send(request))
