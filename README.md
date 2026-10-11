@@ -1,92 +1,141 @@
-# SimCamLite
+<div align="center">
+  <img src="assets/icon.png" width="128" alt="SimCam Lite icon" />
+  <h1>SimCam Lite</h1>
+  <p><em>A free, open-source camera for the iOS Simulator.</em></p>
+</div>
 
-Giả lập camera cho iOS Simulator: nguồn hình là ảnh, video (loop), camera của Mac hoặc test pattern. App iOS **không cần sửa code** — thư viện được inject qua `DYLD_INSERT_LIBRARIES` và giả lập `AVFoundation` (device, session, video data output, photo output, preview layer, rotation coordinator).
+<p align="center">
+  <img src="https://img.shields.io/badge/platform-macOS%2014%2B-000000.svg?style=flat-square&logo=apple" alt="Platform: macOS 14+" />
+  <img src="https://img.shields.io/badge/simulator-iOS%2016%2B-0A84FF.svg?style=flat-square&logo=apple" alt="iOS Simulator 16+" />
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square" alt="License: MIT" /></a>
+</p>
 
-Camera emulator for the iOS Simulator (image / looping video / Mac camera / test pattern), injected with `DYLD_INSERT_LIBRARIES`; no changes to the app under test.
+<p align="center">
+  <img src="assets/screenshots/camera-and-simulator.png" alt="SimCam Lite streaming a video into a camera app on the iOS Simulator" />
+</p>
 
-## Build
+The iOS Simulator has no camera. If your app takes photos, scans QR codes or shows a live preview, you normally have to
+run it on a real iPhone every time you touch that code.
+
+SimCam Lite gives the Simulator a working camera. Pick a photo, a video, a QR code or your Mac's camera, and every app
+on the Simulator sees it as the iPhone's back or front camera. **You don't change a single line of your app's code.**
+
+## Why SimCam Lite?
+
+I built it because nothing I tried fit my day-to-day work:
+
+- The polished simulator camera tools are commercial and need a paid license, often per seat.
+- The open-source projects I found were abandoned, needed code changes or a special SDK inside the app, or only
+  supported a still image.
+
+SimCam Lite is free and MIT licensed. It works with apps you launch from the Simulator and apps you run from Xcode with
+the debugger attached.
+
+## Features
+
+- **Any source as the camera**: a photo, a looping video, a QR code generated from a link or text, your Mac's camera,
+  or a test pattern. Drag and drop a file onto the preview to switch.
+- **Separate back and front cameras**: give each its own source, or let the front camera follow the back one.
+- **Works with your existing code**: camera preview, video frames, photo capture and device rotation behave the way
+  your app expects on a real device.
+- **Realistic devices**: emulate triple (0.5× · 1× · 3×), dual wide or single cameras, at 30 or 60 fps.
+- **Fit, rotate and mirror** each source, and pause videos on a frame.
+- **Simulator manager**: see every simulator, boot one, and launch any installed app with the camera turned on.
+- **Run from Xcode**: set up a project once and keep using Xcode's Run button and debugger.
+- **Command-line tool**: control everything from Terminal, scripts or CI with `simcam`.
+- **Menu bar app**: keeps streaming in the background, with quick access to sources and simulators.
+- **Automatic updates** with release notes, so you always know what changed.
+
+<p align="center">
+  <img src="assets/screenshots/simulator-and-settings.png" alt="The Simulator and Settings sections of SimCam Lite" />
+</p>
+
+## Install
+
+### Download the app
+
+1. Download `SimCamLite-<version>.dmg` from the [latest release](https://github.com/huyhunhngc/SimCamLite/releases/latest).
+2. Open the DMG and drag **SimCam Lite** to Applications.
+3. Open it. The app is signed and notarized by Apple, and it updates itself from then on.
+
+### Build from source
+
+You need Xcode 26 or newer and [XcodeGen](https://github.com/yonaskolb/XcodeGen).
 
 ```bash
 brew install xcodegen
-scripts/build.sh            # → build/SimCamLite.app
 ```
-
-Mở `build/SimCamLite.app`. Khi khởi động, app copy `SimCamLiteLoader.dylib` và `SimCamLiteInject.framework` vào `/Users/Shared/SimCamLite/` và bắt đầu phát 30 fps (chọn 60 fps trên toolbar hoặc menu bar) vào `/Users/Shared/SimCamLite/frames.shm`.
-
-Cửa sổ chính mở mỗi khi khởi động app (trừ khi CLI mở app ở chế độ nền). Sidebar gồm **Camera**, **Simulator** và **Run from Xcode**; toolbar có nút Start/Stop, trạng thái stream, fps và device profile. Mọi tuỳ chọn (nguồn back/front, Fill/xoay/mirror, fps, profile, *Same as back*, simulator đang chọn) được lưu và khôi phục khi mở lại app. Nguồn Mac camera chỉ được khôi phục nếu đã cấp quyền camera; file không còn tồn tại thì quay về test pattern.
-
-## Sử dụng
-
-- **Back camera / Front camera**: bấm *Pattern*, *File…* (ảnh hoặc video), *QR…*, *Mac camera*, hoặc kéo-thả file vào khung preview. Tuỳ chọn Fill/Fit, xoay 90°, mirror, pause video.
-- **QR code**: *QR…* tạo mã QR từ link hoặc text (tự điền link đang có trong clipboard, nhớ 8 mã gần nhất) để test tính năng quét QR mà không cần chụp ảnh mã. Menu bar › *QR Code from Clipboard*, hoặc `simcam source qr "https://example.com"`.
-- **Same as back**: tắt để dùng nguồn riêng cho camera trước.
-- **Simulator**: liệt kê mọi simulator (như Devices & Simulators của Xcode), simulator đang chạy ở trên cùng. Chọn simulator đang tắt và bấm **Boot**; bật injection trước khi boot thì injection tự bật khi nó chạy. Danh sách Apps hiển thị icon app.
-- **Device profile**: Triple (0.5x · 1x · 3x), Dual Wide, Single. Áp dụng cho app mở sau khi đổi.
-- **Connected apps**: app nào đang dùng SimCamLite, camera đang dùng, số frame, số ảnh đã chụp.
-
-## Inject vào app
-
-1. **Toàn bộ simulator** — bật *Inject into every app launched* trong panel Simulator (tương đương):
-   ```bash
-   xcrun simctl spawn booted launchctl setenv DYLD_INSERT_LIBRARIES /Users/Shared/SimCamLite/SimCamLiteLoader.dylib
-   ```
-   Mọi app mở sau đó được inject. Loader chỉ nạp framework vào app của người dùng, bỏ qua process hệ thống.
-
-   Biến `launchctl setenv` mất khi simulator shutdown, nên SimCamLite **nhớ** lựa chọn này (theo UDID) và tự bật lại mỗi khi simulator đó boot, miễn là app đang chạy (kiểm tra mỗi 3 giây; khi mở app, simulator đang boot cũng được khôi phục). *Inject into every simulator as it boots* (panel Simulator, menu bar › Simulators › *Inject into Every Simulator*, hoặc `simcam inject auto on`) áp dụng cho mọi simulator, kể cả chưa từng bật. Tắt toggle (hoặc `simcam inject off`) thì quên simulator đó. App mở ngay trong vài giây đầu sau boot có thể chưa được inject.
-2. **Một app** — nút *Launch* trong danh sách Apps (tương đương):
-   ```bash
-   SIMCTL_CHILD_DYLD_INSERT_LIBRARIES=/Users/Shared/SimCamLite/SimCamLiteLoader.dylib xcrun simctl launch --terminate-running-process booted <bundle-id>
-   ```
-3. **Chạy từ Xcode (giữ debugger)** — Xcode Run tự set `DYLD_INSERT_LIBRARIES` (Main Thread Checker, `libLogRedirect`…), biến này **ghi đè** biến `launchctl setenv` của simulator nên cách 1 không có tác dụng. Thiết lập **một lần cho mỗi project**:
-   - Mục **Run from Xcode** trên sidebar có checklist (Xcode → loader → project → Run) › **Set Up Project…**, hoặc kéo-thả `.xcworkspace`/`.xcodeproj` vào đó (menu bar › Simulators › *Set Up Xcode Project…* cũng được). Mỗi project hiện các scheme với toggle bật/tắt và lý do bị bỏ qua. Hoặc dùng CLI trong thư mục project:
-     ```bash
-     simcam xcode setup
-     ```
-   - SimCamLite thêm `DYLD_INSERT_LIBRARIES` = `/Users/Shared/SimCamLite/SimCamLiteLoader.dylib` vào Run › Environment Variables của các scheme chạy **app iOS** (đọc `SDKROOT`/`SUPPORTED_PLATFORMS` của target). Scheme macOS/Mac Catalyst bị **bỏ qua**: dyld trên macOS sẽ kill process khi gặp loader của simulator. Nếu scheme đã có biến này thì loader được nối thêm bằng `:`.
-   - Sau đó Stop và Run lại trong Xcode. Xcode nối giá trị này với thư viện của nó, debugger hoạt động bình thường. Commit vào scheme shared cũng an toàn: máy không cài SimCamLite thì dyld của simulator bỏ qua thư viện thiếu.
-   - Gỡ: nút ⊖ cạnh project trong panel, hoặc `simcam xcode remove` (scheme trở lại nguyên trạng). Xem trạng thái: `simcam xcode status`.
-   - Scheme chưa có file (Xcode tự tạo, chưa lưu): mở Product › Scheme › Manage Schemes… một lần rồi chạy lại. Scheme không xác định được platform: thêm `--force` hoặc tự thêm biến (nút copy trong panel) vào Edit Scheme › Run › Arguments › Environment Variables.
-
-Tắt host app → app iOS vẫn chạy và hiển thị khung "SimCamLite – Host app is not running".
-
-## CLI (`simcam`)
-
-`simcam` nằm trong `SimCamLite.app/Contents/MacOS/simcam`; cài vào PATH bằng menu **Install Command Line Tool…** (menu bar hoặc menu app, cũng có trong Permissions & Setup) — app tạo symlink `/usr/local/bin/simcam` (hỏi mật khẩu admin nếu cần, hoặc dùng `~/.local/bin`) và tự phát hiện symlink cũ trỏ tới bản app đã di chuyển. Khi phát triển có thể dùng `scripts/install-cli.sh`. CLI điều khiển chính app đang chạy qua socket `~/Library/Application Support/SimCamLite/control.sock`, nên GUI và CLI luôn cùng một trạng thái. Lệnh cần engine sẽ tự mở app ở chế độ nền.
-
-| Lệnh | Mô tả |
-| --- | --- |
-| `simcam start [--fps 30\|60]` / `stop` / `quit` | Bắt đầu / dừng phát (app vẫn chạy) / thoát app |
-| `simcam status [--json]` | Trạng thái, nguồn, app đang kết nối |
-| `simcam fps 60`, `simcam profile triple\|dual\|single` | Frame rate, device profile |
-| `simcam source [--front] pattern\|camera\|qr\|<file>` | Đặt nguồn (mặc định back); `--front follow` để front dùng lại nguồn back |
-| `simcam source camera --device "FaceTime"` | Chọn Mac camera (`simcam cameras` để liệt kê) |
-| `simcam source [--front] qr "<link hoặc text>"` | Nguồn là mã QR tạo từ link/text |
-| `simcam adjust [--front] --fit --rotate 90 --mirror` | Fill/Fit, xoay, mirror |
-| `simcam pause` / `resume [--front]` | Pause video |
-| `simcam devices [--booted]` | Danh sách simulator iOS |
-| `simcam boot ["iPhone 17 Pro"] [--runtime 26.5] [--wait] [--inject]` | Mở Simulator / boot theo tên hoặc UDID |
-| `simcam apps`, `simcam launch <bundle-id\|tên app>` | Liệt kê / launch app kèm inject |
-| `simcam inject on\|off\|status [--all] [--persist]` | Inject vào mọi app của simulator; `--persist` để app tự bật lại sau khi simulator khởi động lại (`off` cũng quên simulator) |
-| `simcam inject auto on\|off\|status` | Tự inject mọi simulator khi boot (cùng cài đặt với GUI) |
-| `simcam xcode setup\|remove\|status [path] [--scheme …]` | Thêm/gỡ loader trong scheme iOS để app chạy từ Xcode (có debugger) nạp SimCamLite |
-
-Lệnh simulator nhận `--device <tên|UDID>` khi có nhiều simulator đang boot. `simcam help <lệnh>` để xem chi tiết; completion zsh: `simcam --generate-completion-script zsh`.
-
-## Phát triển
 
 ```bash
-scripts/dev-inject.sh com.example.app   # build inject, cài vào /Users/Shared/SimCamLite, launch app kèm inject
-xcrun simctl spawn booted log stream --predicate 'subsystem == "dev.ifateam.simcamlite"'
+git clone https://github.com/huyhunhngc/SimCamLite.git
 ```
 
-| Thư mục | Nội dung |
-| --- | --- |
-| `Shared/` | Định dạng shared memory (seqlock, 2 stream × 3 slot 1920×1440 BGRA, client slots) |
-| `Loader/` | Dylib nhỏ, chỉ `dlopen` framework cho app người dùng |
-| `Inject/` | Fake AVFoundation objects, swizzle, frame pump, photo capture |
-| `HostBridge/` | C API ghi frame/heartbeat cho app macOS |
-| `App/` | App macOS SwiftUI: nguồn hình, render pipeline, quản lý simulator, control server cho CLI |
-| `Common/` | Giao thức + socket dùng chung giữa app và CLI |
-| `CLI/` | Công cụ dòng lệnh `simcam` |
+```bash
+cd SimCamLite && scripts/build.sh
+```
 
-Giới hạn hiện tại: chưa hỗ trợ `AVCaptureMovieFileOutput`, audio, metadata output (QR), multi-cam.
+The app is written to `build/SimCamLite.app`. Before the first build, copy `Config/Environment.example.xcconfig` to
+`Config/Environment.xcconfig` and set `SIMCAM_DEVELOPMENT_TEAM` to your Apple Developer team ID. Release builds are
+signed with a Developer ID certificate; if you don't have one, run `scripts/build.sh Debug` instead.
+
+### Homebrew
+
+Coming soon.
+
+## Getting started
+
+1. Open SimCam Lite and choose a source for the back camera: **Pattern**, **File…**, **QR…** or **Mac camera**.
+2. Go to **Simulator**, pick a simulator and turn on **Use SimCamLite in every app on this simulator**.
+3. Open any app on the Simulator. Its camera now shows your source.
+
+Running your app from Xcode? Open **Run from Xcode** and choose **Set Up Project…** once per project, then press Run as
+usual. See [How injection works](docs/injection.md) for the details.
+
+## Command line
+
+Install the `simcam` tool from **Settings › Command Line Tool**. It controls the running app, so the window and Terminal
+always agree, and it opens SimCam Lite in the background when needed.
+
+| Command | What it does |
+| --- | --- |
+| `simcam start` / `stop` / `quit` | Start or stop streaming, or quit the app |
+| `simcam status` | Show the sources and the apps using the camera |
+| `simcam source ~/Pictures/receipt.jpg` | Use a photo or video as the back camera |
+| `simcam source --front camera` | Use your Mac's camera as the front camera |
+| `simcam source qr "https://example.com"` | Show a QR code for a link or text |
+| `simcam source pattern` | Show the test pattern |
+| `simcam adjust --fit --rotate 90 --mirror` | Change how the source is shown |
+| `simcam pause` / `resume` | Pause or resume a video |
+| `simcam fps 60` | Stream at 30 or 60 fps |
+| `simcam profile triple` | Emulate a triple, dual or single camera |
+| `simcam cameras` | List your Mac's cameras |
+| `simcam devices` | List simulators |
+| `simcam boot "iPhone 17 Pro" --inject` | Boot a simulator with the camera turned on |
+| `simcam apps` | List apps installed on the simulator |
+| `simcam launch com.example.app` | Launch an app with the camera turned on |
+| `simcam inject on` | Turn the camera on for every app on the simulator |
+| `simcam inject auto on` | Turn it on for every simulator as it boots |
+| `simcam xcode setup` | Set up the Xcode project in the current folder |
+
+Run `simcam help <command>` for every option. For zsh completion, run
+`simcam --generate-completion-script zsh`.
+
+## Limitations
+
+SimCam Lite doesn't support movie recording (`AVCaptureMovieFileOutput`), audio, metadata output such as built-in QR
+detection, or multi-camera sessions yet.
+
+## Documentation
+
+- [How injection works](docs/injection.md): simulators, single apps and Xcode projects in depth
+- [Development](docs/development.md): project layout and debugging
+- [Releasing](docs/release.md): signing, notarization and publishing updates
+
+## Contributing
+
+Bug reports, ideas and pull requests are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) and follow the
+[Code of Conduct](CODE_OF_CONDUCT.md).
+
+## License
+
+SimCam Lite is released under the [MIT License](LICENSE).
