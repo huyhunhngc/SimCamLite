@@ -1,18 +1,8 @@
-<div align="center">
-  <img src="assets/icon.png" width="128" alt="SimCam Lite icon" />
-  <h1>SimCam Lite</h1>
-  <p><em>A free, open-source camera for the iOS Simulator.</em></p>
-</div>
+# SimCam Lite
 
-<p align="center">
-  <img src="https://img.shields.io/badge/platform-macOS%2014%2B-000000.svg?style=flat-square&logo=apple" alt="Platform: macOS 14+" />
-  <img src="https://img.shields.io/badge/simulator-iOS%2016%2B-0A84FF.svg?style=flat-square&logo=apple" alt="iOS Simulator 16+" />
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square" alt="License: MIT" /></a>
-</p>
+A free, open-source camera for the iOS Simulator.
 
-<p align="center">
-  <img src="assets/screenshots/camera-and-simulator.png" alt="SimCam Lite streaming a video into a camera app on the iOS Simulator" />
-</p>
+![SimCam Lite streaming a video into a camera app on the iOS Simulator](assets/screenshots/camera-and-simulator.png)
 
 The iOS Simulator has no camera. If your app takes photos, scans QR codes or shows a live preview, you normally have to
 run it on a real iPhone every time you touch that code.
@@ -46,39 +36,45 @@ the debugger attached.
 - **Menu bar app**: keeps streaming in the background, with quick access to sources and simulators.
 - **Automatic updates** with release notes, so you always know what changed.
 
-<p align="center">
-  <img src="assets/screenshots/simulator-and-settings.png" alt="The Simulator and Settings sections of SimCam Lite" />
-</p>
+![The Simulator and Settings sections of SimCam Lite](assets/screenshots/simulator-and-settings.png)
 
 ## Install
 
-### Download the app
+Choose **one** of these options. Most people only need option 1.
+
+### Option 1: Download the app (recommended)
 
 1. Download `SimCamLite-<version>.dmg` from the [latest release](https://github.com/huyhunhngc/SimCamLite/releases/latest).
 2. Open the DMG and drag **SimCam Lite** to Applications.
-3. Open it. The app is signed and notarized by Apple, and it updates itself from then on.
+3. Open SimCam Lite from Applications. It updates itself from then on.
 
-### Build from source
+### Option 2: Build from source
 
-You need Xcode 26 or newer and [XcodeGen](https://github.com/yonaskolb/XcodeGen).
+For contributors, or if you want to change the code. You need Xcode 26 or newer and an Apple Developer account.
 
-```bash
-brew install xcodegen
-```
+1. Install [XcodeGen](https://github.com/yonaskolb/XcodeGen):
 
-```bash
-git clone https://github.com/huyhunhngc/SimCamLite.git
-```
+   ```bash
+   brew install xcodegen
+   ```
 
-```bash
-cd SimCamLite && scripts/build.sh
-```
+2. Clone the repository:
 
-The app is written to `build/SimCamLite.app`. Before the first build, copy `Config/Environment.example.xcconfig` to
-`Config/Environment.xcconfig` and set `SIMCAM_DEVELOPMENT_TEAM` to your Apple Developer team ID. Release builds are
-signed with a Developer ID certificate; if you don't have one, run `scripts/build.sh Debug` instead.
+   ```bash
+   git clone https://github.com/huyhunhngc/SimCamLite.git
+   ```
 
-### Homebrew
+3. Copy `Config/Environment.example.xcconfig` to `Config/Environment.xcconfig` and set `SIMCAM_DEVELOPMENT_TEAM` to
+   your Apple Developer team ID. You can leave the other values as they are.
+4. Build the app:
+
+   ```bash
+   cd SimCamLite && scripts/build.sh Debug
+   ```
+
+5. Open `build/SimCamLite.app`.
+
+### Option 3: Homebrew
 
 Coming soon.
 
@@ -93,8 +89,20 @@ usual. See [How injection works](docs/injection.md) for the details.
 
 ## Command line
 
-Install the `simcam` tool from **Settings › Command Line Tool**. It controls the running app, so the window and Terminal
-always agree, and it opens SimCam Lite in the background when needed.
+The `simcam` command comes with the app, but it needs a one-time install before Terminal can find it:
+
+1. Open SimCam Lite.
+2. Choose **Install Command Line Tool…** from any of these places:
+   - **Settings › Command Line Tool** in the main window
+   - the SimCam Lite menu bar icon
+   - the **SimCam Lite** app menu
+3. Enter your Mac password if asked. The tool is linked to `/usr/local/bin/simcam`, or to `~/.local/bin` if you cancel.
+4. Open a new Terminal window and run `simcam status`.
+
+If you move the app later, the menus show **Fix Command Line Tool…** to update the link.
+
+`simcam` controls the running app, so the window and Terminal always agree, and it opens SimCam Lite in the background
+when needed.
 
 | Command | What it does |
 | --- | --- |
