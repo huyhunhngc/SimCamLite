@@ -5,10 +5,17 @@ options:
     iOS: "16.0"
     macOS: "14.0"
   createIntermediateGroups: true
+# Team, feed URL and Sparkle key come from the gitignored Config/Environment.xcconfig.
+configFiles:
+  Debug: Config/SimCamLite.xcconfig
+  Release: Config/SimCamLite.xcconfig
 packages:
   ArgumentParser:
     url: https://github.com/apple/swift-argument-parser
     from: 1.5.0
+  Sparkle:
+    url: https://github.com/sparkle-project/Sparkle
+    exactVersion: 2.9.6
 settings:
   base:
     CODE_SIGN_IDENTITY: "-"
@@ -33,7 +40,7 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: dev.ifateam.simcamlite.inject
         CODE_SIGN_IDENTITY: Apple Development
         CODE_SIGN_STYLE: Automatic
-        DEVELOPMENT_TEAM: 43W6X55RFR
+        DEVELOPMENT_TEAM: $(SIMCAM_DEVELOPMENT_TEAM)
         PROVISIONING_PROFILE_SPECIFIER: ""
         SUPPORTED_PLATFORMS: iphonesimulator
         GENERATE_INFOPLIST_FILE: YES
@@ -74,18 +81,23 @@ targets:
       - Common
       - path: Shared
         buildPhase: none
+      # Shown in the What's New sheet; the same file feeds the appcast and the GitHub Release.
+      - path: .github/RELEASE_NOTES.md
+        buildPhase: resources
     dependencies:
       - target: simcam
         embed: true
         codeSign: true
         copy:
           destination: executables
+      - package: Sparkle
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: dev.ifateam.simcamlite
         PRODUCT_NAME: SimCamLite
         ASSETCATALOG_COMPILER_APPICON_NAME: SimCamLite
         GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_FILE: App/Info.plist
         INFOPLIST_KEY_NSCameraUsageDescription: SimCamLite uses the Mac camera as a video source for iOS Simulator apps.
         INFOPLIST_KEY_CFBundleDisplayName: SimCam Lite
         INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.developer-tools
@@ -97,7 +109,7 @@ targets:
         ENABLE_APP_SANDBOX: NO
         ENABLE_HARDENED_RUNTIME: YES
         CODE_SIGN_ENTITLEMENTS: App/SimCamLite.entitlements
-        DEVELOPMENT_TEAM: 43W6X55RFR
+        DEVELOPMENT_TEAM: $(SIMCAM_DEVELOPMENT_TEAM)
         PROVISIONING_PROFILE_SPECIFIER: ""
         COMBINE_HIDPI_IMAGES: YES
       configs:
@@ -131,7 +143,7 @@ targets:
         SWIFT_OBJC_BRIDGING_HEADER: CLI/simcam-Bridging-Header.h
         HEADER_SEARCH_PATHS: $(SRCROOT)/Shared
         ENABLE_HARDENED_RUNTIME: YES
-        DEVELOPMENT_TEAM: 43W6X55RFR
+        DEVELOPMENT_TEAM: $(SIMCAM_DEVELOPMENT_TEAM)
         PROVISIONING_PROFILE_SPECIFIER: ""
         SKIP_INSTALL: YES
       configs:

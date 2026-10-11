@@ -9,6 +9,10 @@ struct SimCamLiteApp: App {
             EmptyView()
         }
         .commands {
+            CommandGroup(after: .appInfo) {
+                Button("Check for Updates…") { delegate.updates.checkForUpdates() }
+                Button("What's New in SimCam Lite…") { delegate.showWhatsNew() }
+            }
             CommandGroup(replacing: .appSettings) {
                 Button("Open SimCamLite…") { delegate.showMainWindow() }
                     .keyboardShortcut(",")
@@ -22,6 +26,8 @@ struct SimCamLiteApp: App {
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     let model = AppModel()
+    let updates = UpdateCoordinator()
+    let whatsNew = WhatsNewTracker()
     private var statusMenu: StatusMenuController?
     private var controlServer: ControlServer?
     private var mainWindow: NSWindow?
@@ -41,12 +47,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         statusMenu = StatusMenuController(
             model: model,
             onOpenMain: { [weak self] in self?.showMainWindow() },
-            onOpenPermissions: { [weak self] in self?.showPermissions() }
+            onOpenPermissions: { [weak self] in self?.showPermissions() },
+            updates: updates
         )
+        updates.start()
+        whatsNew.checkOnLaunch()
         // `simcam` starts the app with --background; opened by the user it shows the window.
         if !ProcessInfo.processInfo.arguments.contains("--background") {
             showMainWindow()
         }
+    }
+
+    func showWhatsNew() {
+        showMainWindow()
+        whatsNew.show()
     }
 
     func applicationWillTerminate(_ notification: Notification) {
@@ -65,7 +79,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func showMainWindow() {
         if mainWindow == nil {
-            let root = ContentView(model: model)
+            let root = ContentView(model: model, updates: updates, whatsNew: whatsNew)
                 .frame(minWidth: 900, minHeight: 640)
             let window = makeWindow(title: "SimCamLite", autosave: "MainWindow", content: root,
                                     style: [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView],

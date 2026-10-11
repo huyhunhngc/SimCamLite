@@ -1,0 +1,15 @@
+// Copy to Config/Environment.xcconfig (gitignored) and fill in.
+// `https:/$()/` keeps xcconfig from reading `//` as a comment.
+
+// Apple Developer team ID used to sign the app, the CLI and the inject framework.
+SIMCAM_DEVELOPMENT_TEAM = YOUR_TEAM_ID
+
+SIMCAM_UPDATE_BASE_URL = https:/$()/simcamupdates.ifateam.dev
+SIMCAM_SU_FEED_URL = $(SIMCAM_UPDATE_BASE_URL)/appcast.xml
+// Printed by `generate_keys --account simcamlite`; the private key stays in the login Keychain.
+SIMCAM_SU_PUBLIC_ED_KEY = YOUR_ED25519_PUBLIC_KEY
+
+// App Store Connect API key used by scripts/release-from-archive.sh for notarization.
+SIMCAM_NOTARY_ISSUER_ID = YOUR_ISSUER_ID
+SIMCAM_NOTARY_KEY_ID = YOUR_KEY_ID
+SIMCAM_NOTARY_KEY_PATH = Config/AuthKey_YOUR_KEY_ID.p8

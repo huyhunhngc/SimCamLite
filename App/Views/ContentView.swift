@@ -1,7 +1,7 @@
 import SwiftUI
 
 enum MainSection: String, CaseIterable, Identifiable {
-    case camera, simulator, xcode
+    case camera, simulator, xcode, settings
 
     var id: String { rawValue }
 
@@ -10,6 +10,7 @@ enum MainSection: String, CaseIterable, Identifiable {
         case .camera: "Camera"
         case .simulator: "Simulator"
         case .xcode: "Run from Xcode"
+        case .settings: "Settings"
         }
     }
 
@@ -18,6 +19,7 @@ enum MainSection: String, CaseIterable, Identifiable {
         case .camera: "camera"
         case .simulator: "iphone"
         case .xcode: "hammer"
+        case .settings: "gearshape"
         }
     }
 }
@@ -25,11 +27,16 @@ enum MainSection: String, CaseIterable, Identifiable {
 struct ContentView: View {
     @ObservedObject var model: AppModel
     @ObservedObject var simulators: SimulatorModel
+    @ObservedObject var updates: UpdateCoordinator
+    @ObservedObject var whatsNew: WhatsNewTracker
+    @ObservedObject private var cli = CLIInstaller.shared
     @AppStorage("mainSection") private var section: MainSection = .camera
 
-    init(model: AppModel) {
+    init(model: AppModel, updates: UpdateCoordinator, whatsNew: WhatsNewTracker) {
         self.model = model
         simulators = model.simulators
+        self.updates = updates
+        self.whatsNew = whatsNew
     }
 
     var body: some View {
@@ -46,6 +53,7 @@ struct ContentView: View {
             case .camera: CameraView(model: model, simulators: simulators) { section = $0 }
             case .simulator: SimulatorView(model: model, simulators: simulators)
             case .xcode: XcodeSetupView(model: model, simulators: simulators)
+            case .settings: SettingsView(updates: updates, whatsNew: whatsNew)
             }
         }
         .navigationTitle("SimCamLite")
@@ -62,6 +70,9 @@ struct ContentView: View {
             }
         }
         .animation(.easeInOut(duration: 0.2), value: model.toast)
+        .sheet(isPresented: $whatsNew.isPresented) {
+            WhatsNewView(version: whatsNew.version, notes: whatsNew.notes)
+        }
         .onAppear { simulators.reloadXcodeProjects() }
     }
 
@@ -97,6 +108,14 @@ struct ContentView: View {
             ActivityCapsule(model: model, simulators: simulators)
         }
         ToolbarItemGroup(placement: .primaryAction) {
+            if updates.updateAvailable {
+                Button {
+                    updates.checkForUpdates()
+                } label: {
+                    Label("Update Available", systemImage: "arrow.down.circle")
+                }
+                .help("SimCam Lite \(updates.latestVersion) is available")
+            }
             Picker("Frame rate", selection: $model.frameRate) {
                 ForEach(FrameRate.allCases) { Text($0.title).tag($0) }
             }
@@ -143,7 +162,21 @@ struct ContentView: View {
                 Image(systemName: item.symbol)
             }
             .badge(simulators.isXcodeSetUp ? nil : Text(Image(systemName: "exclamationmark.triangle.fill")).foregroundColor(.orange))
+        case .settings:
+            Label(item.title, systemImage: item.symbol)
+                .badge(settingsBadge)
         }
+    }
+
+    /// Flags an available update or a broken `simcam` link.
+    private var settingsBadge: Text? {
+        if updates.updateAvailable {
+            return Text(Image(systemName: "arrow.down.circle.fill")).foregroundColor(.accentColor)
+        }
+        if cli.isStale {
+            return Text(Image(systemName: "exclamationmark.triangle.fill")).foregroundColor(.orange)
+        }
+        return nil
     }
 }
 

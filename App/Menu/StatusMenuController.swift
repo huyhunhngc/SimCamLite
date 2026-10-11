@@ -11,11 +11,14 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
     private var cancellables: Set<AnyCancellable> = []
     private let onOpenMain: () -> Void
     private let onOpenPermissions: () -> Void
+    private let updates: UpdateCoordinator
 
-    init(model: AppModel, onOpenMain: @escaping () -> Void, onOpenPermissions: @escaping () -> Void) {
+    init(model: AppModel, onOpenMain: @escaping () -> Void, onOpenPermissions: @escaping () -> Void,
+         updates: UpdateCoordinator) {
         self.model = model
         self.onOpenMain = onOpenMain
         self.onOpenPermissions = onOpenPermissions
+        self.updates = updates
         super.init()
         menu.delegate = self
         menu.autoenablesItems = false
@@ -75,7 +78,21 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
         menu.addItem(item(permissionsTitle) { [onOpenPermissions] in onOpenPermissions() })
         menu.addItem(item(CLIInstaller.shared.menuTitle, symbol: "terminal") { CLIInstaller.shared.installInteractively() })
         menu.addItem(.separator())
+        addUpdateSection(to: menu)
+        menu.addItem(.separator())
         menu.addItem(item("Quit SimCamLite", key: "q") { NSApp.terminate(nil) })
+    }
+
+    private func addUpdateSection(to menu: NSMenu) {
+        let title = updates.updateAvailable ? "Update to \(updates.latestVersion)…" : "Check for Updates…"
+        let check = item(title, symbol: "arrow.triangle.2.circlepath") { [updates] in updates.checkForUpdates() }
+        check.isEnabled = updates.canCheckForUpdates
+        menu.addItem(check)
+        let automatic = item("Automatically Check for Updates", state: updates.automaticallyChecksForUpdates) { [updates] in
+            updates.setAutomaticallyChecksForUpdates(!updates.automaticallyChecksForUpdates)
+        }
+        automatic.isEnabled = updates.isEnabled
+        menu.addItem(automatic)
     }
 
     private var permissionsTitle: String {

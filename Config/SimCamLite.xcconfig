@@ -1,0 +1,8 @@
+// Committed project-level defaults.
+// Machine and release values (signing team, feed URL, Sparkle public key, notary credentials) live in the
+// gitignored Environment.xcconfig; see Environment.example.xcconfig. Without it the updater stays off.
+SIMCAM_DEVELOPMENT_TEAM =
+SIMCAM_SU_FEED_URL =
+SIMCAM_SU_PUBLIC_ED_KEY =
+
+#include? "Environment.xcconfig"
