@@ -2,7 +2,7 @@ name: Release Notes
 
 on:
   push:
-    branches: [main]
+    branches: [master]
     paths:
       - .github/RELEASE_NOTES.md
       - project.yml

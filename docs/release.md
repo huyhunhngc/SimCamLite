@@ -1,7 +1,7 @@
 # Releasing SimCam Lite
 
 SimCam Lite updates itself with [Sparkle](https://sparkle-project.org). The appcast and update archives are served from
-the Cloudflare R2 bucket `simcamlite-downloads` at `https://simcamupdates.ifateam.dev`.
+the Cloudflare R2 bucket `simcamupdates` at `https://simcamupdates.ifateam.dev`.
 
 ## One-time setup
 
@@ -22,7 +22,7 @@ Without `Environment.xcconfig` the app still builds; the feed URL is empty and t
 2. Rewrite `.github/RELEASE_NOTES.md`. The first line must be `# SimCam Lite <MARKETING_VERSION>`. The same file is
    embedded in the appcast (Sparkle's update window), shown in the app's What's New sheet, and used as the GitHub
    Release body.
-3. Run `xcodegen generate`, commit, and push to `main`. The *Release Notes* workflow checks the heading and creates the
+3. Run `xcodegen generate`, commit, and push to `master`. The *Release Notes* workflow checks the heading and creates the
    draft release `v<version>`.
 4. Run `scripts/release-from-archive.sh`. It archives, exports with Developer ID, notarizes and staples the app and the
    DMG, signs the Sparkle zip, regenerates `appcast.xml` from `build/sparkle-releases/`, uploads everything to R2 and

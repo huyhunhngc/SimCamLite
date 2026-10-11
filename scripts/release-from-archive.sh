@@ -5,7 +5,7 @@
 #   --archive PATH           use an existing .xcarchive instead of archiving HEAD
 #   --tag TAG                GitHub Release tag (default: v<MARKETING_VERSION>)
 #   --keychain-account NAME  login Keychain account of the Sparkle EdDSA key (default: simcamlite)
-#   --bucket NAME            Cloudflare R2 bucket (default: simcamlite-downloads)
+#   --bucket NAME            Cloudflare R2 bucket (default: simcamupdates)
 #   --no-layout              skip the DMG Finder layout (no Automation prompt)
 #
 # Before running: bump MARKETING_VERSION and CURRENT_PROJECT_VERSION in project.yml, update
@@ -20,7 +20,7 @@ NOTES="$ROOT/.github/RELEASE_NOTES.md"
 ARCHIVE=""
 TAG=""
 ACCOUNT="simcamlite"
-BUCKET="simcamlite-downloads"
+BUCKET="simcamupdates"
 DMG_FLAGS=()
 
 fail() { echo "error: $1" >&2; exit 1; }

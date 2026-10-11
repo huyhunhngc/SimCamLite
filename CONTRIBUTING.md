@@ -22,7 +22,7 @@ Open an issue describing the camera behavior your app needs and how you would us
 
 ## Pull requests
 
-1. Fork the repository and create a branch from `main`.
+1. Fork the repository and create a branch from `master`.
 2. Set up the project as described in [docs/development.md](docs/development.md).
 3. Keep changes focused: one fix or feature per pull request.
 4. Match the style of the surrounding code, and keep new Swift code free of compiler warnings.
