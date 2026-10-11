@@ -1,4 +1,4 @@
-# SimCam Lite 1.0
+# SimCam Lite 0.1.0
 
 SimCam Lite feeds a Mac camera, image, video or QR code into the iOS Simulator camera.
 
