@@ -112,7 +112,7 @@ struct ContentView: View {
             }
             .labelStyle(.titleAndIcon)
             .fixedSize()
-            .help("Cameras the app sees. Applies to apps launched after the change.")
+            .help("Cameras the app sees: \(model.deviceProfile.title). Applies to apps launched after the change.")
         }
     }
 
@@ -299,49 +299,44 @@ struct CameraView: View {
     var body: some View {
         VStack(spacing: 0) {
             banners
-            Form {
-                Section {
-                    StreamPanel(stream: model.back, preview: model.backPreview)
-                } header: {
-                    Label("Back camera", systemImage: "camera")
-                }
+            ScrollView {
+                VStack(alignment: .leading, spacing: 20) {
+                    HStack(alignment: .top, spacing: 16) {
+                        StreamPanel(title: "Back camera", symbol: "camera", stream: model.back, preview: model.backPreview)
+                        StreamPanel(title: "Front camera", symbol: "arrow.triangle.2.circlepath.camera",
+                                    stream: model.front, preview: model.frontPreview, follows: model.frontFollowsBack) {
+                            Toggle("Same as back", isOn: $model.frontFollowsBack)
+                                .toggleStyle(.switch)
+                                .controlSize(.small)
+                                .help("Show the back camera's source on the front camera too")
+                        }
+                    }
 
-                Section {
-                    Toggle("Same as back camera", isOn: $model.frontFollowsBack)
-                    if model.frontFollowsBack {
-                        HStack(alignment: .top, spacing: 16) {
-                            PreviewImage(feed: model.frontPreview).frame(width: 200)
-                            Text("The front camera shows the back camera's source. Turn this off to give it its own.")
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Connected apps").font(.headline)
+                        if model.clients.isEmpty {
+                            Text("No app is using SimCamLite yet. Launch one from the sidebar, or Run it from Xcode once the project is set up.")
                                 .font(.callout)
                                 .foregroundStyle(.secondary)
                         }
-                    } else {
-                        StreamPanel(stream: model.front, preview: model.frontPreview)
-                    }
-                } header: {
-                    Label("Front camera", systemImage: "arrow.triangle.2.circlepath.camera")
-                }
-
-                Section("Connected apps") {
-                    if model.clients.isEmpty {
-                        Text("No app is using SimCamLite yet. Launch one from Simulator, or Run it from Xcode once the project is set up.")
-                            .font(.callout)
-                            .foregroundStyle(.secondary)
-                    }
-                    ForEach(model.clients) { client in
-                        HStack(spacing: 10) {
-                            Image(systemName: "app.badge.checkmark").font(.title2).foregroundStyle(.green)
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(client.processName).fontWeight(.medium)
-                                Text("\(client.bundleID) · pid \(client.pid) · \(client.cameraDescription) · \(client.outputWidth)×\(client.outputHeight) · \(client.framesDelivered) frames · \(client.photoCount) photos")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
+                        ForEach(model.clients) { client in
+                            HStack(spacing: 10) {
+                                Image(systemName: "app.badge.checkmark").font(.title2).foregroundStyle(.green)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(client.processName).fontWeight(.medium)
+                                    Text("\(client.bundleID) · pid \(client.pid) · \(client.cameraDescription) · \(client.outputWidth)×\(client.outputHeight) · \(client.framesDelivered) frames · \(client.photoCount) photos")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
                             }
                         }
                     }
+                    .padding(14)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(.quaternary.opacity(0.35), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
                 }
+                .padding(20)
             }
-            .formStyle(.grouped)
         }
     }
 
