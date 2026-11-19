@@ -1,5 +1,6 @@
 #import "SCLHooks.h"
 #import "SCLFakes.h"
+#import "SCLAudioPump.h"
 #import "SCLFramePump.h"
 #import "SCLRuntime.h"
 #import "SCLSessionState.h"
@@ -21,12 +22,17 @@ static BOOL SCLIsFakeInput(id input) {
     return [input isKindOfClass:SCLFakeDeviceInput.class];
 }
 
+static BOOL SCLIsAudioDeviceInput(id input) {
+    return [input isKindOfClass:AVCaptureDeviceInput.class] && !SCLIsFakeInput(input)
+        && [((AVCaptureDeviceInput *)input).device hasMediaType:AVMediaTypeAudio];
+}
+
 static __thread int SCLOriginalCallDepth;
 
 #define SCL_ORIGINAL_SCOPE(body) do { SCLOriginalCallDepth++; @try { body; } @finally { SCLOriginalCallDepth--; } } while (0)
 
 static BOOL SCLSessionIsFaked(SCLSessionState *state) {
-    return state && (state.fakeInputs.count > 0 || state.managedOutputs.count > 0);
+    return state && (state.fakeInputs.count > 0 || state.audioInputs.count > 0 || state.managedOutputs.count > 0);
 }
 
 #pragma mark - AVCaptureDevice
@@ -151,7 +157,7 @@ static BOOL SCLSessionIsFaked(SCLSessionState *state) {
 @implementation AVCaptureSession (SCLHooks)
 
 - (BOOL)scl_canAddInput:(AVCaptureInput *)input {
-    if (SCLIsFakeInput(input)) {
+    if (SCLIsFakeInput(input) || SCLIsAudioDeviceInput(input)) {
         SCLSessionState *state = SCLStateForSession(self, NO);
         return ![state containsInput:input];
     }
@@ -166,11 +172,18 @@ static BOOL SCLSessionIsFaked(SCLSessionState *state) {
         SCLLogInfo("Session added %{public}@", ((SCLFakeDeviceInput *)input).device.description);
         return;
     }
+    if (SCLIsAudioDeviceInput(input)) {
+        [self willChangeValueForKey:@"inputs"];
+        [SCLStateForSession(self, YES) addAudioInput:(AVCaptureDeviceInput *)input];
+        [self didChangeValueForKey:@"inputs"];
+        SCLLogInfo("Session added audio input %{public}@", ((AVCaptureDeviceInput *)input).device.localizedName);
+        return;
+    }
     [self scl_addInput:input];
 }
 
 - (void)scl_addInputWithNoConnections:(AVCaptureInput *)input {
-    if (SCLIsFakeInput(input)) {
+    if (SCLIsFakeInput(input) || SCLIsAudioDeviceInput(input)) {
         [self addInput:input];
         return;
     }
@@ -178,7 +191,7 @@ static BOOL SCLSessionIsFaked(SCLSessionState *state) {
 }
 
 - (void)scl_removeInput:(AVCaptureInput *)input {
-    if (SCLIsFakeInput(input)) {
+    if (SCLIsFakeInput(input) || [SCLStateForSession(self, NO) containsInput:input]) {
         [self willChangeValueForKey:@"inputs"];
         [SCLStateForSession(self, NO) removeInput:input];
         [self didChangeValueForKey:@"inputs"];
@@ -190,7 +203,7 @@ static BOOL SCLSessionIsFaked(SCLSessionState *state) {
 - (NSArray<AVCaptureInput *> *)scl_inputs {
     NSArray<AVCaptureInput *> *inputs = [self scl_inputs] ?: @[];
     SCLSessionState *state = SCLOriginalCallDepth > 0 ? nil : SCLStateForSession(self, NO);
-    return state ? [inputs arrayByAddingObjectsFromArray:state.fakeInputs] : inputs;
+    return state ? [[inputs arrayByAddingObjectsFromArray:state.fakeInputs] arrayByAddingObjectsFromArray:state.audioInputs] : inputs;
 }
 
 - (BOOL)scl_canAddOutput:(AVCaptureOutput *)output {
@@ -245,6 +258,9 @@ static BOOL SCLSessionIsFaked(SCLSessionState *state) {
 }
 
 - (void)scl_commitConfiguration {
+    if (SCLSessionIsFaked(SCLStateForSession(self, NO))) {
+        return;
+    }
     SCL_ORIGINAL_SCOPE([self scl_commitConfiguration]);
 }
 
@@ -261,6 +277,7 @@ static BOOL SCLSessionIsFaked(SCLSessionState *state) {
     SCLSetSessionStateRunning(state, YES);
     [self didChangeValueForKey:@"running"];
     [SCLFramePump.shared sessionStatesDidChange];
+    [SCLAudioPump.shared sessionStatesDidChange];
     [NSNotificationCenter.defaultCenter postNotificationName:AVCaptureSessionDidStartRunningNotification object:self];
     SCLLogInfo("Session started");
 }
@@ -268,13 +285,16 @@ static BOOL SCLSessionIsFaked(SCLSessionState *state) {
 - (void)scl_stopRunning {
     SCLSessionState *state = SCLStateForSession(self, NO);
     if (!state.running) {
-        [self scl_stopRunning];
+        if (!SCLSessionIsFaked(state)) {
+            [self scl_stopRunning];
+        }
         return;
     }
     [self willChangeValueForKey:@"running"];
     SCLSetSessionStateRunning(state, NO);
     [self didChangeValueForKey:@"running"];
     [SCLFramePump.shared sessionStatesDidChange];
+    [SCLAudioPump.shared sessionStatesDidChange];
     [NSNotificationCenter.defaultCenter postNotificationName:AVCaptureSessionDidStopRunningNotification object:self];
     SCLLogInfo("Session stopped");
 }
@@ -301,6 +321,9 @@ static BOOL SCLSessionIsFaked(SCLSessionState *state) {
 
 - (void)scl_setSessionPreset:(AVCaptureSessionPreset)preset {
     SCLStateForSession(self, YES).preset = preset;
+    if ([preset isEqualToString:AVCaptureSessionPresetInputPriority]) {
+        return;
+    }
     @try {
         SCL_ORIGINAL_SCOPE([self scl_setSessionPreset:preset]);
     } @catch (NSException *exception) {
@@ -313,7 +336,39 @@ static BOOL SCLSessionIsFaked(SCLSessionState *state) {
 
 @end
 
+#pragma mark - Audio data output
+
+@implementation AVCaptureAudioDataOutput (SCLHooks)
+
+- (AVCaptureConnection *)scl_connectionWithMediaType:(AVMediaType)mediaType {
+    AVCaptureSession *session = SCLOriginalCallDepth > 0 ? nil : SCLSessionForOutput(self);
+    if (session && [mediaType isEqualToString:AVMediaTypeAudio]) {
+        return SCLConnectionForOutput(self, session);
+    }
+    return [self scl_connectionWithMediaType:mediaType];
+}
+
+- (NSArray<AVCaptureConnection *> *)scl_connections {
+    AVCaptureSession *session = SCLOriginalCallDepth > 0 ? nil : SCLSessionForOutput(self);
+    return session ? @[SCLConnectionForOutput(self, session)] : [self scl_connections];
+}
+
+- (void)scl_setSampleBufferDelegate:(id<AVCaptureAudioDataOutputSampleBufferDelegate>)delegate queue:(dispatch_queue_t)queue {
+    SCLSetAudioDataDelegate(self, delegate, queue);
+    @try {
+        SCL_ORIGINAL_SCOPE([self scl_setSampleBufferDelegate:delegate queue:queue]);
+    } @catch (NSException *exception) {
+        SCLLogError("Audio setSampleBufferDelegate raised %{public}@", exception.reason);
+    }
+}
+
+@end
+
 #pragma mark - Video data output
+
+@interface AVCaptureVideoDataOutput (SCLPrivate)
+- (void)_updateVideoSettingsForConnection:(AVCaptureConnection *)connection connectionBeingAdded:(BOOL)beingAdded;
+@end
 
 @implementation AVCaptureVideoDataOutput (SCLHooks)
 
@@ -341,9 +396,16 @@ static BOOL SCLSessionIsFaked(SCLSessionState *state) {
 - (void)scl_setVideoSettings:(NSDictionary<NSString *, id> *)settings {
     SCLSetVideoDataSettings(self, settings);
     @try {
-        [self scl_setVideoSettings:settings];
+        SCL_ORIGINAL_SCOPE([self scl_setVideoSettings:settings]);
     } @catch (NSException *exception) {
     }
+}
+
+- (void)scl__updateVideoSettingsForConnection:(AVCaptureConnection *)connection connectionBeingAdded:(BOOL)beingAdded {
+    if ([connection isKindOfClass:SCLFakeConnection.class]) {
+        return;
+    }
+    [self scl__updateVideoSettingsForConnection:connection connectionBeingAdded:beingAdded];
 }
 
 - (NSDictionary<NSString *, id> *)scl_videoSettings {
@@ -618,7 +680,13 @@ void SCLInstallHooks(void) {
     SCL_HOOK_INSTANCE(videoData, setSampleBufferDelegate:queue:);
     SCL_HOOK_INSTANCE(videoData, setVideoSettings:);
     SCL_HOOK_INSTANCE(videoData, videoSettings);
+    SCL_HOOK_INSTANCE(videoData, _updateVideoSettingsForConnection:connectionBeingAdded:);
     SCL_HOOK_INSTANCE(videoData, availableVideoCVPixelFormatTypes);
+
+    Class audioData = AVCaptureAudioDataOutput.class;
+    SCL_HOOK_INSTANCE(audioData, connectionWithMediaType:);
+    SCL_HOOK_INSTANCE(audioData, connections);
+    SCL_HOOK_INSTANCE(audioData, setSampleBufferDelegate:queue:);
 
     Class photo = AVCapturePhotoOutput.class;
     SCL_HOOK_INSTANCE(photo, connectionWithMediaType:);

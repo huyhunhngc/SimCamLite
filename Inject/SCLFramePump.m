@@ -222,6 +222,10 @@ static CIImage *SCLOriented(CIImage *image, CGFloat angle, BOOL mirrored) {
         state.lastDeliveryNs = now;
         state.lastDevice = device;
         CGSize size = SCLPresetSize(state.preset);
+        if ([state.preset isEqualToString:AVCaptureSessionPresetInputPriority]) {
+            CMVideoDimensions active = device.sclActiveDimensions;
+            size = CGSizeMake(active.width, active.height);
+        }
         CIImage *sensor = [self sensorImageForDevice:device size:size];
         state.latestSensorImage = sensor;
 
@@ -350,6 +354,11 @@ static CIImage *SCLOriented(CIImage *image, CGFloat angle, BOOL mirrored) {
         return;
     }
     [_context render:image toCVPixelBuffer:buffer bounds:CGRectMake(0, 0, width, height) colorSpace:_colorSpace];
+    CVBufferSetAttachment(buffer, kCVImageBufferColorPrimariesKey, kCVImageBufferColorPrimaries_ITU_R_709_2, kCVAttachmentMode_ShouldPropagate);
+    CVBufferSetAttachment(buffer, kCVImageBufferTransferFunctionKey, kCVImageBufferTransferFunction_ITU_R_709_2, kCVAttachmentMode_ShouldPropagate);
+    if (format != kCVPixelFormatType_32BGRA) {
+        CVBufferSetAttachment(buffer, kCVImageBufferYCbCrMatrixKey, kCVImageBufferYCbCrMatrix_ITU_R_709_2, kCVAttachmentMode_ShouldPropagate);
+    }
 
     CMVideoFormatDescriptionRef formatDescription = NULL;
     CMVideoFormatDescriptionCreateForImageBuffer(kCFAllocatorDefault, buffer, &formatDescription);

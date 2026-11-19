@@ -10,6 +10,7 @@ static const void *SCLLayerConnectionKey = &SCLLayerConnectionKey;
 
 @implementation SCLSessionState {
     NSMutableArray<SCLFakeDeviceInput *> *_inputs;
+    NSMutableArray<AVCaptureDeviceInput *> *_audioInputs;
     NSMutableArray<AVCaptureOutput *> *_outputs;
     NSHashTable<AVCaptureVideoPreviewLayer *> *_layers;
 }
@@ -18,6 +19,7 @@ static const void *SCLLayerConnectionKey = &SCLLayerConnectionKey;
     if ((self = [super init])) {
         _session = session;
         _inputs = [NSMutableArray array];
+        _audioInputs = [NSMutableArray array];
         _outputs = [NSMutableArray array];
         _layers = [NSHashTable weakObjectsHashTable];
     }
@@ -36,6 +38,12 @@ static const void *SCLLayerConnectionKey = &SCLLayerConnectionKey;
     }
 }
 
+- (NSArray<AVCaptureDeviceInput *> *)audioInputs {
+    @synchronized (self) {
+        return [_audioInputs copy];
+    }
+}
+
 - (NSArray<AVCaptureOutput *> *)managedOutputs {
     @synchronized (self) {
         return [_outputs copy];
@@ -50,7 +58,8 @@ static const void *SCLLayerConnectionKey = &SCLLayerConnectionKey;
 
 - (BOOL)containsInput:(AVCaptureInput *)input {
     @synchronized (self) {
-        return [_inputs indexOfObjectIdenticalTo:(SCLFakeDeviceInput *)input] != NSNotFound;
+        return [_inputs indexOfObjectIdenticalTo:(SCLFakeDeviceInput *)input] != NSNotFound
+            || [_audioInputs indexOfObjectIdenticalTo:(AVCaptureDeviceInput *)input] != NSNotFound;
     }
 }
 
@@ -62,9 +71,18 @@ static const void *SCLLayerConnectionKey = &SCLLayerConnectionKey;
     }
 }
 
+- (void)addAudioInput:(AVCaptureDeviceInput *)input {
+    @synchronized (self) {
+        if ([_audioInputs indexOfObjectIdenticalTo:input] == NSNotFound) {
+            [_audioInputs addObject:input];
+        }
+    }
+}
+
 - (void)removeInput:(AVCaptureInput *)input {
     @synchronized (self) {
         [_inputs removeObjectIdenticalTo:(SCLFakeDeviceInput *)input];
+        [_audioInputs removeObjectIdenticalTo:(AVCaptureDeviceInput *)input];
     }
 }
 
@@ -139,7 +157,8 @@ void SCLSetSessionStateRunning(SCLSessionState *state, BOOL running) {
 }
 
 BOOL SCLIsManagedOutput(AVCaptureOutput *output) {
-    return [output isKindOfClass:AVCaptureVideoDataOutput.class] || [output isKindOfClass:AVCapturePhotoOutput.class];
+    return [output isKindOfClass:AVCaptureVideoDataOutput.class] || [output isKindOfClass:AVCapturePhotoOutput.class]
+        || [output isKindOfClass:AVCaptureAudioDataOutput.class];
 }
 
 AVCaptureSession *SCLSessionForOutput(AVCaptureOutput *output) {
@@ -160,6 +179,8 @@ SCLFakeConnection *SCLConnectionForOutput(AVCaptureOutput *output, AVCaptureSess
                 kind = SCLConnectionKindVideoData;
             } else if ([output isKindOfClass:AVCapturePhotoOutput.class]) {
                 kind = SCLConnectionKindPhoto;
+            } else if ([output isKindOfClass:AVCaptureAudioDataOutput.class]) {
+                kind = SCLConnectionKindAudioData;
             }
             connection = [[SCLFakeConnection alloc] sclInitWithKind:kind output:output previewLayer:nil session:session];
             objc_setAssociatedObject(output, SCLOutputConnectionKey, connection, OBJC_ASSOCIATION_RETAIN_NONATOMIC);

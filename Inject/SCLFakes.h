@@ -9,7 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface SCLFakeFormat : AVCaptureDeviceFormat
-- (instancetype)sclInitWithMaxZoom:(CGFloat)maxZoom __attribute__((objc_method_family(init)));
+- (instancetype)sclInitWithMaxZoom:(CGFloat)maxZoom width:(int32_t)width height:(int32_t)height __attribute__((objc_method_family(init)));
 @end
 
 @interface SCLFakeDevice : AVCaptureDevice
@@ -33,6 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) double sclFocalLength;
 @property (nonatomic, strong, readonly) SCLFakeDeviceInput *sclInput;
 @property (nonatomic, readonly) CMTime sclFrameDuration;
+@property (nonatomic, readonly) CMVideoDimensions sclActiveDimensions;
 
 - (void)sclStepRampWithInterval:(NSTimeInterval)interval;
 
@@ -50,6 +51,7 @@ typedef NS_ENUM(NSInteger, SCLConnectionKind) {
     SCLConnectionKindVideoData,
     SCLConnectionKindPhoto,
     SCLConnectionKindPreview,
+    SCLConnectionKindAudioData,
     SCLConnectionKindOther,
 };
 

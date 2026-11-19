@@ -48,6 +48,7 @@
 		8EF5834E11CBA91110601B70 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7589871061273A369707AC /* SettingsView.swift */; };
 		8FA3DD9AB76F44683C1EF197 /* InjectInstaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB5406B1A96F9EFFCB8A20F /* InjectInstaller.swift */; };
 		95D35D545CFB9DF5BE4458E7 /* SimulatorCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D22B2A76C2A5E019B627D46 /* SimulatorCommands.swift */; };
+		9883C30C5A9B470932A0532B /* SCLAudioPump.h in Headers */ = {isa = PBXBuildFile; fileRef = AB6F5D329DCBC133D24AAD00 /* SCLAudioPump.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		99007C648FEC0385BC252204 /* SCLRuntime.h in Headers */ = {isa = PBXBuildFile; fileRef = 72DF236B3E21C4998A47FEF7 /* SCLRuntime.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		99637F765F956484AB5BEE99 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD69A3E6DA6F725A3341BCE5 /* AppModel.swift */; };
 		9F4D3A90E2208F32D65607A3 /* SCLSessionState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1B83CBCF3C8BAF2A7CCB0061 /* SCLSessionState.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -69,6 +70,7 @@
 		CD64B5A119E35994B693DA79 /* SCLFakes.h in Headers */ = {isa = PBXBuildFile; fileRef = 20013AB0A51781A5B3E1DE35 /* SCLFakes.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D32B5456EE2C023145D09368 /* CoreImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90AEB11CCC6473BF9EC26A20 /* CoreImage.framework */; };
 		D36FCC6DCF8BF76E67901988 /* SCLInject.m in Sources */ = {isa = PBXBuildFile; fileRef = 36B9D5D123EB7E23CB743A16 /* SCLInject.m */; };
+		D42EE4E186286A27C72B68B7 /* SCLAudioPump.m in Sources */ = {isa = PBXBuildFile; fileRef = 38641AEC8564B9B2FB8524CE /* SCLAudioPump.m */; };
 		D45B767863521FE932F45CD9 /* RenderPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = F60DC3EA3D51515AA1062A30 /* RenderPipeline.swift */; };
 		D463DEF16583DFACD1867A98 /* StreamPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631BE78CF386E631A96E8BFA /* StreamPanel.swift */; };
 		D65595B83BA037FB92C173A1 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 83E47F05F36455806B627FDA /* CoreVideo.framework */; };
@@ -132,6 +134,7 @@
 		32575ECC78E187EC3C50CB56 /* SimCam.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimCam.swift; sourceTree = "<group>"; };
 		33A84B447E1DBDC5F64B98A7 /* SimCamLite-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SimCamLite-Bridging-Header.h"; sourceTree = "<group>"; };
 		36B9D5D123EB7E23CB743A16 /* SCLInject.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SCLInject.m; sourceTree = "<group>"; };
+		38641AEC8564B9B2FB8524CE /* SCLAudioPump.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SCLAudioPump.m; sourceTree = "<group>"; };
 		3B2A8EA7D50FCB03C87F5DF8 /* TestPatternSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestPatternSource.swift; sourceTree = "<group>"; };
 		446170EA94FE0515FD442CA9 /* SCLSessionState.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SCLSessionState.m; sourceTree = "<group>"; };
 		470830E96E5D075088FD8E86 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
@@ -160,6 +163,7 @@
 		A14EF0D69A34E1424A31B038 /* PermissionsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsModel.swift; sourceTree = "<group>"; };
 		A1DF3248FE28CABA9CE2DC25 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		A76F67B3007192824B87436C /* SCLHostBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SCLHostBridge.h; sourceTree = "<group>"; };
+		AB6F5D329DCBC133D24AAD00 /* SCLAudioPump.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SCLAudioPump.h; sourceTree = "<group>"; };
 		AC78608B8402660C8B4FAF12 /* RELEASE_NOTES.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = RELEASE_NOTES.md; sourceTree = "<group>"; };
 		AE2B371EF7FC9585B615CFBA /* SimCamLiteLoader.dylib */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "compiled.mach-o.dylib"; path = SimCamLiteLoader.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		AFA7712FEFCE424A90E1004D /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -276,6 +280,8 @@
 		39F10102B704D57308CC8572 /* Inject */ = {
 			isa = PBXGroup;
 			children = (
+				AB6F5D329DCBC133D24AAD00 /* SCLAudioPump.h */,
+				38641AEC8564B9B2FB8524CE /* SCLAudioPump.m */,
 				20013AB0A51781A5B3E1DE35 /* SCLFakes.h */,
 				0494865196855D0B63540660 /* SCLFakes.m */,
 				C81FFBA4A54C738CC9C0F10B /* SCLFramePump.h */,
@@ -434,6 +440,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9883C30C5A9B470932A0532B /* SCLAudioPump.h in Headers */,
 				CD64B5A119E35994B693DA79 /* SCLFakes.h in Headers */,
 				7649E28C94011D393929EA89 /* SCLFramePump.h in Headers */,
 				55DDA91BFD3BFF291974885D /* SCLFrameReader.h in Headers */,
@@ -614,6 +621,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D42EE4E186286A27C72B68B7 /* SCLAudioPump.m in Sources */,
 				4AD4B431F774660FABAC114F /* SCLFakes.m in Sources */,
 				331A02D09F290EE71DBCE77D /* SCLFramePump.m in Sources */,
 				49B104B40FE49FB382840249 /* SCLFrameReader.m in Sources */,
@@ -735,7 +743,7 @@
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = "$(SIMCAM_DEVELOPMENT_TEAM)";
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -749,7 +757,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 0.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.ifateam.simcamlite;
 				PRODUCT_NAME = SimCamLite;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1011,7 +1019,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = "$(SIMCAM_DEVELOPMENT_TEAM)";
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1025,7 +1033,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 0.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.ifateam.simcamlite;
 				PRODUCT_NAME = SimCamLite;
 				PROVISIONING_PROFILE_SPECIFIER = "";

@@ -44,16 +44,22 @@ static CMTime SCLClampedFrameDuration(CMTime duration) {
     CGFloat _maxZoom;
     CMVideoFormatDescriptionRef _formatDescription;
     NSArray<AVFrameRateRange *> *_ranges;
+    int32_t _width;
+    int32_t _height;
 }
 
-- (instancetype)sclInitWithMaxZoom:(CGFloat)maxZoom {
+- (instancetype)sclInitWithMaxZoom:(CGFloat)maxZoom width:(int32_t)width height:(int32_t)height {
     _maxZoom = maxZoom;
+    _width = width;
+    _height = height;
     CMVideoFormatDescriptionCreate(kCFAllocatorDefault, kCVPixelFormatType_420YpCbCr8BiPlanarFullRange,
-                                   SCL_SENSOR_WIDTH, SCL_SENSOR_HEIGHT, NULL, &_formatDescription);
+                                   width, height, NULL, &_formatDescription);
     _ranges = @[[[SCLFakeFrameRateRange alloc] sclInit]];
     return self;
 }
 
+- (BOOL)isEqual:(id)object { return self == object; }
+- (NSUInteger)hash { return (NSUInteger)(__bridge void *)self; }
 - (id)figCaptureSourceVideoFormat { return nil; }
 - (AVMediaType)mediaType { return AVMediaTypeVideo; }
 - (CMFormatDescriptionRef)formatDescription { return _formatDescription; }
@@ -92,7 +98,7 @@ static CMTime SCLClampedFrameDuration(CMTime duration) {
 - (CGFloat)videoMaxZoomFactorForDepthDataDelivery { return _maxZoom; }
 - (NSArray *)supportedVideoZoomFactorsForDepthDataDelivery { return @[]; }
 - (NSArray *)supportedVideoZoomRangesForDepthDataDelivery { return @[]; }
-- (NSString *)description { return @"<SCLFakeFormat 1920x1440 420f>"; }
+- (NSString *)description { return [NSString stringWithFormat:@"<SCLFakeFormat %dx%d 420f>", _width, _height]; }
 
 @end
 
@@ -109,6 +115,7 @@ static CMTime SCLClampedFrameDuration(CMTime duration) {
     NSArray<AVCaptureDevice *> *_constituents;
     CGFloat _displayMultiplier;
     SCLFakeFormat *_format;
+    NSArray<SCLFakeFormat *> *_formats;
     SCLFakeDeviceInput *_input;
 
     CGFloat _zoom;
@@ -148,7 +155,9 @@ static CMTime SCLClampedFrameDuration(CMTime duration) {
     _switchOver = [switchOver copy];
     _constituents = [constituents copy];
     _displayMultiplier = displayMultiplier;
-    _format = [[SCLFakeFormat alloc] sclInitWithMaxZoom:maxZoom];
+    _format = [[SCLFakeFormat alloc] sclInitWithMaxZoom:maxZoom width:SCL_SENSOR_WIDTH height:SCL_SENSOR_HEIGHT];
+    _formats = @[[[SCLFakeFormat alloc] sclInitWithMaxZoom:maxZoom width:1920 height:1080], _format,
+                 [[SCLFakeFormat alloc] sclInitWithMaxZoom:maxZoom width:4032 height:3024]];
     _zoom = 1;
     _rampTarget = 1;
     _sclReferenceCrop = 1;
@@ -254,9 +263,23 @@ static CMTime SCLClampedFrameDuration(CMTime duration) {
 
 #pragma mark Formats
 
-- (NSArray<AVCaptureDeviceFormat *> *)formats { return @[_format]; }
-- (AVCaptureDeviceFormat *)activeFormat { return _format; }
-- (void)setActiveFormat:(AVCaptureDeviceFormat *)activeFormat {}
+- (NSArray<AVCaptureDeviceFormat *> *)formats { return _formats; }
+- (AVCaptureDeviceFormat *)activeFormat {
+    @synchronized (self) {
+        return _format;
+    }
+}
+- (void)setActiveFormat:(AVCaptureDeviceFormat *)activeFormat {
+    if (![_formats containsObject:(SCLFakeFormat *)activeFormat]) {
+        return;
+    }
+    @synchronized (self) {
+        _format = (SCLFakeFormat *)activeFormat;
+    }
+}
+- (CMVideoDimensions)sclActiveDimensions {
+    return CMVideoFormatDescriptionGetDimensions(self.activeFormat.formatDescription);
+}
 - (CMTime)activeVideoMinFrameDuration {
     @synchronized (self) {
         return _minFrameDuration;
@@ -607,6 +630,16 @@ static CMTime SCLClampedFrameDuration(CMTime duration) {
 
 - (NSArray<AVCaptureInputPort *> *)inputPorts {
     AVCaptureSession *session = _session;
+    if (_kind == SCLConnectionKindAudioData) {
+        AVCaptureDeviceInput *input = session ? SCLStateForSession(session, NO).audioInputs.firstObject : nil;
+        NSMutableArray<AVCaptureInputPort *> *ports = [NSMutableArray array];
+        for (AVCaptureInputPort *port in input.ports) {
+            if ([port.mediaType isEqualToString:AVMediaTypeAudio]) {
+                [ports addObject:port];
+            }
+        }
+        return ports;
+    }
     SCLFakeDevice *device = session ? SCLStateForSession(session, NO).activeDevice : nil;
     return device ? device.sclInput.ports : @[];
 }

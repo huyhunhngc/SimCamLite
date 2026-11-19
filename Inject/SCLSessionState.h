@@ -15,11 +15,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, weak, nullable) SCLFakeDevice *lastDevice;
 @property (nonatomic, readonly, nullable) SCLFakeDevice *activeDevice;
 @property (nonatomic, readonly) NSArray<SCLFakeDeviceInput *> *fakeInputs;
+@property (nonatomic, readonly) NSArray<AVCaptureDeviceInput *> *audioInputs;
 @property (nonatomic, readonly) NSArray<AVCaptureOutput *> *managedOutputs;
 @property (nonatomic, readonly) NSArray<AVCaptureVideoPreviewLayer *> *previewLayers;
 
 - (BOOL)containsInput:(AVCaptureInput *)input;
 - (void)addInput:(SCLFakeDeviceInput *)input;
+- (void)addAudioInput:(AVCaptureDeviceInput *)input;
 - (void)removeInput:(AVCaptureInput *)input;
 - (BOOL)containsOutput:(AVCaptureOutput *)output;
 - (void)addOutput:(AVCaptureOutput *)output;

@@ -136,8 +136,11 @@ Run `simcam help <command>` for every option. For zsh completion, run
 
 ## Limitations
 
-SimCam Lite doesn't support movie recording (`AVCaptureMovieFileOutput`), audio, metadata output such as built-in QR
+SimCam Lite doesn't support movie recording (`AVCaptureMovieFileOutput`), metadata output such as built-in QR
 detection, or multi-camera sessions yet.
+
+Audio inputs with `AVCaptureAudioDataOutput` are supported: samples are 48 kHz mono 16-bit PCM from the Mac microphone
+(silence if microphone permission isn't granted).
 
 ## Documentation
 
