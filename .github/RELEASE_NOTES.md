@@ -1,11 +1,10 @@
-# SimCam Lite 0.2.2
+# SimCam Lite 0.2.3
 
-Test every camera and microphone permission case in one click.
+Sound now records when an app turns on the microphone while the camera is already running.
 
 ### What's New
 
-- **Permission presets:** Right-click an app in the sidebar (or use the hand button on hover) and pick a case: fresh install, camera denied, microphone not asked, microphone denied, or both allowed. SimCam Lite sets the permissions and restarts the app.
-- **Command line:** `simcam permission <app> <case>` does the same, for example `simcam permission vinlens mic-denied`.
+- **Microphone fix:** Apps that ask for the microphone after the camera starts (for example right after the first permission prompt) now get sound in their recordings.
 
 ### System Requirements
 

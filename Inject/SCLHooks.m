@@ -165,12 +165,18 @@ static BOOL SCLSessionIsFaked(SCLSessionState *state) {
     return [self scl_canAddInput:input];
 }
 
+static void SCLPumpsUpdate(void) {
+    [SCLFramePump.shared sessionStatesDidChange];
+    [SCLAudioPump.shared sessionStatesDidChange];
+}
+
 - (void)scl_addInput:(AVCaptureInput *)input {
     if (SCLIsFakeInput(input)) {
         [self willChangeValueForKey:@"inputs"];
         [SCLStateForSession(self, YES) addInput:(SCLFakeDeviceInput *)input];
         [self didChangeValueForKey:@"inputs"];
         SCLLogInfo("Session added %{public}@", ((SCLFakeDeviceInput *)input).device.description);
+        SCLPumpsUpdate();
         return;
     }
     if (SCLIsAudioDeviceInput(input)) {
@@ -178,6 +184,7 @@ static BOOL SCLSessionIsFaked(SCLSessionState *state) {
         [SCLStateForSession(self, YES) addAudioInput:(AVCaptureDeviceInput *)input];
         [self didChangeValueForKey:@"inputs"];
         SCLLogInfo("Session added audio input %{public}@", ((AVCaptureDeviceInput *)input).device.localizedName);
+        SCLPumpsUpdate();
         return;
     }
     [self scl_addInput:input];
@@ -196,6 +203,7 @@ static BOOL SCLSessionIsFaked(SCLSessionState *state) {
         [self willChangeValueForKey:@"inputs"];
         [SCLStateForSession(self, NO) removeInput:input];
         [self didChangeValueForKey:@"inputs"];
+        SCLPumpsUpdate();
         return;
     }
     [self scl_removeInput:input];
@@ -222,6 +230,7 @@ static BOOL SCLSessionIsFaked(SCLSessionState *state) {
         SCLSetSessionForOutput(output, self);
         [self didChangeValueForKey:@"outputs"];
         SCLLogInfo("Session added %{public}s", class_getName(output.class));
+        SCLPumpsUpdate();
         return;
     }
     [self scl_addOutput:output];
@@ -243,6 +252,7 @@ static BOOL SCLSessionIsFaked(SCLSessionState *state) {
             SCLSetSessionForOutput(output, nil);
         }
         [self didChangeValueForKey:@"outputs"];
+        SCLPumpsUpdate();
         return;
     }
     [self scl_removeOutput:output];
@@ -277,8 +287,7 @@ static BOOL SCLSessionIsFaked(SCLSessionState *state) {
     [self willChangeValueForKey:@"running"];
     SCLSetSessionStateRunning(state, YES);
     [self didChangeValueForKey:@"running"];
-    [SCLFramePump.shared sessionStatesDidChange];
-    [SCLAudioPump.shared sessionStatesDidChange];
+    SCLPumpsUpdate();
     [NSNotificationCenter.defaultCenter postNotificationName:AVCaptureSessionDidStartRunningNotification object:self];
     SCLLogInfo("Session started");
 }
@@ -294,8 +303,7 @@ static BOOL SCLSessionIsFaked(SCLSessionState *state) {
     [self willChangeValueForKey:@"running"];
     SCLSetSessionStateRunning(state, NO);
     [self didChangeValueForKey:@"running"];
-    [SCLFramePump.shared sessionStatesDidChange];
-    [SCLAudioPump.shared sessionStatesDidChange];
+    SCLPumpsUpdate();
     [NSNotificationCenter.defaultCenter postNotificationName:AVCaptureSessionDidStopRunningNotification object:self];
     SCLLogInfo("Session stopped");
 }
