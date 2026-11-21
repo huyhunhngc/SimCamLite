@@ -67,6 +67,7 @@ final class StatusMenuController: NSObject, NSMenuDelegate {
             model.frontSeparate.toggle()
         })
         menu.addItem(submenuItem("Device profile", submenu: deviceProfileMenu()))
+        menu.addItem(item("Ask for Camera Permission", state: model.asksForPermission) { [model] in model.asksForPermission.toggle() })
         menu.addItem(submenuItem("Frame rate", submenu: frameRateMenu()))
         menu.addItem(.separator())
 

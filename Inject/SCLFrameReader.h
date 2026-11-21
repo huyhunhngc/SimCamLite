@@ -10,6 +10,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) BOOL hostAlive;
 @property (nonatomic, readonly) uint32_t deviceProfile;
+@property (nonatomic, readonly) BOOL asksForPermission;
 
 - (uint64_t)frameCounterForStream:(int)stream;
 - (nullable CVPixelBufferRef)copyFrameForStream:(int)stream CF_RETURNS_RETAINED;

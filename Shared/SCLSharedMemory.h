@@ -73,6 +73,7 @@ typedef struct {
     volatile uint64_t hostHeartbeatNs;
     SCLStreamHeader streams[SCL_STREAM_COUNT];
     SCLClientInfo clients[SCL_MAX_CLIENTS];
+    volatile uint32_t asksForPermission;
 } SCLSharedHeader;
 
 _Static_assert(sizeof(SCLSharedHeader) <= SCL_HEADER_BYTES, "SCLSharedHeader exceeds header region");

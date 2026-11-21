@@ -27,6 +27,7 @@ enum Output {
     static func status(_ status: StatusSnapshot) {
         let state = status.streaming ? "● streaming \(status.fps) fps" : "○ stopped (\(status.fps) fps)"
         print("SimCamLite  \(state) · profile \(status.profile)")
+        if let asks = status.asksForPermission { print("Permission  \(asks ? "ask" : "always allow")") }
         print("Back        \(describe(status.back))")
         print("Front       \(status.frontFollowsBack ? "follows back" : describe(status.front))")
         var notes: [String] = []

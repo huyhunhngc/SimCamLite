@@ -47,6 +47,7 @@ final class AppModel: ObservableObject {
     let front = StreamController(label: "Front")
     @Published var frontFollowsBack = true { didSet { syncPipeline() } }
     @Published var deviceProfile: DeviceProfile = .triple { didSet { syncPipeline() } }
+    @Published var asksForPermission = false { didSet { syncPipeline() } }
     @Published var frameRate: FrameRate = .fps30 { didSet { syncPipeline() } }
     let backPreview = PreviewFeed()
     let frontPreview = PreviewFeed()
@@ -104,6 +105,7 @@ final class AppModel: ObservableObject {
         frameRate = FrameRate(rawValue: settings.frameRate) ?? .fps30
         deviceProfile = DeviceProfile(name: settings.deviceProfile) ?? .triple
         frontFollowsBack = settings.frontFollowsBack
+        asksForPermission = settings.asksForPermission ?? false
         for (stream, saved) in [(back, settings.back), (front, settings.front)] {
             stream.options = saved.options
             if case .camera = saved.source, AVCaptureDevice.authorizationStatus(for: .video) != .authorized {
@@ -119,6 +121,7 @@ final class AppModel: ObservableObject {
             frameRate: frameRate.rawValue,
             deviceProfile: deviceProfile.name,
             frontFollowsBack: frontFollowsBack,
+            asksForPermission: asksForPermission,
             back: .init(source: back.spec, options: back.options),
             front: .init(source: front.spec, options: front.options),
             selectedUDID: simulators.selectedUDID ?? simulators.preferredUDID
@@ -173,6 +176,7 @@ final class AppModel: ObservableObject {
         let frontOptions = front.options
         let follows = frontFollowsBack
         let profile = deviceProfile.rawValue
+        let permissions = asksForPermission
         let rate = Double(frameRate.rawValue)
         pipeline.update { config in
             config.backSource = backSource
@@ -181,6 +185,7 @@ final class AppModel: ObservableObject {
             config.frontOptions = frontOptions
             config.frontFollowsBack = follows
             config.deviceProfile = profile
+            config.asksForPermission = permissions
             config.frameRate = rate
         }
     }

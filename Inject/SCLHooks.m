@@ -2,6 +2,7 @@
 #import "SCLFakes.h"
 #import "SCLAudioPump.h"
 #import "SCLFramePump.h"
+#import "SCLFrameReader.h"
 #import "SCLRuntime.h"
 #import "SCLSessionState.h"
 #import <objc/runtime.h>
@@ -69,14 +70,14 @@ static BOOL SCLSessionIsFaked(SCLSessionState *state) {
 }
 
 + (AVAuthorizationStatus)scl_authorizationStatusForMediaType:(AVMediaType)mediaType {
-    if ([mediaType isEqualToString:AVMediaTypeVideo]) {
+    if ([mediaType isEqualToString:AVMediaTypeVideo] && !SCLFrameReader.shared.asksForPermission) {
         return AVAuthorizationStatusAuthorized;
     }
     return [self scl_authorizationStatusForMediaType:mediaType];
 }
 
 + (void)scl_requestAccessForMediaType:(AVMediaType)mediaType completionHandler:(void (^)(BOOL))handler {
-    if ([mediaType isEqualToString:AVMediaTypeVideo]) {
+    if ([mediaType isEqualToString:AVMediaTypeVideo] && !SCLFrameReader.shared.asksForPermission) {
         if (handler) {
             dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
                 handler(YES);

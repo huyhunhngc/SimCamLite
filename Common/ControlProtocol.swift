@@ -33,6 +33,7 @@ enum ControlRequest: Codable {
     case quit
     case setFrameRate(Int)
     case setProfile(String)
+    case askForPermission(Bool)
     case setSource(target: StreamTarget, source: SourceSpec)
     case followBack(Bool)
     case adjust(target: StreamTarget, fill: Bool?, rotation: Int?, mirror: Bool?)
@@ -66,6 +67,7 @@ struct StatusSnapshot: Codable {
     var fps: Int
     var profile: String
     var frontFollowsBack: Bool
+    var asksForPermission: Bool?
     var back: StreamSnapshot
     var front: StreamSnapshot
     var clients: [ClientSnapshot]

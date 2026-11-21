@@ -10,6 +10,7 @@ struct AppSettings: Codable {
     var frameRate = FrameRate.fps30.rawValue
     var deviceProfile = DeviceProfile.triple.name
     var frontFollowsBack = true
+    var asksForPermission: Bool?
     var back = Stream()
     var front = Stream()
     var selectedUDID: String?

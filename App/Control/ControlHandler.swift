@@ -46,6 +46,10 @@ final class ControlHandler {
         case .setSource(let target, let spec):
             return setSource(spec, on: target)
 
+        case .askForPermission(let asks):
+            model.asksForPermission = asks
+            return reply(asks ? "Apps ask for camera permission like on a real iPhone" : "Apps always get camera permission")
+
         case .followBack(let follows):
             model.frontFollowsBack = follows
             return reply(follows ? "Front camera uses the back source" : "Front camera uses its own source")
@@ -123,6 +127,7 @@ extension AppModel {
             fps: frameRate.rawValue,
             profile: deviceProfile.name,
             frontFollowsBack: frontFollowsBack,
+            asksForPermission: asksForPermission,
             back: back.snapshot(),
             front: front.snapshot(),
             clients: clients.map {

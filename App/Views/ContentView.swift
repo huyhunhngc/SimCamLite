@@ -126,12 +126,14 @@ struct ContentView: View {
                 }
                 .pickerStyle(.inline)
                 .labelsHidden()
+                Divider()
+                Toggle("Ask for Camera Permission", isOn: $model.asksForPermission)
             } label: {
                 Label(model.deviceProfile.shortTitle, systemImage: "camera.aperture")
             }
             .labelStyle(.titleAndIcon)
             .fixedSize()
-            .help("Cameras the app sees: \(model.deviceProfile.title). Applies to apps launched after the change.")
+            .help("Cameras the app sees: \(model.deviceProfile.title). Applies to apps launched after the change. Ask for Camera Permission: apps get the iOS camera alert and can be denied, like on a real iPhone.")
         }
     }
 

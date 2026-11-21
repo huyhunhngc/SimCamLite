@@ -85,6 +85,13 @@
     }
 }
 
+- (BOOL)asksForPermission {
+    @synchronized (self) {
+        SCLSharedHeader *header = [self header];
+        return header && header->asksForPermission;
+    }
+}
+
 - (CVPixelBufferRef)makeBufferWithWidth:(uint32_t)width height:(uint32_t)height {
     if (!_pool || _poolWidth != width || _poolHeight != height) {
         if (_pool) {

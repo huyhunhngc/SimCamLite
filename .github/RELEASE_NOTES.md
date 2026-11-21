@@ -1,17 +1,11 @@
-# SimCam Lite 0.2.0
+# SimCam Lite 0.2.1
 
-Better support for camera apps that pick their own format and record video with sound.
+Test how your app handles camera permission, just like on a real iPhone.
 
 ### What's New
 
-- **Microphone audio:** Apps that use `AVCaptureAudioDataOutput` now receive 48 kHz mono audio from your Mac's microphone, or silence when microphone access isn't granted.
-- **More camera formats:** The camera now offers 1920×1080, 1920×1440 and 4032×3024 formats. Apps can choose one with `activeFormat`, and frames arrive at that size.
-- **Correct colors:** Frames are tagged as Rec. 709, so apps that check the color space accept them.
-
-### Fixes
-
-- Apps that call `commitConfiguration` or `stopRunning` on a simulated session no longer reset the camera.
-- Choosing a camera format no longer crashes apps.
+- **Ask for Camera Permission:** A new option in the camera menu. When it's on, apps see the iOS camera alert and can be denied, so you can test your permission flow. When it's off, apps always get camera access, as before.
+- **Command line:** `simcam permission ask` or `simcam permission allow` switches the option, and `simcam status` shows it.
 
 ### System Requirements
 

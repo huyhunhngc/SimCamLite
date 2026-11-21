@@ -9,7 +9,7 @@ struct SimCam: AsyncParsableCommand {
         discussion: "Stream commands drive SimCamLite.app (opened in the background when needed) and share its state with the GUI.",
         version: "1.0",
         subcommands: [
-            Start.self, Stop.self, Quit.self, Status.self, Fps.self, Profile.self,
+            Start.self, Stop.self, Quit.self, Status.self, Fps.self, Profile.self, Permission.self,
             Source.self, Adjust.self, Pause.self, Resume.self, Cameras.self,
             Devices.self, Boot.self, Apps.self, Launch.self, Inject.self, Xcode.self,
         ]
@@ -93,6 +93,18 @@ struct Profile: AsyncParsableCommand {
 
     func run() async throws {
         Output.message(try await AppConnection.send(.setProfile(profile)))
+    }
+}
+
+struct Permission: AsyncParsableCommand {
+    static let configuration = CommandConfiguration(abstract: "Choose how apps get camera permission.")
+
+    @Argument(help: "ask (iOS alert, can be denied, like a real iPhone) | allow (always granted)")
+    var mode: String
+
+    func run() async throws {
+        guard ["ask", "allow"].contains(mode) else { throw ValidationError("Use ask or allow") }
+        Output.message(try await AppConnection.send(.askForPermission(mode == "ask")))
     }
 }
 
