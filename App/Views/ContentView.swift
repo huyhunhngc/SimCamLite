@@ -202,25 +202,38 @@ struct SidebarApps: View {
                 Text("No apps installed").foregroundStyle(.secondary)
             }
             ForEach(simulators.selectedDevice?.isBooted == true ? simulators.apps : []) { app in
-                Button {
-                    launch(app)
-                } label: {
-                    HStack(spacing: 8) {
-                        SimulatorAppIcon(app: app, size: 20)
-                        Text(app.name).lineLimit(1)
-                        Spacer(minLength: 4)
-                        Image(systemName: "play.fill")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                            .opacity(hovered == app.id ? 1 : 0)
+                HStack(spacing: 8) {
+                    Button {
+                        launch(app)
+                    } label: {
+                        HStack(spacing: 8) {
+                            SimulatorAppIcon(app: app, size: 20)
+                            Text(app.name).lineLimit(1)
+                            Spacer(minLength: 4)
+                            Image(systemName: "play.fill")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .opacity(hovered == app.id ? 1 : 0)
+                        }
+                        .contentShape(Rectangle())
                     }
-                    .contentShape(Rectangle())
+                    .help("Launch \(app.name) with SimCamLite (\(app.bundleID))")
+                    Menu {
+                        permissionItems(app)
+                    } label: {
+                        Image(systemName: "hand.raised")
+                    }
+                    .menuStyle(.borderlessButton)
+                    .menuIndicator(.hidden)
+                    .fixedSize()
+                    .opacity(hovered == app.id ? 1 : 0)
+                    .help("Permissions: restart \(app.name) with camera and microphone set for a test case")
                 }
                 .buttonStyle(.plain)
                 .onHover { hovered = $0 ? app.id : (hovered == app.id ? nil : hovered) }
-                .help("Launch \(app.name) with SimCamLite (\(app.bundleID))")
                 .contextMenu {
                     Button("Launch with SimCamLite") { launch(app) }
+                    Menu("Permissions") { permissionItems(app) }
                     Button("Copy Bundle ID") {
                         NSPasteboard.general.clearContents()
                         NSPasteboard.general.setString(app.bundleID, forType: .string)
@@ -233,6 +246,21 @@ struct SidebarApps: View {
     private func launch(_ app: SimulatorApp) {
         Task {
             await simulators.launch(app)
+            if let message = simulators.message { model.showToast(message) }
+        }
+    }
+
+    @ViewBuilder
+    private func permissionItems(_ app: SimulatorApp) -> some View {
+        ForEach(PermissionScenario.allCases) { scenario in
+            Button(scenario.title) { setPermissions(scenario, for: app) }
+        }
+    }
+
+    private func setPermissions(_ scenario: PermissionScenario, for app: SimulatorApp) {
+        model.asksForPermission = true
+        Task {
+            await simulators.setPermissions(scenario, for: app)
             if let message = simulators.message { model.showToast(message) }
         }
     }

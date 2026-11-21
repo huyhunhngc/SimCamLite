@@ -119,8 +119,51 @@ enum SimulatorManager {
         .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
     }
 
+    /// Sets the app's camera and microphone answers for a test case. iOS quits the app if it is running.
+    static func setPermissions(_ scenario: PermissionScenario, for bundleID: String, on udid: String) async throws {
+        try await run(["simctl", "privacy", udid, scenario.camera, "camera", bundleID])
+        try await run(["simctl", "privacy", udid, scenario.microphone, "microphone", bundleID])
+    }
+
     static func launch(_ bundleID: String, on udid: String) async throws {
         try await run(["simctl", "launch", "--terminate-running-process", udid, bundleID],
                       environment: ["SIMCTL_CHILD_\(injectVariable)": InjectInstaller.loaderPath])
+    }
+}
+
+/// Camera and microphone permission states to test an app's permission flow; `simctl privacy` actions.
+enum PermissionScenario: String, CaseIterable, Identifiable {
+    case fresh
+    case cameraDenied = "camera-denied"
+    case micNotAsked = "mic-not-asked"
+    case micDenied = "mic-denied"
+    case allowed
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .fresh: "Fresh Install (Asks for Both)"
+        case .cameraDenied: "Camera Denied"
+        case .micNotAsked: "Camera Allowed, Microphone Not Asked"
+        case .micDenied: "Camera Allowed, Microphone Denied"
+        case .allowed: "Camera and Microphone Allowed"
+        }
+    }
+
+    var camera: String {
+        switch self {
+        case .fresh: "reset"
+        case .cameraDenied: "revoke"
+        case .micNotAsked, .micDenied, .allowed: "grant"
+        }
+    }
+
+    var microphone: String {
+        switch self {
+        case .fresh, .cameraDenied, .micNotAsked: "reset"
+        case .micDenied: "revoke"
+        case .allowed: "grant"
+        }
     }
 }

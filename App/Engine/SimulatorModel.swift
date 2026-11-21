@@ -145,6 +145,15 @@ final class SimulatorModel: ObservableObject {
         }
     }
 
+    func setPermissions(_ scenario: PermissionScenario, for app: SimulatorApp, udid: String? = nil) async {
+        guard let udid = udid ?? selectedUDID else { return }
+        await perform {
+            try await SimulatorManager.setPermissions(scenario, for: app.bundleID, on: udid)
+            try await SimulatorManager.launch(app.bundleID, on: udid)
+            self.message = "\(app.name) restarted: \(scenario.title)"
+        }
+    }
+
     func copyXcodeEnvironment() {
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(xcodeEnvironment, forType: .string)

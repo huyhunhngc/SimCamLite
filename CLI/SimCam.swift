@@ -97,14 +97,41 @@ struct Profile: AsyncParsableCommand {
 }
 
 struct Permission: AsyncParsableCommand {
-    static let configuration = CommandConfiguration(abstract: "Choose how apps get camera permission.")
+    static let configuration = CommandConfiguration(
+        abstract: "Choose how apps get camera permission, or set an app's permissions for a test case.",
+        discussion: """
+        simcam permission ask | allow
+        simcam permission <app> <case>   restarts the app with these answers:
 
-    @Argument(help: "ask (iOS alert, can be denied, like a real iPhone) | allow (always granted)")
-    var mode: String
+        """ + PermissionScenario.allCases.map { "  \($0.rawValue): \($0.title)" }.joined(separator: "\n")
+    )
+
+    @Argument(help: "ask | allow, or an app (bundle ID or name)")
+    var target: String
+
+    @Argument(help: ArgumentHelp("Test case for the app", valueName: "case"))
+    var scenario: String?
+
+    @OptionGroup var device: DeviceOption
 
     func run() async throws {
-        guard ["ask", "allow"].contains(mode) else { throw ValidationError("Use ask or allow") }
-        Output.message(try await AppConnection.send(.askForPermission(mode == "ask")))
+        guard let scenario else {
+            guard ["ask", "allow"].contains(target) else {
+                throw ValidationError("Use ask, allow, or <app> <case>. See `simcam permission --help`.")
+            }
+            Output.message(try await AppConnection.send(.askForPermission(target == "ask")))
+            return
+        }
+        guard let chosen = PermissionScenario(rawValue: scenario) else {
+            throw ValidationError("Cases: " + PermissionScenario.allCases.map(\.rawValue).joined(separator: ", "))
+        }
+        let simulator = try await device.resolve()
+        let app = try await Simulators.userApp(target, on: simulator)
+        try await Simulators.requireInjectLibrary()
+        _ = try await AppConnection.send(.askForPermission(true))
+        try await SimulatorManager.setPermissions(chosen, for: app.bundleID, on: simulator.udid)
+        try await SimulatorManager.launch(app.bundleID, on: simulator.udid)
+        print("\(app.name) restarted on \(simulator.name): \(chosen.title)")
     }
 }
 

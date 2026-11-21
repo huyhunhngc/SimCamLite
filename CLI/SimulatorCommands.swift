@@ -11,6 +11,15 @@ struct DeviceOption: ParsableArguments {
 }
 
 enum Simulators {
+    static func userApp(_ query: String, on device: SimulatorDevice) async throws -> SimulatorApp {
+        let apps = try await SimulatorManager.userApps(on: device.udid)
+        let match = apps.first { $0.bundleID == query }
+            ?? apps.first { $0.name.caseInsensitiveCompare(query) == .orderedSame }
+            ?? apps.first { $0.name.replacingOccurrences(of: " ", with: "").caseInsensitiveCompare(query) == .orderedSame }
+        guard let match else { throw CLIError("No user app '\(query)' on \(device.name). See `simcam apps`.") }
+        return match
+    }
+
     static func booted(matching query: String?) async throws -> SimulatorDevice {
         let booted = try await SimulatorManager.bootedDevices()
         guard !booted.isEmpty else { throw CLIError("No booted simulator. Start one with `simcam boot <name>`.") }
@@ -172,12 +181,7 @@ struct Launch: AsyncParsableCommand {
 
     func run() async throws {
         let device = try await target.resolve()
-        let apps = try await SimulatorManager.userApps(on: device.udid)
-        let match = apps.first { $0.bundleID == app }
-            ?? apps.first { $0.name.caseInsensitiveCompare(app) == .orderedSame }
-        guard let match else {
-            throw CLIError("No user app '\(app)' on \(device.name). See `simcam apps`.")
-        }
+        let match = try await Simulators.userApp(app, on: device)
         try await Simulators.requireInjectLibrary()
         try await SimulatorManager.launch(match.bundleID, on: device.udid)
         print("Launched \(match.name) (\(match.bundleID)) on \(device.name) with SimCamLite")
