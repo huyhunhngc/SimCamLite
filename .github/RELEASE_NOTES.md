@@ -1,10 +1,10 @@
-# SimCam Lite 0.2.5
+# SimCam Lite 0.2.6
 
-Apps can now test 4K video in the simulator.
+Resizing the window is smooth again while the cameras stream.
 
 ### What's New
 
-- **4K video:** The back cameras now offer a 3840 × 2160 format, and the 4K session preset gives real 4K frames, so apps that look for 4K can show and record it. The simulator has no hardware video encoder, so a 4K recording saves fewer frames per second than on a real iPhone; the picture size is the same.
+- **Smoother window:** The camera previews now draw outside the window's layout, so streaming video no longer makes the app re-measure the whole window on every frame. Resizing and scrolling the Camera screen stay smooth, even with 4K video at 60 fps, and the app uses less CPU.
 
 ### System Requirements
 

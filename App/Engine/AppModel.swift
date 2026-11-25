@@ -35,10 +35,18 @@ enum FrameRate: Int, CaseIterable, Identifiable {
     var title: String { "\(rawValue) fps" }
 }
 
-/// Kept separate from AppModel so per-frame preview updates only redraw the preview images.
+/// Per-frame preview images go to the preview layers through `frames`, outside SwiftUI state: a published image
+/// made SwiftUI re-measure the whole window on every frame, so resizing the window stuttered.
 @MainActor
 final class PreviewFeed: ObservableObject {
-    @Published fileprivate(set) var image: CGImage?
+    /// Changes only when the first frame arrives; the preview shows a spinner until then.
+    @Published private(set) var hasImage = false
+    let frames = CurrentValueSubject<CGImage?, Never>(nil)
+
+    fileprivate func show(_ image: CGImage?) {
+        frames.send(image)
+        if hasImage != (image != nil) { hasImage = image != nil }
+    }
 }
 
 @MainActor
@@ -79,8 +87,8 @@ final class AppModel: ObservableObject {
 
         pipeline.onPreview = { [weak self] backImage, frontImage in
             MainActor.assumeIsolated {
-                self?.backPreview.image = backImage
-                self?.frontPreview.image = frontImage
+                self?.backPreview.show(backImage)
+                self?.frontPreview.show(frontImage)
             }
         }
         pipeline.onClients = { [weak self] clients in

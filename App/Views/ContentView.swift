@@ -1,3 +1,4 @@
+import Combine
 import SwiftUI
 
 enum MainSection: String, CaseIterable, Identifiable {
@@ -482,16 +483,34 @@ struct PreviewImage: View {
     var body: some View {
         ZStack {
             Rectangle().fill(.black)
-            if let image = feed.image {
-                Image(decorative: image, scale: 1)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-            } else {
+            PreviewLayer(frames: feed.frames)
+            if !feed.hasImage {
                 ProgressView()
             }
         }
         .aspectRatio(3.0 / 4.0, contentMode: .fit)
         .clipShape(RoundedRectangle(cornerRadius: 10))
+    }
+}
+
+/// Shows preview frames on a Core Animation layer, so a new frame never re-runs SwiftUI layout.
+private struct PreviewLayer: NSViewRepresentable {
+    let frames: CurrentValueSubject<CGImage?, Never>
+
+    func makeNSView(context: Context) -> NSView {
+        let view = NSView()
+        view.wantsLayer = true
+        view.layer?.contentsGravity = .resizeAspect
+        context.coordinator.subscription = frames.sink { [weak view] in view?.layer?.contents = $0 }
+        return view
+    }
+
+    func updateNSView(_ view: NSView, context: Context) {}
+
+    func makeCoordinator() -> Coordinator { Coordinator() }
+
+    final class Coordinator {
+        var subscription: AnyCancellable?
     }
 }
 
