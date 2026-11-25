@@ -42,7 +42,7 @@ targets:
         CODE_SIGN_STYLE: Automatic
         DEVELOPMENT_TEAM: $(SIMCAM_DEVELOPMENT_TEAM)
         PROVISIONING_PROFILE_SPECIFIER: ""
-        SUPPORTED_PLATFORMS: iphonesimulator
+        SUPPORTED_PLATFORMS: iphonesimulator iphoneos
         GENERATE_INFOPLIST_FILE: YES
         HEADER_SEARCH_PATHS: $(SRCROOT)/Shared
         DEFINES_MODULE: NO
@@ -63,7 +63,10 @@ targets:
       - Loader
     settings:
       base:
-        SUPPORTED_PLATFORMS: iphonesimulator
+        CODE_SIGN_IDENTITY: Apple Development
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: $(SIMCAM_DEVELOPMENT_TEAM)
+        SUPPORTED_PLATFORMS: iphonesimulator iphoneos
         EXECUTABLE_PREFIX: ""
         PRODUCT_NAME: SimCamLiteLoader
         SKIP_INSTALL: YES

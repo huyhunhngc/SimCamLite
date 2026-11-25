@@ -62,6 +62,20 @@ simulator-wide variable, so option 1 has no effect there. Set up each project on
   platform can't be determined: pass `--force`, or add the variable yourself (copy button in the panel) in Edit Scheme ›
   Run › Arguments › Environment Variables.
 
+## 4. An iOS app on this Mac (Designed for iPad)
+
+Build the app for a device (`Debug-iphoneos`, signed with the project's own team), then:
+
+```bash
+scripts/mac-inject.sh path/to/Debug-iphoneos/App.app
+```
+
+The script builds the device variant of the loader and framework into `/Users/Shared/SimCamLite/iphoneos/`, wraps the
+app so macOS runs it as an iPad app, and opens it with `DYLD_INSERT_LIBRARIES` and `SIMCAMLITE_FORCE`. On the Mac the
+app is sandboxed and cannot read `/Users/Shared`, so the script hard-links `frames.shm` into the app's container
+(`Data/tmp/SimCamLite/frames.shm`), where the framework looks when the shared path is denied. macOS asks for camera and
+microphone access the first time.
+
 ## Other app behavior
 
 - Every option (back and front sources, Fill/rotate/mirror, fps, profile, *Same as back*, the selected simulator) is

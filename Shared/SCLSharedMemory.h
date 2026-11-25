@@ -8,6 +8,7 @@
 #define SCL_SHM_VERSION 1u
 #define SCL_SHM_DIRECTORY "/Users/Shared/SimCamLite"
 #define SCL_SHM_PATH "/Users/Shared/SimCamLite/frames.shm"
+#define SCL_SHM_SANDBOX_SUBPATH "SimCamLite/frames.shm"
 
 #define SCL_STREAM_COUNT 2
 #define SCL_SLOT_COUNT 3

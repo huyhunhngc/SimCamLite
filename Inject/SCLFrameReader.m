@@ -49,6 +49,10 @@
 
     int fd = open(SCL_SHM_PATH, O_RDWR);
     if (fd < 0) {
+        NSString *sandboxPath = [NSTemporaryDirectory() stringByAppendingPathComponent:@SCL_SHM_SANDBOX_SUBPATH];
+        fd = open(sandboxPath.fileSystemRepresentation, O_RDWR);
+    }
+    if (fd < 0) {
         return NULL;
     }
     void *base = mmap(NULL, SCL_SHM_BYTES, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
