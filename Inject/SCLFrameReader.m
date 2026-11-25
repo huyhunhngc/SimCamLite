@@ -92,6 +92,13 @@
     }
 }
 
+- (BOOL)followsDeviceRotation {
+    @synchronized (self) {
+        SCLSharedHeader *header = [self header];
+        return !header || !header->ignoresDeviceRotation;
+    }
+}
+
 - (CVPixelBufferRef)makeBufferWithWidth:(uint32_t)width height:(uint32_t)height {
     if (!_pool || _poolWidth != width || _poolHeight != height) {
         if (_pool) {

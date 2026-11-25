@@ -97,6 +97,21 @@ static CIImage *SCLOriented(CIImage *image, CGFloat angle, BOOL mirrored) {
     return SCLNormalized(result);
 }
 
+static _Atomic(UIDeviceOrientation) SCLHeldOrientation = UIDeviceOrientationPortrait;
+
+/// The host draws the scene as a phone held upright sees it. Turns that sensor picture into what the sensor sees at
+/// `angle`: held sideways, the camera sees a landscape band of the scene.
+static CIImage *SCLSensorImageForAngle(CIImage *uprightSensor, CGFloat angle) {
+    CIImage *scene = SCLOriented(uprightSensor, 90, NO);
+    CGSize size = scene.extent.size;
+    if (lround(angle / 90.0) % 2 == 0 && size.height > size.width) {
+        CGFloat band = size.width * size.width / size.height;
+        scene = SCLNormalized([scene imageByCroppingToRect:CGRectMake(0, (size.height - band) / 2, size.width, band)]);
+        scene = [scene imageByApplyingTransform:CGAffineTransformMakeScale(size.height / size.width, size.height / size.width)];
+    }
+    return SCLOriented(scene, 360 - angle, NO);
+}
+
 @interface SCLOutputContext : NSObject
 @property (nonatomic) CVPixelBufferPoolRef pool;
 @property (nonatomic) OSType format;
@@ -168,6 +183,18 @@ static CIImage *SCLOriented(CIImage *image, CGFloat angle, BOOL mirrored) {
             kCIContextWorkingColorSpace: (__bridge id)_colorSpace,
             kCIContextCacheIntermediates: @NO,
         }];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            void (^track)(void) = ^{
+                UIDeviceOrientation orientation = UIDevice.currentDevice.orientation;
+                if (UIDeviceOrientationIsValidInterfaceOrientation(orientation)) {
+                    atomic_store(&SCLHeldOrientation, orientation);
+                }
+            };
+            [UIDevice.currentDevice beginGeneratingDeviceOrientationNotifications];
+            [NSNotificationCenter.defaultCenter addObserverForName:UIDeviceOrientationDidChangeNotification object:nil
+                                                             queue:NSOperationQueue.mainQueue usingBlock:^(NSNotification *note) { track(); }];
+            track();
+        });
     }
     return self;
 }
@@ -281,6 +308,11 @@ static CIImage *SCLOriented(CIImage *image, CGFloat angle, BOOL mirrored) {
     CIImage *base = frame ? [CIImage imageWithCVPixelBuffer:frame] : [self placeholder];
     if (frame) {
         CVPixelBufferRelease(frame);
+    }
+    UIDeviceOrientation held = SCLFrameReader.shared.followsDeviceRotation ? atomic_load(&SCLHeldOrientation) : UIDeviceOrientationPortrait;
+    CGFloat angle = SCLCaptureAngle(held, device.position == AVCaptureDevicePositionFront, 90);
+    if (angle != 90) {
+        base = SCLSensorImageForAngle(base, angle);
     }
     CGRect extent = base.extent;
     CGFloat aspect = size.width / size.height;

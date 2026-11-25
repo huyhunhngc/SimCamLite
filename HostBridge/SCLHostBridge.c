@@ -102,12 +102,13 @@ void scl_host_end_frame(int stream, int slot, uint32_t width, uint32_t height, u
     header->frameCounter += 1;
 }
 
-void scl_host_heartbeat(uint32_t device_profile, bool asks_for_permission) {
+void scl_host_heartbeat(uint32_t device_profile, bool asks_for_permission, bool follows_device_rotation) {
     if (!scl_base) {
         return;
     }
     scl_header()->deviceProfile = device_profile;
     scl_header()->asksForPermission = asks_for_permission;
+    scl_header()->ignoresDeviceRotation = !follows_device_rotation;
     scl_header()->hostPID = getpid();
     scl_header()->hostHeartbeatNs = SCLNowNs();
 }

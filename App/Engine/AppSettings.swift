@@ -11,6 +11,7 @@ struct AppSettings: Codable {
     var deviceProfile = DeviceProfile.triple.name
     var frontFollowsBack = true
     var asksForPermission: Bool?
+    var followsDeviceRotation: Bool?
     var back = Stream()
     var front = Stream()
     var selectedUDID: String?

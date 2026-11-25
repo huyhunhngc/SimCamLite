@@ -128,6 +128,7 @@ struct ContentView: View {
                 .labelsHidden()
                 Divider()
                 Toggle("Ask for Camera Permission", isOn: $model.asksForPermission)
+                Toggle("Follow Simulator Rotation", isOn: $model.followsDeviceRotation)
             } label: {
                 Label(model.deviceProfile.shortTitle, systemImage: "camera.aperture")
             }

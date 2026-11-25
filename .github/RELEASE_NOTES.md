@@ -1,10 +1,10 @@
-# SimCam Lite 0.2.3
+# SimCam Lite 0.2.4
 
-Sound now records when an app turns on the microphone while the camera is already running.
+The camera picture now turns with the simulator, the way a real phone sees the world.
 
 ### What's New
 
-- **Microphone fix:** Apps that ask for the microphone after the camera starts (for example right after the first permission prompt) now get sound in their recordings.
+- **Follow Simulator Rotation:** Turn the simulator sideways and apps get a landscape view of your source, upright once the app applies the device rotation, just like on a real iPhone. Held portrait, the picture is the same as before. On by default; turn it off in the menu or the stream settings.
 
 ### System Requirements
 

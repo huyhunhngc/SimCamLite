@@ -31,6 +31,7 @@ final class RenderPipeline: @unchecked Sendable {
         var frontOptions = RenderOptions()
         var deviceProfile: UInt32 = UInt32(SCLDeviceProfileTriple)
         var asksForPermission = false
+        var followsDeviceRotation = true
         var frameRate: Double = 30
     }
 
@@ -75,7 +76,7 @@ final class RenderPipeline: @unchecked Sendable {
         lock.unlock()
 
         guard scl_host_open() else { return }
-        scl_host_heartbeat(config.deviceProfile, config.asksForPermission)
+        scl_host_heartbeat(config.deviceProfile, config.asksForPermission, config.followsDeviceRotation)
         let time = CACurrentMediaTime()
         let backStream = Int32(SCLStreamBack)
         let frontStream = Int32(SCLStreamFront)

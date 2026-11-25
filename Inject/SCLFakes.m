@@ -754,7 +754,7 @@ static CMTime SCLClampedFrameDuration(CMTime duration) {
 
 #pragma mark - Rotation coordinator
 
-static CGFloat SCLCaptureAngle(UIDeviceOrientation orientation, BOOL front, CGFloat fallback) {
+CGFloat SCLCaptureAngle(UIDeviceOrientation orientation, BOOL front, CGFloat fallback) {
     switch (orientation) {
         case UIDeviceOrientationPortrait: return 90;
         case UIDeviceOrientationPortraitUpsideDown: return 270;

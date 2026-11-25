@@ -1,7 +1,11 @@
 #import <AVFoundation/AVFoundation.h>
 #import <CoreImage/CoreImage.h>
+#import <UIKit/UIKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
+
+/// Rotation that makes the sensor picture level for a device orientation, like the real rotation coordinator.
+CGFloat SCLCaptureAngle(UIDeviceOrientation orientation, BOOL front, CGFloat fallback);
 
 @class SCLFakeDeviceInput;
 
