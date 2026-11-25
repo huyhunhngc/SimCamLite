@@ -14,10 +14,22 @@ export interface ChangelogRelease {
 
 export const CHANGELOG_RELEASES: ChangelogRelease[] = [
   {
+    version: '0.2.6',
+    date: 'Nov 25, 2026',
+    summary: 'Resizing the window is smooth again while the cameras stream.',
+    latest: true,
+    highlights: [
+      {
+        title: 'Smoother window',
+        description:
+          "The camera previews now draw outside the window's layout, so streaming video no longer makes the app re-measure the whole window on every frame. Resizing and scrolling the Camera screen stay smooth, even with 4K video at 60 fps, and the app uses less CPU.",
+      },
+    ],
+  },
+  {
     version: '0.2.5',
     date: 'Nov 25, 2026',
     summary: 'Apps can now test 4K video in the simulator.',
-    latest: true,
     highlights: [
       {
         title: '4K video format',

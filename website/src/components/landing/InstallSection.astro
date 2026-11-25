@@ -1,5 +1,5 @@
 ---
-import { APP_VERSION, GITHUB_REPO, HOMEBREW_CMD, LATEST_RELEASE_URL } from '@data/navigation';
+import { APP_VERSION, DMG_DOWNLOAD_URL, GITHUB_REPO, HOMEBREW_CMD } from '@data/navigation';
 
 const sourceCommands = `brew install xcodegen
 git clone ${GITHUB_REPO}.git
@@ -35,7 +35,7 @@ cd SimCamLite && scripts/build.sh Debug`;
           Download <code>SimCamLite-{APP_VERSION}.dmg</code>, drag to Applications, and open it. Includes one-click CLI PATH installation inside Settings.
         </p>
         <div class="card-spacer"></div>
-        <a href={LATEST_RELEASE_URL} target="_blank" rel="noopener noreferrer" class="btn btn-tonal card-action">
+        <a href={DMG_DOWNLOAD_URL} class="btn btn-tonal card-action">
           Download v{APP_VERSION} DMG
         </a>
       </article>

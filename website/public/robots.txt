@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://simcam.ifateam.dev/sitemap-index.xml

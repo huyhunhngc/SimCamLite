@@ -1,6 +1,7 @@
-export const APP_VERSION = '0.2.5';
+export const APP_VERSION = '0.2.6';
 export const GITHUB_REPO = 'https://github.com/huyhunhngc/SimCamLite';
 export const LATEST_RELEASE_URL = `${GITHUB_REPO}/releases/latest`;
+export const DMG_DOWNLOAD_URL = `https://simcamupdates.ifateam.dev/releases/SimCamLite-${APP_VERSION}.dmg`;
 export const HOMEBREW_CMD = 'brew install --cask huyhunhngc/tap/simcam-lite';
 export const DOCS_EDIT_BASE = `${GITHUB_REPO}/tree/master/website/src/content/docs`;
 

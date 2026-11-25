@@ -1,5 +1,5 @@
 ---
-import { APP_VERSION, GITHUB_REPO, LATEST_RELEASE_URL, TOP_NAV } from '@data/navigation';
+import { APP_VERSION, DMG_DOWNLOAD_URL, GITHUB_REPO, TOP_NAV } from '@data/navigation';
 import ThemeToggle from './ThemeToggle.astro';
 
 interface Props {
@@ -15,17 +15,7 @@ const currentPath = Astro.url.pathname;
   <div class="header-inner">
     <div class="header-left">
       <a href="/" class="brand-link">
-        <span class="brand-icon" aria-hidden="true">
-          <svg width="26" height="26" viewBox="0 0 64 64" fill="none">
-            <rect width="64" height="64" rx="15" fill="#18191d"></rect>
-            <rect x="20" y="10" width="24" height="44" rx="5.5" stroke="#f5f5f5" stroke-width="2.5"></rect>
-            <rect x="28" y="13.5" width="8" height="2.4" rx="1.2" fill="#f5f5f5"></rect>
-            <path d="M21 27.5C21 25.8431 22.3431 24.5 24 24.5H26.2L27.5 22.3C27.9 21.6 28.65 21.2 29.45 21.2H34.55C35.35 21.2 36.1 21.6 36.5 22.3L37.8 24.5H40C41.6569 24.5 43 25.8431 43 27.5V39C43 40.6569 41.6569 42 40 42H24C22.3431 42 21 40.6569 21 39V27.5Z" fill="#141518" stroke="#f5f5f5" stroke-width="1.8"></path>
-            <circle cx="32" cy="33.2" r="5.3" stroke="#E5B567" stroke-width="2.4"></circle>
-            <circle cx="30.2" cy="31.5" r="1.25" fill="#E5B567"></circle>
-            <circle cx="39.4" cy="27.6" r="1.15" fill="#E5B567"></circle>
-          </svg>
-        </span>
+        <img class="brand-icon" src="/icon-192.png" width="26" height="26" alt="" />
         <span class="brand-name">SimCam Lite</span>
       </a>
     </div>
@@ -110,7 +100,7 @@ const currentPath = Astro.url.pathname;
         {TOP_NAV.map((item) => (
           <a href={item.href} class="mobile-nav-link">{item.label}</a>
         ))}
-        <a href={LATEST_RELEASE_URL} target="_blank" rel="noopener noreferrer" class="mobile-nav-link">
+        <a href={DMG_DOWNLOAD_URL} class="mobile-nav-link">
           Download DMG (v{APP_VERSION})
         </a>
         <a href={GITHUB_REPO} target="_blank" rel="noopener noreferrer" class="mobile-nav-link">
@@ -128,8 +118,8 @@ const currentPath = Astro.url.pathname;
     z-index: 50;
     height: var(--nav-height);
     background-color: var(--landing-header-bg);
-    backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
   }
 
   .site-header.is-docs {

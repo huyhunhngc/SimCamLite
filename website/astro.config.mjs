@@ -9,7 +9,17 @@ export default defineConfig({
   build: {
     format: 'directory',
   },
-  integrations: [mdx(), sitemap()],
+  integrations: [
+    mdx(),
+    sitemap({
+      filter: (page) => page !== 'https://simcam.ifateam.dev/docs/',
+    }),
+  ],
+  vite: {
+    build: {
+      cssMinify: 'esbuild',
+    },
+  },
   markdown: {
     shikiConfig: {
       themes: {

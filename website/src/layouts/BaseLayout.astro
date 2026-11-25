@@ -10,16 +10,25 @@ interface Props {
   description?: string;
   isDocs?: boolean;
   hasSidebar?: boolean;
+  noindex?: boolean;
+  ogType?: 'website' | 'article';
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
 }
 
 const {
   title,
-  description = 'A free, open-source macOS app that gives the iOS Simulator a working camera. Stream photos, 4K video, QR codes, or your Mac webcam with zero changes to your app code.',
+  description = 'Free, open-source macOS app that gives the iOS Simulator a working camera. Stream photos, 4K video, QR codes, or your Mac webcam with no app code changes.',
   isDocs = false,
   hasSidebar = false,
+  noindex = false,
+  ogType = 'website',
+  jsonLd,
 } = Astro.props;
 
-const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://simcam.ifateam.dev');
+const site = Astro.site ?? new URL('https://simcam.ifateam.dev');
+const canonicalURL = new URL(Astro.url.pathname, site);
+const ogImageURL = new URL('/og-image.png', site);
+const ogImageAlt = 'SimCam Lite on macOS streaming a video into a camera app on the iOS Simulator';
 ---
 
 <!doctype html>
@@ -39,19 +48,34 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://simcam.i
 
     <title>{title}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonicalURL.toString()} />
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonicalURL.toString()} />}
 
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="apple-touch-icon" href="/app-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#edeceb" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0a0a0b" />
+    <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
 
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalURL.toString()} />
     <meta property="og:site_name" content="SimCam Lite" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:image" content={ogImageURL.toString()} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={ogImageAlt} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageURL.toString()} />
+    <meta name="twitter:image:alt" content={ogImageAlt} />
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

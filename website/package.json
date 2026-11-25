@@ -5,11 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && node scripts/check-built-css.mjs",
     "preview": "astro preview",
     "check": "astro check",
     "cf:dev": "wrangler dev",
-    "deploy": "astro build && wrangler deploy"
+    "deploy": "pnpm build && wrangler deploy"
   },
   "dependencies": {
     "@astrojs/mdx": "^8.1.6",

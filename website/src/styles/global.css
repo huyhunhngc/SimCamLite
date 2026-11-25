@@ -472,6 +472,10 @@ dialog::backdrop {
   color: var(--docs-text-1);
 }
 
+.prose td:first-child code {
+  white-space: nowrap;
+}
+
 .prose tr:nth-child(2n) td {
   background-color: var(--docs-sidebar-bg);
 }

@@ -6,9 +6,52 @@ import FeatureShowcase from '@components/landing/FeatureShowcase.astro';
 import CliShowcase from '@components/landing/CliShowcase.astro';
 import InstallSection from '@components/landing/InstallSection.astro';
 import FaqSection from '@components/landing/FaqSection.astro';
+import { APP_VERSION, DMG_DOWNLOAD_URL, GITHUB_REPO } from '@data/navigation';
+import { FAQS } from '@data/faq';
+
+const site = Astro.site ?? new URL('https://simcam.ifateam.dev');
+const abs = (path: string) => new URL(path, site).toString();
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'SimCam Lite',
+    description:
+      'A free, open-source macOS app that gives the iOS Simulator a working camera. Stream photos, 4K video, QR codes, or your Mac webcam with zero changes to your app code.',
+    url: abs('/'),
+    applicationCategory: 'DeveloperApplication',
+    operatingSystem: 'macOS 14.0 or later',
+    softwareVersion: APP_VERSION,
+    downloadUrl: DMG_DOWNLOAD_URL,
+    installUrl: DMG_DOWNLOAD_URL,
+    releaseNotes: abs('/changelog/'),
+    image: abs('/icon-512.png'),
+    screenshot: abs('/og-image.png'),
+    license: 'https://opensource.org/licenses/MIT',
+    isAccessibleForFree: true,
+    sameAs: [GITHUB_REPO],
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'SimCam Lite',
+    url: abs('/'),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: FAQS.map((item) => ({
+      '@type': 'Question',
+      name: item.q,
+      acceptedAnswer: { '@type': 'Answer', text: item.a.replaceAll('`', '') },
+    })),
+  },
+];
 ---
 
-<BaseLayout title="SimCam Lite — Free, Open-Source Camera for the iOS Simulator">
+<BaseLayout title="SimCam Lite — Free, Open-Source Camera for the iOS Simulator" jsonLd={jsonLd}>
   <Hero />
   <WhyStrip />
   <FeatureShowcase />

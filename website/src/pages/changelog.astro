@@ -2,14 +2,7 @@
 import BaseLayout from '@layouts/BaseLayout.astro';
 import { CHANGELOG_RELEASES } from '@data/changelog';
 import { GITHUB_REPO, LATEST_RELEASE_URL } from '@data/navigation';
-
-function formatInlineCode(text: string): string {
-  const escaped = text
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;');
-  return escaped.replace(/`([^`]+)`/g, '<code>$1</code>');
-}
+import { formatInlineCode } from '@data/format';
 ---
 
 <BaseLayout

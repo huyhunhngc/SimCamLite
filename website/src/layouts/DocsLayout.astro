@@ -4,7 +4,7 @@ import BaseLayout from './BaseLayout.astro';
 import DocsSidebar from '@components/docs/DocsSidebar.astro';
 import TableOfContents from '@components/docs/TableOfContents.astro';
 import DocsPagination from '@components/docs/DocsPagination.astro';
-import { DOCS_EDIT_BASE, getPrevNext, normalizePath } from '@data/navigation';
+import { DOCS_EDIT_BASE, getBreadcrumb, getPrevNext, normalizePath } from '@data/navigation';
 
 interface Props {
   title: string;
@@ -20,9 +20,20 @@ const { prev, next } = getPrevNext(currentPath);
 const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
 const filePath = entryId.endsWith('.mdx') ? entryId : `${entryId}.mdx`;
 const editUrl = `${DOCS_EDIT_BASE}/${filePath}`;
+const site = Astro.site ?? new URL('https://simcam.ifateam.dev');
+const breadcrumb = getBreadcrumb(currentPath);
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'SimCam Lite', item: new URL('/', site).toString() },
+    { '@type': 'ListItem', position: 2, name: 'Docs', item: new URL('/docs/get-started/introduction/', site).toString() },
+    { '@type': 'ListItem', position: 3, name: breadcrumb?.title ?? title, item: new URL(currentPath, site).toString() },
+  ],
+};
 ---
 
-<BaseLayout title={`${title} | SimCam Lite Docs`} description={description} isDocs={true} hasSidebar={true}>
+<BaseLayout title={`${title} | SimCam Lite Docs`} description={description} isDocs={true} hasSidebar={true} ogType="article" jsonLd={jsonLd}>
   <div class="docs-mobile-bar">
     <button
       type="button"

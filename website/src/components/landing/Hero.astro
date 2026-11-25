@@ -1,7 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import cameraAndSim from '@assets/camera-and-simulator.png';
-import { APP_VERSION, HOMEBREW_CMD, LATEST_RELEASE_URL } from '@data/navigation';
+import { APP_VERSION, DMG_DOWNLOAD_URL, HOMEBREW_CMD } from '@data/navigation';
 ---
 
 <section class="hero">
@@ -18,7 +18,7 @@ import { APP_VERSION, HOMEBREW_CMD, LATEST_RELEASE_URL } from '@data/navigation'
       </p>
 
       <div class="hero-actions" data-hero-enter style="--hero-delay: 180ms;">
-        <a href={LATEST_RELEASE_URL} target="_blank" rel="noopener noreferrer" class="btn btn-primary hero-btn">
+        <a href={DMG_DOWNLOAD_URL} class="btn btn-primary hero-btn">
           Download for Mac
         </a>
         <a href="/docs/get-started/introduction/" class="btn btn-secondary hero-btn">

@@ -3,7 +3,7 @@
 
 <dialog id="search-dialog" class="search-dialog" closedby="any" aria-labelledby="search-dialog-title">
   <div class="search-panel">
-    <h1 id="search-dialog-title" class="sr-only">Search SimCam Lite documentation</h1>
+    <h2 id="search-dialog-title" class="sr-only">Search SimCam Lite documentation</h2>
     <div class="search-input-row">
       <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <circle cx="11" cy="11" r="8"></circle>
@@ -56,6 +56,7 @@
 
   .search-dialog::backdrop {
     background-color: rgba(0, 0, 0, 0.52);
+    -webkit-backdrop-filter: blur(4px);
     backdrop-filter: blur(4px);
   }
 
