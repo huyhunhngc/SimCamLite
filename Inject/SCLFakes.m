@@ -157,6 +157,7 @@ static CMTime SCLClampedFrameDuration(CMTime duration) {
     _displayMultiplier = displayMultiplier;
     _format = [[SCLFakeFormat alloc] sclInitWithMaxZoom:maxZoom width:SCL_SENSOR_WIDTH height:SCL_SENSOR_HEIGHT];
     _formats = @[[[SCLFakeFormat alloc] sclInitWithMaxZoom:maxZoom width:1920 height:1080], _format,
+                 [[SCLFakeFormat alloc] sclInitWithMaxZoom:maxZoom width:3840 height:2160],
                  [[SCLFakeFormat alloc] sclInitWithMaxZoom:maxZoom width:4032 height:3024]];
     _zoom = 1;
     _rampTarget = 1;

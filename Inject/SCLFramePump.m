@@ -46,8 +46,10 @@ NSDictionary<NSString *, id> *SCLVideoDataSettings(AVCaptureVideoDataOutput *out
 }
 
 static CGSize SCLPresetSize(AVCaptureSessionPreset preset) {
-    if (!preset || [preset isEqualToString:AVCaptureSessionPresetHigh] || [preset isEqualToString:AVCaptureSessionPreset1920x1080]
-        || [preset isEqualToString:AVCaptureSessionPreset3840x2160]) {
+    if ([preset isEqualToString:AVCaptureSessionPreset3840x2160]) {
+        return CGSizeMake(3840, 2160);
+    }
+    if (!preset || [preset isEqualToString:AVCaptureSessionPresetHigh] || [preset isEqualToString:AVCaptureSessionPreset1920x1080]) {
         return CGSizeMake(1920, 1080);
     }
     if ([preset isEqualToString:AVCaptureSessionPresetPhoto] || [preset isEqualToString:AVCaptureSessionPresetInputPriority]) {

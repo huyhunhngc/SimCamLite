@@ -1,10 +1,10 @@
-# SimCam Lite 0.2.4
+# SimCam Lite 0.2.5
 
-The camera picture now turns with the simulator, the way a real phone sees the world.
+Apps can now test 4K video in the simulator.
 
 ### What's New
 
-- **Follow Simulator Rotation:** Turn the simulator sideways and apps get a landscape view of your source, upright once the app applies the device rotation, just like on a real iPhone. Held portrait, the picture is the same as before. On by default; turn it off in the menu or the stream settings.
+- **4K video:** The back cameras now offer a 3840 × 2160 format, and the 4K session preset gives real 4K frames, so apps that look for 4K can show and record it. The simulator has no hardware video encoder, so a 4K recording saves fewer frames per second than on a real iPhone; the picture size is the same.
 
 ### System Requirements
 
