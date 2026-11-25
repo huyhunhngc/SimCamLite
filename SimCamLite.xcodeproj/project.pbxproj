@@ -12,6 +12,7 @@
 		0880B51AFFB691F49B6CAFC4 /* ControlSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B437F0ACB993E4DA541FD17 /* ControlSocket.swift */; };
 		0BF03CB7C887E6D4E19C41C5 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = EF58C11BD48DC1528AA9D29C /* Sparkle */; };
 		0C64202AA40C974FF9A1210E /* FrameSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD2CDEF2F111868F5775B1B7 /* FrameSource.swift */; };
+		0D1973E0409283112D89D0D8 /* SimulatorScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CB7F95138B6C8561C4E506 /* SimulatorScreen.swift */; };
 		0EA737A20F5F57581FF49B05 /* InjectInstaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB5406B1A96F9EFFCB8A20F /* InjectInstaller.swift */; };
 		19408CD9F340901806302635 /* ControlServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81E38129EFA3156B579079B5 /* ControlServer.swift */; };
 		196136FAB1A5E25CCC6D2DAF /* QRCodeSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ED56366B10213433430ED1C /* QRCodeSource.swift */; };
@@ -32,6 +33,7 @@
 		4AD4B431F774660FABAC114F /* SCLFakes.m in Sources */ = {isa = PBXBuildFile; fileRef = 0494865196855D0B63540660 /* SCLFakes.m */; };
 		4E5D502CBB3EA5CF5DE88533 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 470830E96E5D075088FD8E86 /* CoreMedia.framework */; };
 		55DDA91BFD3BFF291974885D /* SCLFrameReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 0EBB76D87F1D0C2A72054A8E /* SCLFrameReader.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5A53A94C2579C69A96C74D99 /* SCLSimulatorScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = D7A872E0658FB32E6D5DE30D /* SCLSimulatorScreen.m */; };
 		5C9EEC0FA1A0B4C992E5FB32 /* CLIInstaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF6BFC1DA0E0C0DAEF127CC /* CLIInstaller.swift */; };
 		611EAF940298E03F5DC8B075 /* StatusMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9735D6FFF96FAFFDF05E9B4 /* StatusMenuController.swift */; };
 		632C9DAC690CA87947695412 /* ImageSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5B11F0D31FE3D85AEF6BCDF /* ImageSource.swift */; };
@@ -47,6 +49,7 @@
 		887666F08EB8AC38F01C0A2B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29EA138942F93C947137F40C /* ContentView.swift */; };
 		8EF5834E11CBA91110601B70 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7589871061273A369707AC /* SettingsView.swift */; };
 		8FA3DD9AB76F44683C1EF197 /* InjectInstaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB5406B1A96F9EFFCB8A20F /* InjectInstaller.swift */; };
+		93696AF616760BA6265D5205 /* SimulatorPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56D077332BF573CAB651318C /* SimulatorPane.swift */; };
 		95D35D545CFB9DF5BE4458E7 /* SimulatorCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D22B2A76C2A5E019B627D46 /* SimulatorCommands.swift */; };
 		9883C30C5A9B470932A0532B /* SCLAudioPump.h in Headers */ = {isa = PBXBuildFile; fileRef = AB6F5D329DCBC133D24AAD00 /* SCLAudioPump.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		99007C648FEC0385BC252204 /* SCLRuntime.h in Headers */ = {isa = PBXBuildFile; fileRef = 72DF236B3E21C4998A47FEF7 /* SCLRuntime.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -141,8 +144,10 @@
 		4BF749F27598E70739D82A09 /* UpdateCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateCoordinator.swift; sourceTree = "<group>"; };
 		4EB40A42FE5356E0568CB03A /* SCLLoader.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = SCLLoader.c; sourceTree = "<group>"; };
 		4F3D94BB8E621B5313A6D8DF /* SCLFrameReader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SCLFrameReader.m; sourceTree = "<group>"; };
+		56D077332BF573CAB651318C /* SimulatorPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulatorPane.swift; sourceTree = "<group>"; };
 		57189909D564353E8D1790E7 /* SimCamLiteInject.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SimCamLiteInject.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B437F0ACB993E4DA541FD17 /* ControlSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlSocket.swift; sourceTree = "<group>"; };
+		5E137E5BE808E9479D600CB7 /* SCLSimulatorScreen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SCLSimulatorScreen.h; sourceTree = "<group>"; };
 		60A1CA3587E34BD2188F04E2 /* ControlHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlHandler.swift; sourceTree = "<group>"; };
 		631BE78CF386E631A96E8BFA /* StreamPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamPanel.swift; sourceTree = "<group>"; };
 		695AC54807E491CE388C0C17 /* SCLSharedMemory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SCLSharedMemory.h; sourceTree = "<group>"; };
@@ -178,6 +183,8 @@
 		CD69A3E6DA6F725A3341BCE5 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
 		D64F382B69C165B5F8D95341 /* SimulatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulatorView.swift; sourceTree = "<group>"; };
 		D782E026D61DCB65FD5424DE /* WhatsNewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhatsNewView.swift; sourceTree = "<group>"; };
+		D7A872E0658FB32E6D5DE30D /* SCLSimulatorScreen.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SCLSimulatorScreen.m; sourceTree = "<group>"; };
+		E1CB7F95138B6C8561C4E506 /* SimulatorScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulatorScreen.swift; sourceTree = "<group>"; };
 		E5B11F0D31FE3D85AEF6BCDF /* ImageSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSource.swift; sourceTree = "<group>"; };
 		ECFCCD48C06B16916F390BE0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		F60DC3EA3D51515AA1062A30 /* RenderPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenderPipeline.swift; sourceTree = "<group>"; };
@@ -235,6 +242,7 @@
 				F60DC3EA3D51515AA1062A30 /* RenderPipeline.swift */,
 				C8A307D72DD75EF15B94D6C6 /* SimulatorManager.swift */,
 				73ED683083EAC7447226F616 /* SimulatorModel.swift */,
+				E1CB7F95138B6C8561C4E506 /* SimulatorScreen.swift */,
 				9A3B270966D3F49A62A48896 /* StreamController.swift */,
 				4BF749F27598E70739D82A09 /* UpdateCoordinator.swift */,
 				92435A8BCE95C8A36507DD46 /* WhatsNewTracker.swift */,
@@ -305,6 +313,8 @@
 			children = (
 				835EBFBE9B3D4309EBC230BA /* SCLHostBridge.c */,
 				A76F67B3007192824B87436C /* SCLHostBridge.h */,
+				5E137E5BE808E9479D600CB7 /* SCLSimulatorScreen.h */,
+				D7A872E0658FB32E6D5DE30D /* SCLSimulatorScreen.m */,
 				33A84B447E1DBDC5F64B98A7 /* SimCamLite-Bridging-Header.h */,
 			);
 			path = HostBridge;
@@ -324,6 +334,7 @@
 				29EA138942F93C947137F40C /* ContentView.swift */,
 				0758D9CA1980E86FF76D9C6C /* PermissionsView.swift */,
 				FB7589871061273A369707AC /* SettingsView.swift */,
+				56D077332BF573CAB651318C /* SimulatorPane.swift */,
 				D64F382B69C165B5F8D95341 /* SimulatorView.swift */,
 				631BE78CF386E631A96E8BFA /* StreamPanel.swift */,
 				D782E026D61DCB65FD5424DE /* WhatsNewView.swift */,
@@ -675,10 +686,13 @@
 				6EB2803F90F3D1B8826C2B38 /* RecentFiles.swift in Sources */,
 				D45B767863521FE932F45CD9 /* RenderPipeline.swift in Sources */,
 				F8F5F3662503F9215768FD5A /* SCLHostBridge.c in Sources */,
+				5A53A94C2579C69A96C74D99 /* SCLSimulatorScreen.m in Sources */,
 				8EF5834E11CBA91110601B70 /* SettingsView.swift in Sources */,
 				9FF88AC266654A451BEAF07F /* SimCamLiteApp.swift in Sources */,
 				357AAA91A871B6BD19F3E6DB /* SimulatorManager.swift in Sources */,
 				EE6680F985B429CFA200E99B /* SimulatorModel.swift in Sources */,
+				93696AF616760BA6265D5205 /* SimulatorPane.swift in Sources */,
+				0D1973E0409283112D89D0D8 /* SimulatorScreen.swift in Sources */,
 				44E6519C7B322D693AF0E6BF /* SimulatorView.swift in Sources */,
 				611EAF940298E03F5DC8B075 /* StatusMenuController.swift in Sources */,
 				B05C81BA8EDBAD66D450D6FD /* StreamController.swift in Sources */,
@@ -743,7 +757,7 @@
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = "$(SIMCAM_DEVELOPMENT_TEAM)";
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -757,7 +771,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.2.6;
+				MARKETING_VERSION = 0.2.7;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.ifateam.simcamlite;
 				PRODUCT_NAME = SimCamLite;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1025,7 +1039,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = "$(SIMCAM_DEVELOPMENT_TEAM)";
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1039,7 +1053,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.2.6;
+				MARKETING_VERSION = 0.2.7;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.ifateam.simcamlite;
 				PRODUCT_NAME = SimCamLite;
 				PROVISIONING_PROFILE_SPECIFIER = "";

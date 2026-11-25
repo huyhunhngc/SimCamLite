@@ -68,6 +68,7 @@ final class AppModel: ObservableObject {
     @Published var toast: String?
 
     let simulators = SimulatorModel()
+    let simulatorScreen = SimulatorScreen()
     let permissions = PermissionsModel()
     var onShowPermissions: (() -> Void)?
     private let pipeline = RenderPipeline()

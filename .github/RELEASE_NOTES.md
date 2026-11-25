@@ -1,10 +1,12 @@
-# SimCam Lite 0.2.6
+# SimCam Lite 0.2.7
 
-Resizing the window is smooth again while the cameras stream.
+See and use the simulator right next to your cameras.
 
 ### What's New
 
-- **Smoother window:** The camera previews now draw outside the window's layout, so streaming video no longer makes the app re-measure the whole window on every frame. Resizing and scrolling the Camera screen stay smooth, even with 4K video at 60 fps, and the app uses less CPU.
+- **Simulator screen:** The Camera screen now shows the selected simulator's live screen on the right. Click to tap, drag to swipe, and type while it's selected. Home and Lock buttons sit below it. No screen recording permission needed.
+- **Show or hide it:** The new iPhone button in the toolbar shows or hides the simulator screen. SimCam Lite remembers your choice.
+- **Fits any window:** The two camera cards sit side by side when there's room and stack when the window is narrow. New windows open larger, at 1440 × 880.
 
 ### System Requirements
 

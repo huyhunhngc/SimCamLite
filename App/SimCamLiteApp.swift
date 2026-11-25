@@ -80,14 +80,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func showMainWindow() {
         if mainWindow == nil {
             let root = ContentView(model: model, updates: updates, whatsNew: whatsNew)
-                .frame(minWidth: 900, minHeight: 640)
+                .frame(minWidth: 1010, minHeight: 640)
             let window = makeWindow(title: "SimCamLite", autosave: "MainWindow", content: root,
                                     style: [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView],
-                                    bridgesToolbar: true)
+                                    bridgesToolbar: true, defaultSize: NSSize(width: 1440, height: 880))
             window.toolbarStyle = .unified
             // The toolbar's run destination takes the title's place, as in Xcode; the title still names the window in menus.
             window.titleVisibility = .hidden
-            window.minSize = NSSize(width: 900, height: 640)
+            window.minSize = NSSize(width: 1010, height: 640)
             mainWindow = window
         }
         present(mainWindow)
@@ -105,7 +105,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func makeWindow<Content: View>(title: String, autosave: String, content: Content, style: NSWindow.StyleMask,
-                                         bridgesToolbar: Bool = false) -> NSWindow {
+                                         bridgesToolbar: Bool = false, defaultSize: NSSize? = nil) -> NSWindow {
         let host = NSHostingController(rootView: content)
         // Lets SwiftUI `.toolbar` drive this AppKit window.
         if bridgesToolbar {
@@ -119,6 +119,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         window.isReleasedWhenClosed = false
         window.setFrameAutosaveName(autosave)
         if !window.setFrameUsingName(autosave) {
+            if let defaultSize, let visible = (window.screen ?? NSScreen.main)?.visibleFrame {
+                let frame = window.frameRect(forContentRect: NSRect(origin: .zero, size: defaultSize))
+                window.setFrame(NSRect(origin: .zero, size: NSSize(width: min(frame.width, visible.width),
+                                                                   height: min(frame.height, visible.height))),
+                                display: false)
+            }
             window.center()
         }
         return window

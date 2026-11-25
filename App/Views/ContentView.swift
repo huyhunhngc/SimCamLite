@@ -32,6 +32,7 @@ struct ContentView: View {
     @ObservedObject var whatsNew: WhatsNewTracker
     @ObservedObject private var cli = CLIInstaller.shared
     @AppStorage("mainSection") private var section: MainSection = .camera
+    @AppStorage("showsSimulatorPane") private var showsSimulatorPane = true
 
     init(model: AppModel, updates: UpdateCoordinator, whatsNew: WhatsNewTracker) {
         self.model = model
@@ -136,6 +137,12 @@ struct ContentView: View {
             .labelStyle(.titleAndIcon)
             .fixedSize()
             .help("Cameras the app sees: \(model.deviceProfile.title). Applies to apps launched after the change. Ask for Camera Permission: apps get the iOS camera alert and can be denied, like on a real iPhone.")
+            if section == .camera {
+                Toggle(isOn: $showsSimulatorPane.animation()) {
+                    Label("Simulator Screen", systemImage: "iphone")
+                }
+                .help(showsSimulatorPane ? "Hide the simulator screen" : "Show the simulator screen")
+            }
         }
     }
 
@@ -361,12 +368,33 @@ struct CameraView: View {
     @ObservedObject var simulators: SimulatorModel
     let open: (MainSection) -> Void
 
+    @AppStorage("showsSimulatorPane") private var showsSimulatorPane = true
+    @State private var columnWidth: CGFloat = .infinity
+    @State private var width: CGFloat = .infinity
+    /// Below this column width the two camera cards stack instead of squeezing side by side.
+    private static let sideBySideWidth: CGFloat = 600
+    private static let padding: CGFloat = 20
+
     var body: some View {
+        HStack(spacing: 0) {
+            cameraColumn
+            if showsSimulatorPane {
+                SimulatorPane(screen: model.simulatorScreen, simulators: simulators, availableWidth: width)
+                    .padding([.vertical, .trailing], 20)
+            }
+        }
+        .onGeometryChange(for: CGFloat.self, of: \.size.width) { width = $0 }
+    }
+
+    private var cameraColumn: some View {
         VStack(spacing: 0) {
             banners
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
-                    HStack(alignment: .top, spacing: 16) {
+                    let cards = columnWidth >= Self.sideBySideWidth
+                        ? AnyLayout(HStackLayout(alignment: .top, spacing: 16))
+                        : AnyLayout(VStackLayout(spacing: 16))
+                    cards {
                         StreamPanel(title: "Back camera", symbol: "camera", stream: model.back, preview: model.backPreview)
                         StreamPanel(title: "Front camera", symbol: "arrow.triangle.2.circlepath.camera",
                                     stream: model.front, preview: model.frontPreview, follows: model.frontFollowsBack) {
@@ -400,9 +428,10 @@ struct CameraView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(.quaternary.opacity(0.35), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
                 }
-                .padding(20)
+                .padding(Self.padding)
             }
         }
+        .onGeometryChange(for: CGFloat.self, of: \.size.width) { columnWidth = $0 - 2 * Self.padding }
     }
 
     /// Setup gaps that silently leave apps without the camera; shown until fixed.
