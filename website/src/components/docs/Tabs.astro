@@ -1,0 +1,132 @@
+---
+interface Props {
+  labels: string[];
+}
+
+const { labels } = Astro.props;
+const uid = Math.random().toString(36).slice(2, 8);
+---
+
+<div class="mdx-tabs" data-mdx-tabs={uid}>
+  <div class="mdx-tablist" role="tablist">
+    {labels.map((label, i) => (
+      <button
+        type="button"
+        role="tab"
+        class="mdx-tab-btn"
+        aria-selected={i === 0 ? 'true' : 'false'}
+        tabindex={i === 0 ? 0 : -1}
+        data-tab-idx={i}
+      >
+        {label}
+      </button>
+    ))}
+  </div>
+  <div class="mdx-tab-panels">
+    <slot />
+  </div>
+</div>
+
+<style>
+  .mdx-tabs {
+    margin: 20px 0;
+  }
+
+  .mdx-tablist {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    border-bottom: 1px solid var(--docs-divider);
+    overflow-x: auto;
+  }
+
+  .mdx-tab-btn {
+    padding: 8px 12px;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    background: transparent;
+    color: var(--docs-text-3);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .mdx-tab-btn:hover {
+    color: var(--docs-text-1);
+  }
+
+  .mdx-tab-btn[aria-selected='true'] {
+    color: var(--docs-text-1);
+    font-weight: 600;
+    border-bottom-color: var(--docs-link);
+  }
+
+  .mdx-tab-panels {
+    padding-top: 16px;
+  }
+
+  .mdx-tab-panels :global(.mdx-tab-item:not(:first-child)) {
+    display: none;
+  }
+
+  .mdx-tab-panels :global(.mdx-tab-item[data-active='true']) {
+    display: block !important;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    @keyframes tab-fade {
+      from {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    .mdx-tab-panels :global(.mdx-tab-item[data-active='true']) {
+      animation: tab-fade 0.2s var(--ease-out-expo) both;
+    }
+  }
+
+  .mdx-tab-panels :global(.mdx-tab-item[data-active='false']) {
+    display: none !important;
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-mdx-tabs]').forEach((root) => {
+    const buttons = Array.from(root.querySelectorAll<HTMLButtonElement>(':scope > .mdx-tablist > .mdx-tab-btn'));
+    const panels = Array.from(root.querySelectorAll<HTMLElement>(':scope > .mdx-tab-panels > .mdx-tab-item'));
+
+    const activate = (idx: number) => {
+      buttons.forEach((btn, i) => {
+        const active = i === idx;
+        btn.setAttribute('aria-selected', active ? 'true' : 'false');
+        btn.tabIndex = active ? 0 : -1;
+      });
+      panels.forEach((panel, i) => {
+        panel.setAttribute('data-active', i === idx ? 'true' : 'false');
+      });
+    };
+
+    activate(0);
+
+    buttons.forEach((btn, idx) => {
+      btn.addEventListener('click', () => activate(idx));
+      btn.addEventListener('keydown', (e) => {
+        let next = idx;
+        if (e.key === 'ArrowRight') next = (idx + 1) % buttons.length;
+        else if (e.key === 'ArrowLeft') next = (idx - 1 + buttons.length) % buttons.length;
+        else return;
+        e.preventDefault();
+        activate(next);
+        buttons[next]?.focus();
+      });
+    });
+  });
+</script>

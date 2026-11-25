@@ -1,0 +1,41 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Hero from '@components/landing/Hero.astro';
+import WhyStrip from '@components/landing/WhyStrip.astro';
+import FeatureShowcase from '@components/landing/FeatureShowcase.astro';
+import CliShowcase from '@components/landing/CliShowcase.astro';
+import InstallSection from '@components/landing/InstallSection.astro';
+import FaqSection from '@components/landing/FaqSection.astro';
+---
+
+<BaseLayout title="SimCam Lite — Free, Open-Source Camera for the iOS Simulator">
+  <Hero />
+  <WhyStrip />
+  <FeatureShowcase />
+  <CliShowcase />
+  <InstallSection />
+  <FaqSection />
+</BaseLayout>
+
+<script is:inline>
+  if (window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+    document.documentElement.dataset.motion = 'ready';
+    const revealEls = document.querySelectorAll('[data-reveal]');
+    if ('IntersectionObserver' in window && revealEls.length > 0) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.setAttribute('data-reveal', 'visible');
+              io.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+      );
+      revealEls.forEach((el) => io.observe(el));
+    } else {
+      revealEls.forEach((el) => el.setAttribute('data-reveal', 'visible'));
+    }
+  }
+</script>

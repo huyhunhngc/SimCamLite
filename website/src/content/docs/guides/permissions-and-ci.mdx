@@ -1,0 +1,68 @@
+---
+title: Testing Permissions & CI
+description: Test camera and microphone permission dialogs, denied states, and automate UI tests or AI agent workflows with simcam.
+section: Guides
+order: 6
+---
+
+Camera screens often fail at the edges: the first-time system permission prompt, the denied-permission empty state, or microphone prompts when switching to video capture. SimCam Lite lets you test every TCC permission state deterministically.
+
+## Global permission mode (`ask` vs `allow`)
+
+Control whether injected apps check the iOS Simulator’s real TCC database or automatically receive `.authorized` status:
+
+```bash
+# Respect real Simulator TCC permissions (shows system prompts on fresh install)
+simcam permission ask
+
+# Always report camera permission as allowed
+simcam permission allow
+```
+
+## Five deterministic permission presets
+
+To jump straight to a specific test scenario and relaunch your app with clean TCC state, pass `<app>` (bundle ID or app name) and a `<case>` preset:
+
+| Preset | Camera TCC | Microphone TCC | When to use |
+| --- | --- | --- | --- |
+| `fresh` | `reset` | `reset` | First-time onboarding & native permission prompt flows |
+| `camera-denied` | `revoke` | `reset` | Verify your “Enable Camera in Settings” fallback screen |
+| `mic-not-asked` | `grant` | `reset` | Camera already granted, testing delayed microphone prompt |
+| `mic-denied` | `grant` | `revoke` | Video/audio recording screen with blocked microphone |
+| `allowed` | `grant` | `grant` | Happy-path UI tests without blocking system alerts |
+
+```bash
+# Example: verify your denied-camera state on a booted simulator
+simcam permission com.example.scanner camera-denied
+
+# Reset back to a fresh install state
+simcam permission "My Scanner" fresh
+```
+
+<Callout type="note">
+  Running a preset automatically switches SimCam Lite to <code>ask</code> mode, applies the camera & microphone TCC actions on the target simulator, and relaunches the app with SimCam Lite injected.
+</Callout>
+
+## Scripting UI tests, CI & AI agents
+
+Because `simcam` controls the running app over its Unix socket (and auto-launches SimCam Lite in the background when needed), you can script reproducible camera fixtures in XCUITest, Fastlane, shell scripts, or AI coding agents:
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+# 1. Boot a simulator with injection enabled and wait until ready
+simcam boot "iPhone 17 Pro" --inject --wait
+
+# 2. Set deterministic camera & permission state
+simcam source ~/Fixtures/sample-receipt.jpg
+simcam adjust --fill --rotate 0 --no-mirror
+simcam permission com.example.scanner allowed
+
+# 3. Verify streaming state in JSON before running tests
+simcam status --json
+```
+
+### Checking readiness programmatically
+
+Use `simcam status --json` to inspect `streaming`, `fps`, `profile`, `injectInstalled`, `sharedMemoryReady`, `back` / `front` stream configs, and connected `clients` (with live `frames` and `photos` counts).

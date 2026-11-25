@@ -1,0 +1,223 @@
+---
+import { Image } from 'astro:assets';
+import cameraAndSim from '@assets/camera-and-simulator.png';
+import { APP_VERSION, HOMEBREW_CMD, LATEST_RELEASE_URL } from '@data/navigation';
+---
+
+<section class="hero">
+  <div class="container hero-inner">
+    <div class="hero-copy">
+      <p class="hero-eyebrow" data-hero-enter style="--hero-delay: 0ms;">SimCam Lite {APP_VERSION} · Open source · MIT</p>
+
+      <h1 class="hero-title" data-hero-enter style="--hero-delay: 60ms;">
+        A real camera for the iOS Simulator.
+      </h1>
+
+      <p class="hero-subtitle" data-hero-enter style="--hero-delay: 120ms;">
+        Stream a photo, looping 4K video, QR code, or your Mac’s webcam into any Simulator app—with zero changes to your app’s code.
+      </p>
+
+      <div class="hero-actions" data-hero-enter style="--hero-delay: 180ms;">
+        <a href={LATEST_RELEASE_URL} target="_blank" rel="noopener noreferrer" class="btn btn-primary hero-btn">
+          Download for Mac
+        </a>
+        <a href="/docs/get-started/introduction/" class="btn btn-secondary hero-btn">
+          Read the Docs
+        </a>
+      </div>
+
+      <div class="brew-bar" data-hero-enter style="--hero-delay: 230ms;">
+        <code class="brew-cmd">{HOMEBREW_CMD}</code>
+        <button
+          type="button"
+          class="brew-copy-btn"
+          data-copy-text={HOMEBREW_CMD}
+          aria-label="Copy Homebrew install command"
+        >
+          <span class="copy-label">Copy</span>
+        </button>
+      </div>
+
+      <ul class="hero-trust" aria-label="Highlights" data-hero-enter style="--hero-delay: 280ms;">
+        <li>Up to 4K video</li>
+        <li>30 & 60 fps</li>
+        <li>Independent back & front</li>
+        <li>Zero SDK</li>
+      </ul>
+    </div>
+
+    <div class="hero-stage" data-hero-enter style="--hero-delay: 320ms; --hero-duration: 0.85s;">
+      <Image
+        src={cameraAndSim}
+        alt="SimCam Lite macOS app streaming a video feed into a camera app running on the iOS Simulator"
+        loading="eager"
+        fetchpriority="high"
+        class="stage-image"
+      />
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding: 72px 0 40px;
+  }
+
+  .hero-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .hero-copy {
+    width: 100%;
+    min-width: 0;
+    max-width: 820px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .hero-eyebrow {
+    margin: 0 0 18px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--landing-ink-secondary);
+    letter-spacing: -0.01em;
+  }
+
+  .hero-title {
+    margin: 0;
+    max-width: 780px;
+    font-family: var(--font-display);
+    font-size: clamp(2.15rem, 6.2vw, 4.65rem);
+    font-weight: 700;
+    line-height: 1.04;
+    letter-spacing: -0.04em;
+    color: var(--landing-ink);
+  }
+
+  .hero-subtitle {
+    margin: 22px 0 0;
+    max-width: 600px;
+    font-size: clamp(1.0625rem, 1.7vw, 1.25rem);
+    line-height: 1.55;
+    letter-spacing: -0.01em;
+    color: var(--landing-ink-secondary);
+  }
+
+  .hero-actions {
+    margin-top: 32px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .hero-btn {
+    padding: 14px 26px;
+    font-size: 0.96875rem;
+  }
+
+  .brew-bar {
+    margin-top: 22px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 9px 8px 14px;
+    max-width: 100%;
+    min-width: 0;
+    border-radius: 13px;
+    background-color: var(--landing-surface);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+  }
+
+  .brew-cmd {
+    min-width: 0;
+    color: var(--landing-ink);
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: none;
+  }
+
+  .brew-copy-btn {
+    flex-shrink: 0;
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 0;
+    background-color: var(--landing-surface-strong);
+    color: var(--landing-ink);
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+  }
+
+  .brew-copy-btn:hover {
+    background-color: var(--landing-surface-muted);
+  }
+
+  .hero-trust {
+    list-style: none;
+    margin: 22px 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px 24px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--landing-ink-secondary);
+  }
+
+  .hero-stage {
+    width: 100%;
+    max-width: 1100px;
+    margin-top: 48px;
+    padding: 20px;
+    border-radius: 32px;
+    background-color: var(--landing-surface-strong);
+  }
+
+  .stage-image {
+    width: 100%;
+    height: auto;
+    border-radius: 20px;
+  }
+
+  @media (max-width: 640px) {
+    .hero {
+      padding: 44px 0 28px;
+    }
+
+    .hero-stage {
+      margin-top: 36px;
+      padding: 10px;
+      border-radius: 20px;
+    }
+
+    .stage-image {
+      border-radius: 12px;
+    }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-copy-text]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const text = btn.dataset.copyText;
+      if (!text) return;
+      try {
+        await navigator.clipboard.writeText(text);
+        const label = btn.querySelector('.copy-label');
+        if (label) label.textContent = 'Copied';
+        setTimeout(() => {
+          if (label) label.textContent = 'Copy';
+        }, 1600);
+      } catch {}
+    });
+  });
+</script>

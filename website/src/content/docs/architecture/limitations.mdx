@@ -1,0 +1,40 @@
+---
+title: Limitations & Compatibility
+description: Exact AVFoundation capabilities supported today and known limitations in the current release.
+section: Architecture
+order: 8
+---
+
+SimCam Lite focuses on the most common iOS camera workflows—live previews, frame processing, QR/barcode scanning via video frames, photo capture, and audio data streams—while remaining honest about what isn’t implemented yet.
+
+## What works today
+
+- **Live preview (`AVCaptureVideoPreviewLayer`)**: SwiftUI and UIKit camera screens render live frames at 30 or 60 fps with proper aspect fill/fit and rotation.
+- **Video frame processing (`AVCaptureVideoDataOutput`)**: Vision (`VNDetectBarcodesRequest`, `VNRecognizeTextRequest`), CoreML, WebRTC/video call SDKs, and custom Metal/CoreImage pipelines receive real `CMSampleBuffer` frames.
+- **Photo capture (`AVCapturePhotoOutput`)**: Capturing stills returns full-resolution photos from the active back or front stream.
+- **4K back camera format (`v0.2.5+`)**: Back cameras advertise a `3840 × 2160` format and respond to `.hd4K3840x2160` session presets.
+- **Audio data output (`AVCaptureAudioDataOutput`)**: Supplies 48 kHz mono 16-bit PCM samples from the Mac’s microphone (or silence if mic permission is not granted).
+- **Device discovery & rotation**: Emulates Triple (`0.5× · 1× · 3×`), Dual Wide, and Single camera topologies plus `AVCaptureDeviceRotationCoordinator`.
+
+## Known limitations
+
+<Callout type="warning" title="Unsupported AVFoundation APIs">
+  The following features are not yet supported in SimCam Lite:
+  <ul>
+    <li><strong>Movie file recording (<code>AVCaptureMovieFileOutput</code>)</strong></li>
+    <li><strong>Built-in metadata output (<code>AVCaptureMetadataOutput</code>)</strong> such as AVFoundation’s native QR/barcode object delegate</li>
+    <li><strong>Multi-camera sessions (<code>AVCaptureMultiCamSession</code>)</strong></li>
+  </ul>
+</Callout>
+
+### Notes on QR code scanning
+
+If your app scans QR codes using **Apple Vision** (`VNDetectBarcodesRequest`) or another decoder operating on `AVCaptureVideoDataOutput` frames, QR scanning works out of the box. Apps relying exclusively on `AVCaptureMetadataOutput` will not receive metadata objects yet.
+
+### Notes on 4K recording performance
+
+Because the iOS Simulator has no hardware video encoder, recording 4K frames software-side saves fewer frames per second than a physical iPhone—though the captured dimensions (`3840 × 2160`) match real hardware.
+
+## Found a missing API?
+
+If your app uses an `AVFoundation` class or property that behaves differently on the Simulator, please [open an issue on GitHub](https://github.com/huyhunhngc/SimCamLite/issues) with the symbol or crash log.

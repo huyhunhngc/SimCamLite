@@ -1,0 +1,78 @@
+---
+title: Installation
+description: Install SimCam Lite on macOS using Homebrew, the signed DMG release, or by building from source.
+section: Get Started
+order: 2
+---
+
+## System requirements
+
+- **macOS:** 14.0 (Sonoma) or newer
+- **Xcode:** with at least one iOS Simulator runtime installed
+
+## Choose an install method
+
+<Tabs labels={['Homebrew (Recommended)', 'Direct DMG', 'Build from Source']}>
+  <TabItem>
+    <p>Installing with Homebrew puts <strong>SimCamLite.app</strong> in <code>/Applications</code> and links the <code>simcam</code> command onto your <code>PATH</code> automatically.</p>
+
+```bash
+brew install --cask huyhunhngc/tap/simcam-lite
+```
+
+    <p>SimCam Lite updates itself automatically via Sparkle, so you do not need to run <code>brew upgrade</code> after installation.</p>
+  </TabItem>
+  <TabItem>
+    <Steps>
+      <ol>
+        <li>Download <code>SimCamLite-&lt;version&gt;.dmg</code> from the <a href="https://github.com/huyhunhngc/SimCamLite/releases/latest" target="_blank" rel="noopener noreferrer">latest GitHub release</a>.</li>
+        <li>Open the DMG and drag <strong>SimCam Lite</strong> into your <strong>Applications</strong> folder.</li>
+        <li>Launch <strong>SimCam Lite</strong> from Applications. Future updates are delivered automatically via Sparkle.</li>
+      </ol>
+    </Steps>
+  </TabItem>
+  <TabItem>
+    <p>Recommended for contributors or anyone modifying the source. Requires Xcode 26+ and an Apple Developer account.</p>
+    <Steps>
+      <ol>
+        <li>
+          Install <a href="https://github.com/yonaskolb/XcodeGen" target="_blank" rel="noopener noreferrer">XcodeGen</a>:
+          <pre><code>brew install xcodegen</code></pre>
+        </li>
+        <li>
+          Clone the repository and configure your team ID:
+          <pre><code>git clone https://github.com/huyhunhngc/SimCamLite.git
+cd SimCamLite
+cp Config/Environment.example.xcconfig Config/Environment.xcconfig</code></pre>
+          Set <code>SIMCAM_DEVELOPMENT_TEAM</code> in <code>Config/Environment.xcconfig</code>. You can leave the other values as-is.
+        </li>
+        <li>
+          Build and open the app:
+          <pre><code>scripts/build.sh Debug
+open build/SimCamLite.app</code></pre>
+        </li>
+      </ol>
+    </Steps>
+  </TabItem>
+</Tabs>
+
+## Installing the `simcam` CLI (DMG users)
+
+If you installed via Homebrew, `simcam` is already on your `PATH`. If you installed from the DMG:
+
+<Steps>
+  <ol>
+    <li>Open <strong>SimCam Lite</strong>.</li>
+    <li>Choose <strong>Install Command Line Tool…</strong> from <strong>Settings › Command Line Tool</strong>, the menu bar icon, or the <strong>SimCam Lite</strong> app menu.</li>
+    <li>Enter your macOS password when prompted to symlink the binary to <code>/usr/local/bin/simcam</code> (or cancel to install into <code>~/.local/bin/simcam</code>).</li>
+    <li>Open a new Terminal window and verify with <code>simcam status</code>.</li>
+  </ol>
+</Steps>
+
+<Callout type="note" title="Moved the app?">
+  If you relocate <code>SimCamLite.app</code> later, the menus automatically change to <strong>Fix Command Line Tool…</strong> so you can refresh the symlink in one click.
+</Callout>
+
+## Automatic updates
+
+Release builds include [Sparkle](https://sparkle-project.org) with signed updates and a **What’s New** release-notes sheet. You can trigger a manual check anytime from **Settings › Updates › Check for Updates…**.

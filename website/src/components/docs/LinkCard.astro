@@ -1,0 +1,59 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  href: string;
+}
+
+const { title, description, href } = Astro.props;
+---
+
+<a href={href} class="mdx-link-card">
+  <div class="link-card-top">
+    <span class="link-card-title">{title}</span>
+    <span class="link-card-arrow" aria-hidden="true">→</span>
+  </div>
+  <p class="link-card-desc">{description}</p>
+</a>
+
+<style>
+  .mdx-link-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 18px 20px;
+    border-radius: 8px;
+    background-color: var(--docs-bg-soft);
+    text-decoration: none !important;
+    transition: background-color 0.15s ease;
+  }
+
+  .mdx-link-card:hover {
+    background-color: var(--docs-brand-soft);
+  }
+
+  .link-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .link-card-title {
+    font-size: 0.96875rem;
+    font-weight: 600;
+    color: var(--docs-text-1);
+  }
+
+  .link-card-arrow {
+    color: var(--docs-link);
+    font-weight: 500;
+  }
+
+  .link-card-desc {
+    margin: 0 !important;
+    font-size: 0.875rem;
+    line-height: 1.55;
+    color: var(--docs-text-2) !important;
+  }
+</style>

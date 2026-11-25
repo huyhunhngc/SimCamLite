@@ -1,0 +1,205 @@
+---
+import { APP_VERSION, GITHUB_REPO, HOMEBREW_CMD, LATEST_RELEASE_URL } from '@data/navigation';
+
+const sourceCommands = `brew install xcodegen
+git clone ${GITHUB_REPO}.git
+cd SimCamLite && scripts/build.sh Debug`;
+---
+
+<section id="install" class="install-section">
+  <div class="container">
+    <header class="install-head" data-reveal>
+      <h2>Free forever. Install in seconds.</h2>
+      <p>
+        MIT licensed open source. Requires macOS 14.0 (Sonoma) or newer and Xcode with an iOS Simulator runtime.
+      </p>
+    </header>
+
+    <div class="install-grid">
+      <article class="install-card install-card--featured" data-reveal style="--reveal-delay: 0ms;">
+        <div class="card-meta">Recommended · Includes CLI</div>
+        <h3>Homebrew</h3>
+        <p class="card-copy">
+          Installs <code>SimCamLite.app</code> into Applications and puts <code>simcam</code> on your <code>PATH</code>. Self-updates via Sparkle.
+        </p>
+        <pre class="install-code"><code>{HOMEBREW_CMD}</code></pre>
+        <button type="button" class="btn btn-primary card-action" data-copy-cmd={HOMEBREW_CMD}>
+          Copy command
+        </button>
+      </article>
+
+      <article class="install-card" data-reveal style="--reveal-delay: 80ms;">
+        <div class="card-meta">Signed & Notarized DMG</div>
+        <h3>Direct Download</h3>
+        <p class="card-copy">
+          Download <code>SimCamLite-{APP_VERSION}.dmg</code>, drag to Applications, and open it. Includes one-click CLI PATH installation inside Settings.
+        </p>
+        <div class="card-spacer"></div>
+        <a href={LATEST_RELEASE_URL} target="_blank" rel="noopener noreferrer" class="btn btn-tonal card-action">
+          Download v{APP_VERSION} DMG
+        </a>
+      </article>
+
+      <article class="install-card" data-reveal style="--reveal-delay: 160ms;">
+        <div class="card-meta">For Contributors</div>
+        <h3>From Source</h3>
+        <p class="card-copy">
+          Requires Xcode 26+, XcodeGen, and your team ID in <code>Config/Environment.xcconfig</code>.
+        </p>
+        <pre class="install-code"><code>{sourceCommands}</code></pre>
+        <a href="/docs/get-started/installation/" class="btn btn-tonal card-action">
+          Read build guide →
+        </a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .install-section {
+    padding: 56px 0;
+    scroll-margin-top: calc(var(--nav-height) + 16px);
+  }
+
+  .install-head {
+    max-width: 640px;
+    margin: 0 auto 44px;
+    text-align: center;
+  }
+
+  .install-head h2 {
+    margin: 0 0 14px;
+    font-family: var(--font-display);
+    font-size: clamp(2.1rem, 4.2vw, 3.2rem);
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    line-height: 1.06;
+    color: var(--landing-ink);
+  }
+
+  .install-head p {
+    margin: 0;
+    font-size: 1.03125rem;
+    line-height: 1.55;
+    color: var(--landing-ink-secondary);
+  }
+
+  .install-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+    align-items: stretch;
+  }
+
+  .install-card {
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    padding: 34px 28px 28px;
+    border-radius: 30px;
+    background-color: var(--landing-surface);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .install-card--featured {
+    background-color: var(--landing-surface-strong);
+  }
+
+  .card-meta {
+    font-size: 0.8125rem;
+    font-weight: 550;
+    color: var(--landing-ink-secondary);
+  }
+
+  .install-card h3 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.65rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--landing-ink);
+  }
+
+  .card-copy {
+    margin: 0;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--landing-ink-secondary);
+  }
+
+  .card-copy code {
+    font-family: var(--font-mono);
+    font-size: 0.84em;
+    padding: 1px 5px;
+    border-radius: 5px;
+    background-color: var(--landing-canvas);
+    color: var(--landing-ink);
+  }
+
+  .install-code {
+    max-width: 100%;
+    margin: 4px 0 auto;
+    padding: 14px 16px;
+    border-radius: 14px;
+    background-color: var(--landing-canvas);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    line-height: 1.65;
+    color: var(--landing-ink);
+    overflow-x: auto;
+  }
+
+  .card-spacer {
+    flex: 1;
+  }
+
+  .card-action {
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  .btn-tonal {
+    background-color: var(--landing-surface-muted);
+    color: var(--landing-ink);
+  }
+
+  .btn-tonal:hover {
+    opacity: 0.84;
+  }
+
+  @media (max-width: 960px) {
+    .install-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .install-section {
+      padding: 40px 0;
+    }
+
+    .install-card {
+      padding: 24px 20px;
+      border-radius: 22px;
+    }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-copy-cmd]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const cmd = btn.dataset.copyCmd;
+      if (!cmd) return;
+      try {
+        await navigator.clipboard.writeText(cmd);
+        const original = btn.textContent;
+        btn.textContent = 'Copied to clipboard';
+        setTimeout(() => {
+          btn.textContent = original;
+        }, 1600);
+      } catch {}
+    });
+  });
+</script>

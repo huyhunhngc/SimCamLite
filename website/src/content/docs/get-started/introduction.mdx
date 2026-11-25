@@ -1,0 +1,72 @@
+---
+title: Introduction
+description: What SimCam Lite is, why it exists, and how it gives the iOS Simulator a working camera without touching your app’s source code.
+section: Get Started
+order: 1
+---
+
+**SimCam Lite** is a free, MIT-licensed macOS application and CLI tool that gives the iOS Simulator a working camera. Pick a photo, a looping video (up to 4K), a generated QR code, your Mac’s webcam, or a test pattern — and every app on the Simulator sees it as the iPhone’s back or front camera.
+
+**You don’t change a single line of your app’s code.**
+
+## Why SimCam Lite?
+
+The iOS Simulator has no camera hardware. `AVCaptureDevice.default(for: .video)` returns `nil`, leaving every scanner, KYC flow, and camera screen unusable without a physical iPhone on your desk.
+
+SimCam Lite was built to solve two gaps in existing tooling:
+
+- **Commercial simulator tools** require paid per-seat licenses, making them hard to adopt across teams, QA testers, or CI runners.
+- **Older open-source alternatives** are often abandoned, require embedding an intrusive SDK into your app, or only return a single static image.
+
+SimCam Lite works out of the box with apps launched from the Simulator **and** apps run directly from Xcode with the LLDB debugger attached.
+
+## Key capabilities
+
+- **Any source as the camera**: still photos, looping videos (including 4K `3840 × 2160`), QR codes generated from links or text, live Mac cameras, or a test pattern. Drag and drop any file onto the preview to switch immediately.
+- **Independent back and front cameras**: give each camera its own source, or toggle **Same as back**. Adjust fill vs. fit (letterbox), 90° rotation, horizontal mirroring, and frame-exact video pause.
+- **Realistic camera profiles**: emulate **Triple** (`0.5× · 1× · 3×`), **Dual Wide**, or **Single** camera hardware at **30** or **60 fps**, with device rotation following the simulator.
+- **Deterministic permissions & audio**: test all 5 camera/microphone TCC presets and stream 48 kHz mono 16-bit PCM audio via `AVCaptureAudioDataOutput`.
+- **Full CLI automation (`simcam`)**: control sources, boot simulators, launch apps, toggle permission presets, and configure Xcode schemes from Terminal, UI tests, CI, or AI coding agents.
+
+## How it fits together
+
+```mermaid
+flowchart LR
+  Sources["Sources (Photo · 4K Video · QR · Webcam)"] --> App["SimCamLite.app (macOS Renderer)"]
+  App --> SHM["frames.shm (Shared Memory)"]
+  SHM --> Target["Your iOS App (Unmodified AVFoundation)"]
+```
+
+1. **SimCamLite.app** renders your chosen back and front sources on macOS and writes BGRA frames into a shared memory ring buffer (`/Users/Shared/SimCamLite/frames.shm`).
+2. **SimCamLiteLoader.dylib** is injected into iOS Simulator user processes via `DYLD_INSERT_LIBRARIES` (system processes are skipped). It loads `SimCamLiteInject.framework`.
+3. **SimCamLiteInject.framework** emulates `AVFoundation` (`AVCaptureDevice`, `AVCaptureSession`, `AVCaptureVideoDataOutput`, `AVCapturePhotoOutput`, `AVCaptureAudioDataOutput`, `AVCaptureVideoPreviewLayer`, and `AVCaptureDeviceRotationCoordinator`).
+4. **`simcam` CLI** communicates with the running app over a Unix socket (`~/Library/Application Support/SimCamLite/control.sock`) so Terminal and GUI always stay in sync.
+
+<Callout type="tip" title="Zero SDK footprint">
+  Because injection happens at runtime in the Simulator, your production App Store archive never contains SimCam Lite code.
+</Callout>
+
+## Next steps
+
+<CardGrid>
+  <LinkCard
+    title="Installation"
+    description="Install via Homebrew Cask, Direct DMG download, or build from source."
+    href="/docs/get-started/installation/"
+  />
+  <LinkCard
+    title="Quick Start"
+    description="Stream your first camera frame into an iOS Simulator app in three steps."
+    href="/docs/get-started/quick-start/"
+  />
+  <LinkCard
+    title="Simulator & Xcode Setup"
+    description="Enable simulator-wide injection or run with the Xcode debugger attached."
+    href="/docs/guides/simulator-and-xcode/"
+  />
+  <LinkCard
+    title="CLI Reference"
+    description="Explore all 18 simcam subcommands, JSON output, and zsh completions."
+    href="/docs/reference/cli/"
+  />
+</CardGrid>

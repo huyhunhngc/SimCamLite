@@ -1,0 +1,62 @@
+---
+interface Props {
+  type?: 'note' | 'tip' | 'warning' | 'caution';
+  title?: string;
+}
+
+const { type = 'note', title } = Astro.props;
+
+const defaultTitles: Record<NonNullable<Props['type']>, string> = {
+  note: 'Note',
+  tip: 'Tip',
+  warning: 'Warning',
+  caution: 'Caution',
+};
+
+const resolvedTitle = title ?? defaultTitles[type];
+---
+
+<aside class:list={['callout', `callout-${type}`]}>
+  <div class="callout-title">{resolvedTitle}</div>
+  <div class="callout-body">
+    <slot />
+  </div>
+</aside>
+
+<style>
+  .callout {
+    margin: 16px 0;
+    padding: 16px 18px;
+    border-radius: 8px;
+    background-color: var(--docs-bg-soft);
+    font-size: 0.9375rem;
+    line-height: 1.65;
+  }
+
+  .callout-title {
+    font-size: 0.84375rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--docs-text-1);
+  }
+
+  .callout-body :global(p) {
+    color: var(--docs-text-2);
+  }
+
+  .callout-body :global(p:last-child) {
+    margin-bottom: 0;
+  }
+
+  .callout-tip .callout-title {
+    color: var(--callout-tip-text);
+  }
+
+  .callout-warning .callout-title {
+    color: var(--brand-gold);
+  }
+
+  .callout-caution .callout-title {
+    color: var(--callout-caution-text);
+  }
+</style>

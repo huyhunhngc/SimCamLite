@@ -1,0 +1,481 @@
+---
+import type { MarkdownHeading } from 'astro';
+import BaseLayout from './BaseLayout.astro';
+import DocsSidebar from '@components/docs/DocsSidebar.astro';
+import TableOfContents from '@components/docs/TableOfContents.astro';
+import DocsPagination from '@components/docs/DocsPagination.astro';
+import { DOCS_EDIT_BASE, getPrevNext, normalizePath } from '@data/navigation';
+
+interface Props {
+  title: string;
+  description: string;
+  section: string;
+  entryId: string;
+  headings: MarkdownHeading[];
+}
+
+const { title, description, entryId, headings } = Astro.props;
+const currentPath = normalizePath(Astro.url.pathname);
+const { prev, next } = getPrevNext(currentPath);
+const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
+const filePath = entryId.endsWith('.mdx') ? entryId : `${entryId}.mdx`;
+const editUrl = `${DOCS_EDIT_BASE}/${filePath}`;
+---
+
+<BaseLayout title={`${title} | SimCam Lite Docs`} description={description} isDocs={true} hasSidebar={true}>
+  <div class="docs-mobile-bar">
+    <button
+      type="button"
+      class="mobile-bar-btn"
+      id="docs-drawer-open"
+      aria-label="Open documentation menu"
+      aria-controls="docs-drawer"
+      aria-expanded="false"
+    >
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M4 7h16M4 12h16M4 17h16"></path>
+      </svg>
+      <span>Menu</span>
+    </button>
+
+    {tocHeadings.length > 0 && (
+      <details class="mobile-toc">
+        <summary>
+          <span>On this page</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="m6 9 6 6 6-6"></path>
+          </svg>
+        </summary>
+        <nav class="mobile-toc-list" aria-label="On this page">
+          {tocHeadings.map((h) => (
+            <a href={`#${h.slug}`} class:list={['mobile-toc-link', { 'depth-3': h.depth === 3 }]}>
+              {h.text}
+            </a>
+          ))}
+        </nav>
+      </details>
+    )}
+  </div>
+
+  <div class="docs-shell">
+    <aside class="docs-sidebar-col" aria-label="Documentation sidebar">
+      <div class="docs-sidebar-inner">
+        <DocsSidebar currentPath={currentPath} variant="sidebar" />
+      </div>
+    </aside>
+
+    <div class="docs-main-col">
+      <article class="docs-article">
+        <header class="docs-header">
+          <h1 class="docs-title">{title}</h1>
+          <p class="docs-lead">{description}</p>
+        </header>
+
+        <div class="prose" id="docs-prose">
+          <slot />
+        </div>
+
+        <footer class="docs-article-footer">
+          <a href={editUrl} target="_blank" rel="noopener noreferrer" class="edit-link">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 20h9"></path>
+              <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+            </svg>
+            Edit this page on GitHub
+          </a>
+          <DocsPagination prev={prev} next={next} />
+        </footer>
+      </article>
+    </div>
+
+    <aside class="docs-toc-col" aria-label="Table of contents">
+      <TableOfContents headings={tocHeadings} />
+    </aside>
+  </div>
+
+  <DocsSidebar currentPath={currentPath} variant="drawer" />
+</BaseLayout>
+
+<style>
+  .docs-mobile-bar {
+    display: none;
+    position: sticky;
+    top: var(--nav-height);
+    z-index: 40;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--docs-divider);
+    background-color: var(--docs-bg);
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .mobile-bar-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 0;
+    background-color: transparent;
+    color: var(--docs-text-2);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  .mobile-bar-btn:hover {
+    color: var(--docs-text-1);
+    background-color: var(--docs-bg-soft);
+  }
+
+  .mobile-toc {
+    position: relative;
+  }
+
+  .mobile-toc summary {
+    list-style: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--docs-divider);
+    background-color: var(--docs-bg);
+    color: var(--docs-text-2);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  .mobile-toc summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .mobile-toc-list {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 8px);
+    width: min(280px, 85vw);
+    max-height: 60svh;
+    overflow-y: auto;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid var(--docs-divider);
+    background-color: var(--docs-bg);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.14);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .mobile-toc-link {
+    padding: 6px 8px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.8125rem;
+    color: var(--docs-text-2);
+  }
+
+  .mobile-toc-link.depth-3 {
+    padding-left: 20px;
+    font-size: 0.78125rem;
+  }
+
+  .mobile-toc-link:hover {
+    background-color: var(--docs-bg-soft);
+    color: var(--docs-text-1);
+  }
+
+  /* Full-bleed Tapflow 3-column layout aligned with 1200px navbar */
+  .docs-shell {
+    width: 100%;
+    display: grid;
+    grid-template-columns: max(256px, calc((100vw - 1200px) / 2 + 256px)) minmax(0, 1fr) max(220px, calc((100vw - 1200px) / 2 + 220px));
+    align-items: start;
+  }
+
+  .docs-sidebar-col {
+    position: sticky;
+    top: var(--nav-height);
+    height: calc(100svh - var(--nav-height));
+    overflow-y: auto;
+    background-color: var(--docs-sidebar-bg);
+    border-right: 1px solid var(--docs-divider);
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .docs-sidebar-inner {
+    width: 256px;
+    padding: 24px 20px 64px 24px;
+  }
+
+  .docs-main-col {
+    min-width: 0;
+    padding: 40px 48px 96px;
+  }
+
+  .docs-article {
+    max-width: 720px;
+    margin-inline: auto;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    @keyframes docs-fade-in {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    .docs-article {
+      animation: docs-fade-in 0.28s var(--ease-out-expo) both;
+    }
+  }
+
+  .docs-header {
+    margin-bottom: 28px;
+  }
+
+  .docs-title {
+    margin: 0;
+    font-family: var(--font-sans);
+    font-size: clamp(1.75rem, 2.8vw, 2rem);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    color: var(--docs-text-1);
+  }
+
+  .docs-lead {
+    margin: 10px 0 0;
+    font-size: 1rem;
+    line-height: 1.65;
+    color: var(--docs-text-2);
+  }
+
+  .docs-article-footer {
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid var(--docs-divider);
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .edit-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    width: fit-content;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--docs-link);
+    text-decoration: none;
+  }
+
+  .edit-link:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .docs-toc-col {
+    position: sticky;
+    top: var(--nav-height);
+    max-height: calc(100svh - var(--nav-height));
+    overflow-y: auto;
+    padding: 40px 24px 48px 16px;
+    width: 240px;
+  }
+
+  @media (max-width: 1279px) {
+    .docs-shell {
+      grid-template-columns: 272px minmax(0, 1fr);
+    }
+
+    .docs-toc-col {
+      display: none;
+    }
+  }
+
+  @media (max-width: 959px) {
+    .docs-mobile-bar {
+      display: flex;
+    }
+
+    .docs-shell {
+      grid-template-columns: 1fr;
+    }
+
+    .docs-sidebar-col {
+      display: none;
+    }
+
+    .docs-main-col {
+      padding: 28px 20px 72px;
+    }
+  }
+</style>
+
+<script>
+  const prose = document.getElementById('docs-prose');
+  if (prose) {
+    // Wrap Shiki code blocks in Tapflow-style borderless wrapper with quiet lang + hover copy (skip mermaid)
+    const mermaidPres: HTMLPreElement[] = [];
+    prose.querySelectorAll<HTMLPreElement>('pre.astro-code').forEach((pre) => {
+      const lang = pre.getAttribute('data-language') || 'text';
+      if (lang === 'mermaid') {
+        mermaidPres.push(pre);
+        return;
+      }
+      if (pre.parentElement?.classList.contains('code-block-wrap')) return;
+
+      const wrap = document.createElement('div');
+      wrap.className = 'code-block-wrap';
+
+      const langEl = document.createElement('span');
+      langEl.className = 'code-lang';
+      langEl.textContent = lang;
+
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'code-copy-btn';
+      btn.textContent = 'Copy';
+      btn.setAttribute('aria-label', `Copy ${lang} code`);
+
+      btn.addEventListener('click', async () => {
+        const text = pre.textContent ?? '';
+        try {
+          await navigator.clipboard.writeText(text);
+          btn.setAttribute('data-copied', 'true');
+          btn.textContent = 'Copied';
+          setTimeout(() => {
+            btn.removeAttribute('data-copied');
+            btn.textContent = 'Copy';
+          }, 1500);
+        } catch {}
+      });
+
+      pre.parentNode?.insertBefore(wrap, pre);
+      wrap.append(langEl, btn, pre);
+    });
+
+    // Lazy-load and render Mermaid diagrams in Tapflow monochrome light/dark theme
+    if (mermaidPres.length > 0) {
+      const figures = mermaidPres.map((pre) => {
+        const figure = document.createElement('figure');
+        figure.className = 'mermaid-diagram';
+        figure.dataset.mermaidSource = (pre.textContent ?? '').trim();
+        pre.replaceWith(figure);
+        return figure;
+      });
+
+      const metaScheme = document.querySelector<HTMLMetaElement>('meta[name="color-scheme"]');
+      const mqDark = window.matchMedia('(prefers-color-scheme: dark)');
+
+      const isDarkMode = () => {
+        const content = metaScheme?.content;
+        if (content === 'dark') return true;
+        if (content === 'light') return false;
+        return mqDark.matches;
+      };
+
+      const renderMermaidDiagrams = async () => {
+        const { default: mermaid } = await import('mermaid');
+        const dark = isDarkMode();
+
+        mermaid.initialize({
+          startOnLoad: false,
+          theme: 'base',
+          securityLevel: 'strict',
+          flowchart: {
+            curve: 'basis',
+            padding: 14,
+            nodeSpacing: 36,
+            rankSpacing: 44,
+          },
+          themeVariables: dark
+            ? {
+                primaryColor: '#1a1a1a',
+                primaryBorderColor: '#3a3a3a',
+                primaryTextColor: '#f5f5f5',
+                secondaryColor: '#171717',
+                tertiaryColor: '#141414',
+                lineColor: '#888888',
+                clusterBkg: '#161616',
+                clusterBorder: '#2a2a2a',
+                edgeLabelBackground: '#111111',
+                fontFamily: 'Inter, system-ui, sans-serif',
+                fontSize: '13px',
+              }
+            : {
+                primaryColor: '#ffffff',
+                primaryBorderColor: '#d4d4d4',
+                primaryTextColor: '#171717',
+                secondaryColor: '#f5f5f5',
+                tertiaryColor: '#fafafa',
+                lineColor: '#737373',
+                clusterBkg: '#f5f5f5',
+                clusterBorder: '#e0e0e0',
+                edgeLabelBackground: '#fafafa',
+                fontFamily: 'Inter, system-ui, sans-serif',
+                fontSize: '13px',
+              },
+        });
+
+        let counter = 0;
+        for (const fig of figures) {
+          const src = fig.dataset.mermaidSource;
+          if (!src) continue;
+          const uid = `mermaid-${Date.now()}-${counter++}`;
+          const { svg } = await mermaid.render(uid, src);
+          fig.innerHTML = svg;
+        }
+      };
+
+      renderMermaidDiagrams();
+
+      if (metaScheme) {
+        const themeObserver = new MutationObserver(() => {
+          renderMermaidDiagrams();
+        });
+        themeObserver.observe(metaScheme, { attributes: true, attributeFilter: ['content'] });
+      }
+      mqDark.addEventListener('change', () => {
+        renderMermaidDiagrams();
+      });
+    }
+
+    // Wrap tables in horizontal scroll wrapper
+    prose.querySelectorAll<HTMLTableElement>('table').forEach((table) => {
+      if (table.parentElement?.classList.contains('table-scroll')) return;
+      const scroller = document.createElement('div');
+      scroller.className = 'table-scroll';
+      table.parentNode?.insertBefore(scroller, table);
+      scroller.appendChild(table);
+    });
+
+    // Add hover permalink anchors (#) to h2 & h3 headings
+    prose.querySelectorAll<HTMLHeadingElement>('h2[id], h3[id]').forEach((heading) => {
+      if (heading.querySelector('.header-anchor')) return;
+      const anchor = document.createElement('a');
+      anchor.className = 'header-anchor';
+      anchor.href = `#${heading.id}`;
+      anchor.setAttribute('aria-label', `Permalink to ${heading.textContent ?? ''}`);
+      anchor.textContent = '#';
+      heading.prepend(anchor);
+    });
+  }
+
+  document.querySelectorAll('.mobile-toc-link').forEach((link) => {
+    link.addEventListener('click', () => {
+      const details = link.closest('details');
+      if (details) details.open = false;
+    });
+  });
+</script>

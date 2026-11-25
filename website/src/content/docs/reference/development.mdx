@@ -1,0 +1,76 @@
+---
+title: Development & Releasing
+description: Repository structure, local debug injection workflow, framework log streaming, and Sparkle + R2 release automation.
+section: Reference
+order: 10
+---
+
+This guide covers building SimCam Lite from source, debugging the injected `AVFoundation` framework, and publishing signed releases.
+
+## Project layout
+
+| Folder | Contents |
+| --- | --- |
+| `Shared/` | Shared memory format (`SCLSharedMemory.h`): seqlock, 2 streams × 3 BGRA slots, client slots |
+| `Loader/` | Tiny C dylib (`SCLLoader.c`) that `dlopen`s the framework inside Simulator user apps |
+| `Inject/` | Emulated `AVFoundation` objects, swizzling, `SCLFramePump`, `SCLAudioPump`, photo capture |
+| `HostBridge/` | C bridge API (`SCLHostBridge.c`) used by the macOS app to write frames and heartbeats |
+| `App/` | SwiftUI macOS app: sources, render pipeline, simulator management, Sparkle updates, socket server |
+| `Common/` | Control socket protocol (`ControlProtocol.swift`), `InjectionPreferences`, `XcodeSchemeSetup` |
+| `CLI/` | The `simcam` Swift ArgumentParser CLI |
+| `scripts/` | Build, dev-inject, DMG, screenshot composition, Sparkle, and release scripts |
+| `website/` | Astro 5 landing page and documentation site (deployed to Cloudflare Workers) |
+
+## Building & local debugging
+
+```bash
+# Install XcodeGen and build Debug
+brew install xcodegen
+scripts/build.sh Debug
+```
+
+Run `xcodegen generate` after adding or removing source files in `project.yml`. Signing reads `SIMCAM_DEVELOPMENT_TEAM` from the gitignored `Config/Environment.xcconfig` (copied from `Config/Environment.example.xcconfig`).
+
+### Rapid inject iteration
+
+Build `SimCamLiteInject`, install it to `/Users/Shared/SimCamLite`, and launch an app immediately:
+
+```bash
+scripts/dev-inject.sh com.example.app
+```
+
+Stream live `os_log` diagnostics from inside the injected Simulator process:
+
+```bash
+xcrun simctl spawn booted log stream --predicate 'subsystem == "dev.ifateam.simcamlite"'
+```
+
+Link your local CLI build onto `PATH`:
+
+```bash
+scripts/install-cli.sh
+```
+
+## Releasing (Sparkle + Cloudflare R2)
+
+Signed releases distribute the appcast (`appcast.xml`) and update archives via Cloudflare R2 (`simcamupdates.ifateam.dev`) alongside GitHub Releases and the Homebrew tap (`huyhunhngc/homebrew-tap`):
+
+<Steps>
+  <ol>
+    <li>Bump <code>MARKETING_VERSION</code> and increment <code>CURRENT_PROJECT_VERSION</code> in <code>project.yml</code> (Sparkle compares <code>CFBundleVersion</code>).</li>
+    <li>Update <code>.github/RELEASE_NOTES.md</code> starting with <code># SimCam Lite &lt;MARKETING_VERSION&gt;</code>.</li>
+    <li>Run <code>xcodegen generate</code>, commit, and push to <code>master</code>.</li>
+    <li>Run <code>scripts/release-from-archive.sh</code> to archive, Developer ID sign, notarize, staple the DMG, sign the Sparkle zip, regenerate <code>appcast.xml</code>, upload to R2 and GitHub, and update the Homebrew cask.</li>
+  </ol>
+</Steps>
+
+## Website deployment (Cloudflare Workers)
+
+The `website/` folder builds to static files and deploys directly to Cloudflare Workers Static Assets via `wrangler.jsonc`:
+
+```bash
+cd website
+pnpm install
+pnpm run build
+pnpm run deploy
+```

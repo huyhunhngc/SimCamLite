@@ -1,0 +1,72 @@
+---
+title: Sources & Camera Profiles
+description: Configure media sources, QR codes, independent back/front streams, 4K video, frame adjustments, hardware profiles, and audio.
+section: Guides
+order: 4
+---
+
+SimCam Lite exposes two independent virtual camera feeds (**Back camera** and **Front camera**) along with realistic `AVFoundation` hardware profiles.
+
+## Supported sources
+
+Each camera can independently stream one of four source types:
+
+| Source | Behavior | Notes |
+| --- | --- | --- |
+| **Test Pattern** | Built-in animated diagnostic frame | Great for verifying live streaming, FPS, and rotation without external media. |
+| **File (Photo / Video)** | Still image or looping video | Supports drag-and-drop onto the preview. Videos loop seamlessly and can be paused on any frame. |
+| **QR Code** | Encodes any URL or text string | Remembers your **8 most recent** codes and pre-fills links from the clipboard. Menu bar › *QR Code from Clipboard* switches in one click. |
+| **Mac Camera** | Live feed from any connected webcam | Includes Continuity Camera or external USB webcams. List devices with `simcam cameras`. |
+
+<Callout type="note">
+  If a previously selected file no longer exists on disk at next launch, SimCam Lite safely falls back to the test pattern. A Mac camera source is restored on launch only if macOS camera permission has been granted.
+</Callout>
+
+## Independent Back & Front cameras
+
+By default you can configure the **Back camera** and **Front camera** separately, or turn on **Same as back** (`simcam source --front follow`) so the front camera mirrors whatever the back camera is playing.
+
+Setting an explicit source on the front camera (`simcam source --front camera`) automatically switches **Same as back** off.
+
+## Frame adjustments
+
+Per-camera render options let you match how your test media should sit inside the sensor frame:
+
+- **Fill / Fit**: crop to fill the sensor aspect ratio, or letterbox to fit the entire image without cropping.
+- **Rotate**: `0°`, `90°`, `180°`, or `270°`.
+- **Mirror**: flip horizontally (useful for front-camera selfies or reversed barcodes).
+- **Pause / Resume**: freeze a looping video on an exact frame while you inspect overlays or capture a still photo.
+
+```bash
+simcam adjust --fit --rotate 90 --mirror
+simcam pause
+simcam resume
+```
+
+## Device profiles, FPS & 4K video
+
+SimCam Lite emulates real iPhone camera topologies so `AVCaptureDevice.DiscoverySession` and lens-switching UI behave authentically:
+
+- **Triple** (`triple`): `0.5×` ultra-wide · `1×` wide · `3×` telephoto
+- **Dual Wide** (`dual`): `0.5×` ultra-wide · `1×` wide
+- **Single** (`single`): standard single wide lens
+
+<Callout type="tip" title="4K video format (v0.2.5+)">
+  Back cameras advertise a `3840 × 2160` 4K video format, and `AVCaptureSession.Preset.hd4K3840x2160` delivers real 4K frames. Because the iOS Simulator has no hardware video encoder, software encoding during 4K recording saves fewer frames per second than a physical iPhone while preserving full resolution.
+</Callout>
+
+- **Frame rate**: switch between `30 fps` (default) and `60 fps` from the toolbar, menu bar, or `simcam fps 60`.
+- **Device rotation**: `AVCaptureDeviceRotationCoordinator` and video orientation follow simulator rotation like a real phone.
+- **Profile changes**: take effect for apps launched after changing the profile (`simcam profile triple | dual | single`).
+
+## Audio input (`AVCaptureAudioDataOutput`)
+
+Apps that request microphone input alongside video via `AVCaptureAudioDataOutput` receive **48 kHz mono 16-bit PCM** samples from your Mac’s microphone (or silence if macOS microphone permission is not granted).
+
+## Connected apps telemetry
+
+The **Connected apps** card in the main window (and `simcam status`) displays every injected app currently reading frames:
+
+- App name, bundle ID, and **PID**
+- Active camera (`Back camera` / `Front camera`) and stream dimensions (`1920×1440` or `3840×2160`)
+- Live **frame count** and **photos taken** counter

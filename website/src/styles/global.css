@@ -1,0 +1,504 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--font-sans);
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+body {
+  margin: 0;
+  min-height: 100svh;
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  overflow-x: clip;
+}
+
+body:not([data-docs]) {
+  background-color: var(--landing-canvas);
+  color: var(--landing-ink);
+}
+
+body[data-docs="true"] {
+  background-color: var(--docs-bg);
+  color: var(--docs-text-1);
+}
+
+main {
+  flex: 1 0 auto;
+}
+
+img,
+picture,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand-blue);
+  outline-offset: 2px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Native <dialog> scroll-containment & backdrop rules */
+dialog:modal {
+  overscroll-behavior: contain;
+}
+
+dialog::backdrop {
+  overflow: hidden;
+  overscroll-behavior: contain;
+}
+
+/* Shared container & buttons */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: 24px;
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding-inline: 16px;
+  }
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 14px;
+  padding: 13px 22px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  border: 0;
+  transition: background-color 0.16s ease, color 0.16s ease, transform 0.16s ease;
+}
+
+.btn-primary {
+  background-color: var(--landing-ink);
+  color: var(--landing-canvas);
+}
+
+.btn-primary:hover {
+  opacity: 0.88;
+}
+
+.btn-secondary {
+  background-color: var(--landing-surface-strong);
+  color: var(--landing-ink);
+}
+
+.btn-secondary:hover {
+  background-color: var(--landing-surface-muted);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .btn:active {
+    transform: scale(0.985);
+  }
+
+  @keyframes hero-enter {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  [data-hero-enter] {
+    animation: hero-enter var(--hero-duration, 0.72s) var(--ease-out-expo) var(--hero-delay, 0ms) both;
+  }
+
+  html[data-motion='ready'] [data-reveal] {
+    opacity: 0;
+    transform: translateY(22px);
+    transition:
+      opacity 0.68s var(--ease-out-expo) var(--reveal-delay, 0ms),
+      transform 0.68s var(--ease-out-expo) var(--reveal-delay, 0ms);
+    will-change: opacity, transform;
+  }
+
+  html[data-motion='ready'] [data-reveal='visible'] {
+    opacity: 1;
+    transform: none;
+    will-change: auto;
+  }
+}
+
+.pill-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background-color: var(--bg-soft);
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+/* Shiki dual-theme support with manual override awareness */
+.astro-code {
+  background-color: var(--code-bg) !important;
+  margin: 0;
+  padding: 16px 18px;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.84375rem;
+  line-height: 1.65;
+  tab-size: 2;
+}
+
+.astro-code,
+.astro-code span {
+  color: var(--shiki-light);
+  background-color: transparent !important;
+}
+
+@supports (color: light-dark(white, black)) {
+  .astro-code,
+  .astro-code span {
+    color: light-dark(var(--shiki-light), var(--shiki-dark));
+  }
+}
+
+@supports not (color: light-dark(white, black)) {
+  @media (prefers-color-scheme: dark) {
+    :root:not(:has(> head > meta[name="color-scheme"][content="light"])) .astro-code,
+    :root:not(:has(> head > meta[name="color-scheme"][content="light"])) .astro-code span {
+      color: var(--shiki-dark);
+    }
+  }
+
+  :root:has(> head > meta[name="color-scheme"][content="dark"]) .astro-code,
+  :root:has(> head > meta[name="color-scheme"][content="dark"]) .astro-code span {
+    color: var(--shiki-dark);
+  }
+}
+
+/* Code block wrapper (Tapflow-style borderless block with hover copy) */
+.code-block-wrap {
+  position: relative;
+  margin: 16px 0;
+  border-radius: 8px;
+  background-color: var(--docs-code-bg);
+  overflow: hidden;
+}
+
+.code-block-wrap .astro-code {
+  background-color: transparent !important;
+  margin: 0;
+  padding: 20px 24px;
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+
+.code-lang {
+  position: absolute;
+  top: 6px;
+  right: 12px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--docs-text-3);
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.code-copy-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 30px;
+  padding: 0 9px;
+  border-radius: 6px;
+  border: 1px solid var(--docs-divider);
+  background-color: var(--docs-bg);
+  color: var(--docs-text-2);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.code-block-wrap:hover .code-lang,
+.code-block-wrap:focus-within .code-lang {
+  opacity: 0;
+}
+
+.code-block-wrap:hover .code-copy-btn,
+.code-block-wrap:focus-within .code-copy-btn,
+.code-copy-btn:focus-visible,
+.code-copy-btn[data-copied='true'] {
+  opacity: 1;
+}
+
+.code-copy-btn:hover {
+  color: var(--docs-text-1);
+  border-color: var(--border-strong);
+}
+
+.code-copy-btn[data-copied='true'] {
+  color: var(--docs-link);
+  border-color: var(--docs-link);
+}
+
+/* Documentation Prose Styles (Tapflow / VitePress monochrome clarity) */
+.prose {
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--docs-text-1);
+  overflow-wrap: anywhere;
+}
+
+.prose > *:first-child {
+  margin-top: 0;
+}
+
+.prose h2,
+.prose h3,
+.prose h4 {
+  position: relative;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  color: var(--docs-text-1);
+  scroll-margin-top: calc(var(--nav-height) + 24px);
+}
+
+.prose h2 {
+  font-size: 1.5rem;
+  letter-spacing: -0.02em;
+  line-height: 1.33;
+  margin: 48px 0 16px;
+  padding-top: 24px;
+  border-top: 1px solid var(--docs-divider);
+}
+
+.prose h2:first-child {
+  margin-top: 8px;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.prose h3 {
+  font-size: 1.25rem;
+  letter-spacing: -0.015em;
+  line-height: 1.4;
+  margin: 32px 0 12px;
+}
+
+.prose h4 {
+  font-size: 1rem;
+  margin: 24px 0 8px;
+}
+
+.prose h1 code,
+.prose h2 code,
+.prose h3 code {
+  font-family: inherit;
+  font-size: 0.95em;
+  font-weight: 600;
+  color: inherit;
+  letter-spacing: inherit;
+  background: transparent;
+  padding: 0;
+  border: 0;
+}
+
+.prose .header-anchor {
+  position: absolute;
+  left: -0.95em;
+  color: var(--docs-link);
+  text-decoration: none;
+  font-weight: 500;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.prose h2:hover .header-anchor,
+.prose h3:hover .header-anchor,
+.prose .header-anchor:focus-visible {
+  opacity: 1;
+}
+
+.prose p {
+  margin: 0 0 16px;
+  color: var(--docs-text-1);
+}
+
+.prose strong {
+  color: var(--docs-text-1);
+  font-weight: 600;
+}
+
+.prose a {
+  color: var(--docs-link);
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
+  transition: text-decoration-color 0.15s ease;
+}
+
+.prose a:hover {
+  text-decoration-color: currentColor;
+}
+
+.prose ul,
+.prose ol {
+  margin: 0 0 16px;
+  padding-left: 20px;
+  color: var(--docs-text-1);
+}
+
+.prose li {
+  margin: 8px 0;
+}
+
+.prose li > strong {
+  color: var(--docs-text-1);
+}
+
+.prose :not(pre) > code {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  padding: 3px 6px;
+  border-radius: 4px;
+  background-color: var(--docs-code-bg);
+  color: var(--docs-code-color);
+  border: 0;
+}
+
+.prose blockquote {
+  margin: 16px 0;
+  padding: 2px 0 2px 16px;
+  border-left: 2px solid var(--docs-divider);
+  color: var(--docs-text-2);
+}
+
+.prose blockquote p {
+  color: var(--docs-text-2);
+}
+
+.prose blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+.table-scroll {
+  overflow-x: auto;
+  margin: 20px 0;
+}
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  display: table;
+}
+
+.prose th,
+.prose td {
+  text-align: left;
+  padding: 10px 14px;
+  border: 1px solid var(--docs-divider);
+  vertical-align: top;
+}
+
+.prose th {
+  font-weight: 600;
+  color: var(--docs-text-1);
+  background-color: var(--docs-sidebar-bg);
+  white-space: nowrap;
+}
+
+.prose td {
+  color: var(--docs-text-1);
+}
+
+.prose tr:nth-child(2n) td {
+  background-color: var(--docs-sidebar-bg);
+}
+
+.prose hr {
+  border: 0;
+  border-top: 1px solid var(--docs-divider);
+  margin: 32px 0;
+}
+
+.prose img {
+  border-radius: 8px;
+  margin: 20px 0;
+}
+
+.mermaid-diagram {
+  margin: 20px 0;
+  padding: 24px 20px;
+  border-radius: 8px;
+  background-color: var(--docs-sidebar-bg);
+  overflow-x: auto;
+  display: flex;
+  justify-content: center;
+}
+
+.mermaid-diagram svg {
+  max-width: 100%;
+  height: auto;
+  font-family: var(--font-sans) !important;
+}

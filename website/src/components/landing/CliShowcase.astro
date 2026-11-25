@@ -1,0 +1,344 @@
+---
+const tabs = [
+  {
+    id: 'media',
+    label: 'Media & QR',
+    code: `# Use a still photo or looping 4K video as the back camera
+simcam source ~/Pictures/receipt.jpg
+
+# Generate and stream a QR code from any link or payload
+simcam source qr "https://simcamlite.ifateam.dev"
+
+# Use your Mac's FaceTime camera for the front camera
+simcam source --front camera --device "FaceTime"
+
+# Fit, rotate, mirror, or pause a video on an exact frame
+simcam adjust --fit --rotate 90 --mirror
+simcam pause`,
+  },
+  {
+    id: 'simulators',
+    label: 'Simulators',
+    code: `# Boot an iPhone simulator with camera injection enabled
+simcam boot "iPhone 17 Pro" --inject --wait
+
+# List installed apps and launch one with SimCam Lite injected
+simcam apps
+simcam launch com.example.scanner
+
+# Enable injection for every simulator as it boots
+simcam inject auto on
+
+# Machine-readable status for scripts and AI agents
+simcam status --json`,
+  },
+  {
+    id: 'permissions',
+    label: 'Permissions & CI',
+    code: `# Let injected apps prompt for camera access like a real device
+simcam permission ask
+
+# Restart an app with a deterministic TCC permission preset
+simcam permission com.example.app fresh
+simcam permission com.example.app camera-denied
+simcam permission com.example.app allowed
+
+# Configure framerate & camera hardware profile
+simcam fps 60
+simcam profile triple`,
+  },
+  {
+    id: 'xcode',
+    label: 'Xcode Setup',
+    code: `# Inject SimCamLiteLoader into iOS app schemes in the current repo
+simcam xcode setup
+
+# Inspect which schemes are enabled (macOS/Catalyst are skipped safely)
+simcam xcode status
+
+# Revert scheme changes cleanly
+simcam xcode remove`,
+  },
+];
+---
+
+<section id="cli" class="cli-section">
+  <div class="container cli-grid">
+    <div class="cli-copy" data-reveal>
+      <h2 class="section-title">Scriptable from Terminal, CI, and AI agents.</h2>
+      <p class="section-subtitle">
+        Every control in SimCam Lite has a matching <code>simcam</code> command. Both the macOS window and Terminal talk to the same state over a local Unix socket—so UI tests, CI scripts, and AI coding agents always get reproducible frames.
+      </p>
+      <ul class="cli-highlights">
+        <li><strong>18 subcommands</strong> covering sources, adjustments, simulators, permissions, and Xcode schemes.</li>
+        <li><strong>JSON output</strong> via <code>--json</code> on <code>status</code>, <code>cameras</code>, <code>devices</code>, and <code>apps</code>.</li>
+        <li><strong>Zsh completion</strong> built in: <code>simcam --generate-completion-script zsh</code>.</li>
+      </ul>
+      <a href="/docs/reference/cli/" class="btn btn-secondary">
+        Explore CLI Reference →
+      </a>
+    </div>
+
+    <div class="terminal-card" data-reveal style="--reveal-delay: 90ms;">
+      <div class="terminal-chrome">
+        <div class="cli-tabs" role="tablist" aria-label="CLI examples">
+          {tabs.map((tab, index) => (
+            <button
+              type="button"
+              role="tab"
+              id={`cli-tab-${tab.id}`}
+              aria-controls={`cli-panel-${tab.id}`}
+              aria-selected={index === 0 ? 'true' : 'false'}
+              tabindex={index === 0 ? 0 : -1}
+              class="cli-tab-btn"
+              data-cli-tab={tab.id}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <button type="button" class="terminal-copy-btn" data-copy-active-cli aria-label="Copy active CLI commands">
+          Copy
+        </button>
+      </div>
+
+      <div class="terminal-body">
+        {tabs.map((tab, index) => (
+          <pre
+            role="tabpanel"
+            id={`cli-panel-${tab.id}`}
+            aria-labelledby={`cli-tab-${tab.id}`}
+            class="cli-pre"
+            hidden={index !== 0}
+            data-cli-panel={tab.id}
+          ><code>{tab.code}</code></pre>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cli-section {
+    padding: 64px 0;
+    scroll-margin-top: calc(var(--nav-height) + 16px);
+  }
+
+  .cli-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+    gap: 40px;
+    align-items: center;
+  }
+
+  .cli-copy {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .section-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.9rem, 3.4vw, 2.65rem);
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    line-height: 1.1;
+    color: var(--landing-ink);
+  }
+
+  .section-subtitle {
+    margin: 16px 0 20px;
+    font-size: 0.96875rem;
+    line-height: 1.65;
+    color: var(--landing-ink-secondary);
+  }
+
+  .cli-copy code {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    padding: 2px 6px;
+    border-radius: 6px;
+    background-color: var(--landing-surface-strong);
+    color: var(--landing-ink);
+  }
+
+  .cli-highlights {
+    margin: 0 0 28px;
+    padding-left: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 0.9375rem;
+    color: var(--landing-ink-secondary);
+  }
+
+  .cli-highlights strong {
+    color: var(--landing-ink);
+  }
+
+  .terminal-card {
+    border-radius: 28px;
+    background-color: #131315;
+    color: #f4f4f6;
+    overflow: hidden;
+    min-width: 0;
+  }
+
+  .terminal-chrome {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 18px;
+    background-color: #1b1b1f;
+    flex-wrap: wrap;
+  }
+
+  .cli-tabs {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+
+  .cli-tab-btn {
+    padding: 6px 12px;
+    border-radius: 9px;
+    border: 0;
+    background: transparent;
+    color: #9ca0a8;
+    font-size: 0.8125rem;
+    font-weight: 550;
+    cursor: pointer;
+    transition: color 0.15s ease, background-color 0.15s ease;
+  }
+
+  .cli-tab-btn:hover {
+    color: #ffffff;
+  }
+
+  .cli-tab-btn[aria-selected='true'] {
+    background-color: #2b2b31;
+    color: #ffffff;
+  }
+
+  .terminal-copy-btn {
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 0;
+    background-color: #25252b;
+    color: #e4e4e7;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+
+  .terminal-copy-btn:hover {
+    background-color: #32323a;
+    color: #ffffff;
+  }
+
+  .terminal-body {
+    padding: 22px 24px;
+    overflow-x: auto;
+  }
+
+  .cli-pre {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.84375rem;
+    line-height: 1.75;
+    color: #e4e4e8;
+    white-space: pre;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    @keyframes cli-panel-in {
+      from {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    .cli-pre:not([hidden]) {
+      animation: cli-panel-in 0.22s var(--ease-out-expo) both;
+    }
+  }
+
+  @media (max-width: 960px) {
+    .cli-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .cli-section {
+      padding: 40px 0;
+    }
+
+    .terminal-card {
+      border-radius: 22px;
+    }
+
+    .terminal-body {
+      padding: 16px;
+    }
+
+    .cli-pre {
+      font-size: 0.78125rem;
+    }
+  }
+</style>
+
+<script>
+  const tabBtns = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-cli-tab]'));
+  const panels = Array.from(document.querySelectorAll<HTMLElement>('[data-cli-panel]'));
+  const copyBtn = document.querySelector<HTMLButtonElement>('[data-copy-active-cli]');
+
+  function activateTab(id: string) {
+    tabBtns.forEach((btn) => {
+      const selected = btn.dataset.cliTab === id;
+      btn.setAttribute('aria-selected', selected ? 'true' : 'false');
+      btn.tabIndex = selected ? 0 : -1;
+    });
+    panels.forEach((panel) => {
+      panel.hidden = panel.dataset.cliPanel !== id;
+    });
+  }
+
+  tabBtns.forEach((btn, idx) => {
+    btn.addEventListener('click', () => {
+      if (btn.dataset.cliTab) activateTab(btn.dataset.cliTab);
+    });
+    btn.addEventListener('keydown', (e) => {
+      let nextIdx = idx;
+      if (e.key === 'ArrowRight') nextIdx = (idx + 1) % tabBtns.length;
+      else if (e.key === 'ArrowLeft') nextIdx = (idx - 1 + tabBtns.length) % tabBtns.length;
+      else return;
+      e.preventDefault();
+      const target = tabBtns[nextIdx];
+      if (target?.dataset.cliTab) {
+        activateTab(target.dataset.cliTab);
+        target.focus();
+      }
+    });
+  });
+
+  copyBtn?.addEventListener('click', async () => {
+    const activePanel = panels.find((p) => !p.hidden);
+    const text = activePanel?.textContent?.trim();
+    if (!text) return;
+    try {
+      await navigator.clipboard.writeText(text);
+      copyBtn.textContent = 'Copied';
+      setTimeout(() => {
+        copyBtn.textContent = 'Copy';
+      }, 1500);
+    } catch {}
+  });
+</script>

@@ -1,0 +1,131 @@
+---
+---
+
+<button
+  type="button"
+  class="theme-toggle"
+  data-theme-toggle
+  aria-label="Toggle color theme"
+  title="Toggle light or dark theme"
+>
+  <span class="theme-option theme-to-dark" aria-hidden="true">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="4"></circle>
+      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+    </svg>
+  </span>
+  <span class="theme-option theme-to-light" aria-hidden="true">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+    </svg>
+  </span>
+  <span class="sr-only theme-action-dark">Switch to dark theme</span>
+  <span class="sr-only theme-action-light">Switch to light theme</span>
+</button>
+
+<style>
+  .theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    border: 0;
+    background-color: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: color 0.15s ease, background-color 0.15s ease;
+  }
+
+  .theme-toggle:hover {
+    color: var(--text-primary);
+    background-color: var(--landing-surface-muted);
+  }
+
+  :global(body[data-docs="true"]) .theme-toggle:hover {
+    background-color: var(--bg-elevated);
+  }
+
+  /* Default: system is light -> currently light (show sun, action is switch to dark) */
+  .theme-to-light,
+  .theme-action-light {
+    display: none;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not(:has(> head > meta[name="color-scheme"][content="light"])) .theme-to-dark,
+    :root:not(:has(> head > meta[name="color-scheme"][content="light"])) .theme-action-dark {
+      display: none;
+    }
+
+    :root:not(:has(> head > meta[name="color-scheme"][content="light"])) .theme-to-light,
+    :root:not(:has(> head > meta[name="color-scheme"][content="light"])) .theme-action-light {
+      display: inline-flex;
+    }
+  }
+
+  :root:has(> head > meta[name="color-scheme"][content="dark"]) .theme-to-dark,
+  :root:has(> head > meta[name="color-scheme"][content="dark"]) .theme-action-dark {
+    display: none;
+  }
+
+  :root:has(> head > meta[name="color-scheme"][content="dark"]) .theme-to-light,
+  :root:has(> head > meta[name="color-scheme"][content="dark"]) .theme-action-light {
+    display: inline-flex;
+  }
+
+  :root:has(> head > meta[name="color-scheme"][content="light"]) .theme-to-dark,
+  :root:has(> head > meta[name="color-scheme"][content="light"]) .theme-action-dark {
+    display: inline-flex;
+  }
+
+  :root:has(> head > meta[name="color-scheme"][content="light"]) .theme-to-light,
+  :root:has(> head > meta[name="color-scheme"][content="light"]) .theme-action-light {
+    display: none;
+  }
+</style>
+
+<script>
+  const meta = document.querySelector<HTMLMetaElement>('meta[name="color-scheme"]');
+  const mq = window.matchMedia('(prefers-color-scheme: dark)');
+
+  function getSystemScheme(): 'light' | 'dark' {
+    return mq.matches ? 'dark' : 'light';
+  }
+
+  function getRenderedScheme(): 'light' | 'dark' {
+    const content = meta?.content;
+    if (content === 'light' || content === 'dark') return content;
+    return getSystemScheme();
+  }
+
+  function applyStored(value: string | null) {
+    if (!meta) return;
+    meta.content = value === 'light' || value === 'dark' ? value : 'light dark';
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const target = getRenderedScheme() === 'dark' ? 'light' : 'dark';
+      const system = getSystemScheme();
+      try {
+        if (target === system) {
+          localStorage.removeItem('color-scheme');
+          applyStored(null);
+        } else {
+          localStorage.setItem('color-scheme', target);
+          applyStored(target);
+        }
+      } catch {
+        applyStored(target === system ? null : target);
+      }
+    });
+  });
+
+  window.addEventListener('storage', (event) => {
+    if (event.key === 'color-scheme') {
+      applyStored(event.newValue);
+    }
+  });
+</script>

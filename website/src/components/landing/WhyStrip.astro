@@ -1,0 +1,87 @@
+---
+const pillars = [
+  {
+    title: 'Keep your app code untouched',
+    description:
+      'Injects via DYLD_INSERT_LIBRARIES and emulates AVFoundation directly. No #if targetEnvironment(simulator) hacks, no wrapper SDKs, no dependencies.',
+  },
+  {
+    title: 'Free and MIT licensed',
+    description:
+      'No per-seat commercial licenses or paywalls. Built for solo developers, QA engineers, designers, and CI runners.',
+  },
+  {
+    title: 'Xcode debugger and CI ready',
+    description:
+      'Set up an Xcode project once to keep using the Run button and LLDB breakpoints, or drive every source and permission preset from simcam.',
+  },
+];
+---
+
+<section class="why-section">
+  <div class="container">
+    <div class="why-grid">
+      {pillars.map((item, i) => (
+        <article class="why-card" data-reveal style={`--reveal-delay: ${i * 70}ms;`}>
+          <h2>{item.title}</h2>
+          <p>{item.description}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .why-section {
+    padding: 20px 0 64px;
+  }
+
+  .why-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+  }
+
+  .why-card {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    padding: 32px;
+    border-radius: 28px;
+    background-color: var(--landing-surface);
+    text-align: left;
+  }
+
+  .why-card h2 {
+    margin: 0 0 10px;
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1.25;
+    color: var(--landing-ink);
+  }
+
+  .why-card p {
+    margin: 0;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--landing-ink-secondary);
+  }
+
+  @media (max-width: 860px) {
+    .why-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .why-section {
+      padding: 16px 0 40px;
+    }
+
+    .why-card {
+      padding: 24px 20px;
+      border-radius: 22px;
+    }
+  }
+</style>

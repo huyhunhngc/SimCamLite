@@ -1,0 +1,65 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Page Not Found — SimCam Lite" description="The page you are looking for does not exist.">
+  <section class="not-found">
+    <div class="container nf-inner">
+      <span class="nf-code">404</span>
+      <h1>Page not found</h1>
+      <p>
+        We couldn’t find that page. Jump back to the landing page or explore the SimCam Lite documentation.
+      </p>
+      <div class="nf-actions">
+        <a href="/" class="btn btn-primary">Back to Home</a>
+        <a href="/docs/get-started/introduction/" class="btn btn-secondary">Open Documentation</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .not-found {
+    padding: 96px 0;
+    text-align: center;
+  }
+
+  .nf-inner {
+    max-width: 540px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .nf-code {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background-color: var(--bg-soft);
+    color: var(--brand-gold);
+    margin-bottom: 16px;
+  }
+
+  h1 {
+    margin: 0 0 12px;
+    font-family: var(--font-display);
+    font-size: 2.25rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+
+  p {
+    margin: 0 0 28px;
+    color: var(--text-secondary);
+  }
+
+  .nf-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+</style>

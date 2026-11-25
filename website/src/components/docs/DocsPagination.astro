@@ -1,0 +1,78 @@
+---
+import type { DocNavItem } from '@data/navigation';
+
+interface Props {
+  prev?: DocNavItem & { section: string };
+  next?: DocNavItem & { section: string };
+}
+
+const { prev, next } = Astro.props;
+---
+
+{(prev || next) && (
+  <nav class="pagination-grid" aria-label="Documentation pagination">
+    {prev ? (
+      <a href={prev.href} class="pager-card prev">
+        <span class="pager-dir">Previous page</span>
+        <span class="pager-title">{prev.title}</span>
+      </a>
+    ) : (
+      <div></div>
+    )}
+    {next ? (
+      <a href={next.href} class="pager-card next">
+        <span class="pager-dir">Next page</span>
+        <span class="pager-title">{next.title}</span>
+      </a>
+    ) : (
+      <div></div>
+    )}
+  </nav>
+)}
+
+<style>
+  .pagination-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .pager-card {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--docs-divider);
+    background-color: transparent;
+    text-decoration: none;
+    transition: border-color 0.2s ease;
+  }
+
+  .pager-card:hover {
+    border-color: var(--docs-link);
+  }
+
+  .pager-card.next {
+    text-align: right;
+    align-items: flex-end;
+  }
+
+  .pager-dir {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--docs-text-3);
+  }
+
+  .pager-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--docs-link);
+  }
+
+  @media (max-width: 600px) {
+    .pagination-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

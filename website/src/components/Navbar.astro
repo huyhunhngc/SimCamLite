@@ -1,0 +1,401 @@
+---
+import { APP_VERSION, GITHUB_REPO, LATEST_RELEASE_URL, TOP_NAV } from '@data/navigation';
+import ThemeToggle from './ThemeToggle.astro';
+
+interface Props {
+  isDocs?: boolean;
+  hasSidebar?: boolean;
+}
+
+const { isDocs = false, hasSidebar = false } = Astro.props;
+const currentPath = Astro.url.pathname;
+---
+
+<header class:list={['site-header', { 'is-docs': isDocs }]}>
+  <div class="header-inner">
+    <div class="header-left">
+      <a href="/" class="brand-link">
+        <span class="brand-icon" aria-hidden="true">
+          <svg width="26" height="26" viewBox="0 0 64 64" fill="none">
+            <rect width="64" height="64" rx="15" fill="#18191d"></rect>
+            <rect x="20" y="10" width="24" height="44" rx="5.5" stroke="#f5f5f5" stroke-width="2.5"></rect>
+            <rect x="28" y="13.5" width="8" height="2.4" rx="1.2" fill="#f5f5f5"></rect>
+            <path d="M21 27.5C21 25.8431 22.3431 24.5 24 24.5H26.2L27.5 22.3C27.9 21.6 28.65 21.2 29.45 21.2H34.55C35.35 21.2 36.1 21.6 36.5 22.3L37.8 24.5H40C41.6569 24.5 43 25.8431 43 27.5V39C43 40.6569 41.6569 42 40 42H24C22.3431 42 21 40.6569 21 39V27.5Z" fill="#141518" stroke="#f5f5f5" stroke-width="1.8"></path>
+            <circle cx="32" cy="33.2" r="5.3" stroke="#E5B567" stroke-width="2.4"></circle>
+            <circle cx="30.2" cy="31.5" r="1.25" fill="#E5B567"></circle>
+            <circle cx="39.4" cy="27.6" r="1.15" fill="#E5B567"></circle>
+          </svg>
+        </span>
+        <span class="brand-name">SimCam Lite</span>
+      </a>
+    </div>
+
+    <nav class="desktop-nav" aria-label="Primary navigation">
+      {TOP_NAV.map((item) => {
+        const active = item.matchPrefix ? currentPath.startsWith(item.matchPrefix) : false;
+        return (
+          <a href={item.href} class:list={['nav-link', { active }]} aria-current={active ? 'page' : undefined}>
+            {item.label}
+          </a>
+        );
+      })}
+    </nav>
+
+    <div class="header-actions">
+      <button type="button" class="search-trigger" data-open-search aria-label="Search documentation">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.3-4.3"></path>
+        </svg>
+        <span class="search-placeholder">Search</span>
+        <span class="search-kbd" aria-hidden="true">⌘K</span>
+      </button>
+
+      <ThemeToggle />
+
+      <a
+        href={GITHUB_REPO}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="icon-btn"
+        aria-label="SimCam Lite on GitHub"
+        title="GitHub Repository"
+      >
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12Z"></path>
+        </svg>
+      </a>
+
+      {!isDocs && (
+        <a
+          href="/#install"
+          class="header-cta"
+        >
+          Download
+        </a>
+      )}
+
+      {!hasSidebar && (
+        <button
+          type="button"
+          class="icon-btn mobile-nav-btn"
+          id="mobile-nav-open"
+          aria-label="Open menu"
+          aria-controls="mobile-nav-dialog"
+          aria-expanded="false"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M4 7h16M4 12h16M4 17h16"></path>
+          </svg>
+        </button>
+      )}
+    </div>
+  </div>
+</header>
+
+{!hasSidebar && (
+  <dialog id="mobile-nav-dialog" class="mobile-nav-dialog" closedby="any" aria-label="Mobile navigation">
+    <div class="mobile-nav-sheet">
+      <div class="mobile-nav-head">
+        <span class="brand-name">SimCam Lite</span>
+        <form method="dialog">
+          <button type="submit" class="icon-btn" aria-label="Close menu" autofocus>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M18 6 6 18M6 6l12 12"></path>
+            </svg>
+          </button>
+        </form>
+      </div>
+      <nav class="mobile-nav-links" aria-label="Mobile links">
+        {TOP_NAV.map((item) => (
+          <a href={item.href} class="mobile-nav-link">{item.label}</a>
+        ))}
+        <a href={LATEST_RELEASE_URL} target="_blank" rel="noopener noreferrer" class="mobile-nav-link">
+          Download DMG (v{APP_VERSION})
+        </a>
+        <a href={GITHUB_REPO} target="_blank" rel="noopener noreferrer" class="mobile-nav-link">
+          GitHub Repository
+        </a>
+      </nav>
+    </div>
+  </dialog>
+)}
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    height: var(--nav-height);
+    background-color: var(--landing-header-bg);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+
+  .site-header.is-docs {
+    background-color: var(--docs-bg);
+    border-bottom: 1px solid var(--docs-divider);
+  }
+
+  .header-inner {
+    height: 100%;
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-inline: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .brand-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--text-primary);
+  }
+
+  .brand-name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: -0.025em;
+    white-space: nowrap;
+  }
+
+  .desktop-nav {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .nav-link {
+    padding: 6px 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    transition: color 0.15s ease, background-color 0.15s ease;
+  }
+
+  .nav-link:hover,
+  .nav-link.active {
+    color: var(--text-primary);
+    background-color: var(--landing-surface-muted);
+  }
+
+  .is-docs .nav-link:hover {
+    background-color: transparent;
+    color: var(--docs-text-1);
+  }
+
+  .is-docs .nav-link.active {
+    position: relative;
+    background-color: transparent;
+    color: var(--docs-link);
+    font-weight: 600;
+  }
+
+  .is-docs .nav-link.active::after {
+    content: '';
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: -2px;
+    height: 1.5px;
+    border-radius: 1px;
+    background-color: var(--docs-link);
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .search-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 34px;
+    padding: 0 11px;
+    border-radius: 9px;
+    border: 0;
+    background-color: var(--landing-surface);
+    color: var(--text-secondary);
+    font-size: 0.8125rem;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+
+  .is-docs .search-trigger {
+    background-color: var(--docs-bg-soft);
+    color: var(--docs-text-2);
+  }
+
+  .search-trigger:hover {
+    background-color: var(--landing-surface-strong);
+    color: var(--text-primary);
+  }
+
+  .is-docs .search-trigger:hover {
+    background-color: var(--bg-elevated);
+  }
+
+  .search-kbd {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text-muted);
+  }
+
+  .icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    border: 0;
+    background-color: transparent;
+    color: var(--text-secondary);
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.15s ease, background-color 0.15s ease;
+  }
+
+  .icon-btn:hover {
+    color: var(--text-primary);
+    background-color: var(--landing-surface-muted);
+  }
+
+  .is-docs .icon-btn:hover {
+    background-color: var(--bg-elevated);
+  }
+
+  .header-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 34px;
+    padding: 0 14px;
+    border-radius: 10px;
+    background-color: var(--landing-ink);
+    color: var(--landing-canvas);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: opacity 0.15s ease;
+  }
+
+  .header-cta:hover {
+    opacity: 0.86;
+  }
+
+  .mobile-nav-btn {
+    display: none;
+  }
+
+  .mobile-nav-dialog {
+    margin: 0 0 0 auto;
+    padding: 0;
+    border: 0;
+    background-color: var(--landing-canvas);
+    color: var(--landing-ink);
+    width: min(320px, 85vw);
+    height: 100svh;
+    max-height: none;
+  }
+
+  .mobile-nav-dialog[open] {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .mobile-nav-dialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  .mobile-nav-sheet {
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .mobile-nav-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 12px;
+  }
+
+  .mobile-nav-links {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .mobile-nav-link {
+    padding: 10px 12px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--landing-ink-secondary);
+  }
+
+  .mobile-nav-link:hover {
+    background-color: var(--landing-surface);
+    color: var(--landing-ink);
+  }
+
+  @media (max-width: 860px) {
+    .desktop-nav {
+      display: none;
+    }
+
+    .mobile-nav-btn {
+      display: inline-flex;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .header-inner {
+      padding-inline: 16px;
+    }
+
+    .search-placeholder,
+    .search-kbd,
+    .header-cta {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  const openBtn = document.getElementById('mobile-nav-open');
+  const mobileDialog = document.getElementById('mobile-nav-dialog') as HTMLDialogElement | null;
+
+  openBtn?.addEventListener('click', () => {
+    mobileDialog?.showModal();
+    openBtn.setAttribute('aria-expanded', 'true');
+  });
+
+  mobileDialog?.addEventListener('close', () => {
+    openBtn?.setAttribute('aria-expanded', 'false');
+  });
+
+  mobileDialog?.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', () => mobileDialog.close());
+  });
+</script>

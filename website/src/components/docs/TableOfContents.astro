@@ -1,0 +1,101 @@
+---
+import type { MarkdownHeading } from 'astro';
+
+interface Props {
+  headings: MarkdownHeading[];
+}
+
+const { headings } = Astro.props;
+---
+
+{headings.length > 0 && (
+  <nav class="toc-nav" aria-label="On this page">
+    <div class="toc-title">On this page</div>
+    <ul class="toc-list">
+      {headings.map((h) => (
+        <li>
+          <a
+            href={`#${h.slug}`}
+            class:list={['toc-link', { 'depth-3': h.depth === 3 }]}
+            data-toc-link={h.slug}
+          >
+            {h.text}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+)}
+
+<style>
+  .toc-title {
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 24px;
+    color: var(--docs-text-1);
+    margin-bottom: 6px;
+  }
+
+  .toc-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-left: 1px solid var(--docs-divider);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .toc-link {
+    display: block;
+    padding: 4px 0 4px 14px;
+    margin-left: -1px;
+    border-left: 2px solid transparent;
+    text-decoration: none;
+    font-size: 13px;
+    line-height: 20px;
+    color: var(--docs-text-3);
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .toc-link.depth-3 {
+    padding-left: 24px;
+  }
+
+  .toc-link:hover {
+    color: var(--docs-text-1);
+  }
+
+  .toc-link.active {
+    color: var(--docs-link);
+    border-left-color: var(--docs-link);
+    font-weight: 500;
+  }
+</style>
+
+<script>
+  const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-toc-link]'));
+  const targets = links
+    .map((l) => document.getElementById(l.dataset.tocLink ?? ''))
+    .filter((el): el is HTMLElement => el !== null);
+
+  if (links.length > 0 && targets.length > 0) {
+    const setActive = (id: string) => {
+      links.forEach((l) => {
+        l.classList.toggle('active', l.dataset.tocLink === id);
+      });
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries.filter((e) => e.isIntersecting);
+        if (visible.length > 0) {
+          setActive(visible[0].target.id);
+        }
+      },
+      { rootMargin: '-84px 0px -70% 0px', threshold: 0 }
+    );
+
+    targets.forEach((t) => observer.observe(t));
+    setActive(targets[0].id);
+  }
+</script>

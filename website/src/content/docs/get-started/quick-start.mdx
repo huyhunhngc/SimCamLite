@@ -1,0 +1,66 @@
+---
+title: Quick Start
+description: Get your first live camera frame running inside an iOS Simulator app in under two minutes.
+section: Get Started
+order: 3
+---
+
+Once SimCam Lite is installed, you can start streaming into any booted iOS Simulator in three steps.
+
+## Your first camera frame
+
+<Steps>
+  <ol>
+    <li>
+      <strong>Pick a camera source</strong><br />
+      Open <strong>SimCam Lite</strong> and select a source for the <strong>Back camera</strong>: <strong>Pattern</strong>, <strong>File…</strong> (photo or video), <strong>QR…</strong>, or <strong>Mac camera</strong>. You can also drag and drop any image or video file directly onto the preview pane.
+    </li>
+    <li>
+      <strong>Enable injection on a simulator</strong><br />
+      Go to the <strong>Simulator</strong> tab, pick your booted simulator, and turn on <strong>Use SimCamLite in every app on this simulator</strong>.
+    </li>
+    <li>
+      <strong>Open any app on the Simulator</strong><br />
+      Launch an app with a camera view (or relaunch it if it was already open). Its camera preview immediately shows your chosen source.
+    </li>
+  </ol>
+</Steps>
+
+<Callout type="tip" title="Live source switching">
+  You do not need to restart your iOS app when changing sources, toggling mirror/rotation, or switching QR codes. Updates appear in the Simulator preview immediately.
+</Callout>
+
+## Running from Xcode?
+
+When you build and run from Xcode using the **Run** button, Xcode sets its own `DYLD_INSERT_LIBRARIES` environment variable for Main Thread Checker and diagnostics—overriding simulator-wide injection.
+
+To keep using Xcode’s Run button and debugger:
+
+1. Open **Run from Xcode** in SimCam Lite and choose **Set Up Project…** (or drop your `.xcodeproj` / `.xcworkspace` onto the window).
+2. Or run `simcam xcode setup` inside your project directory.
+3. Stop and Run again in Xcode.
+
+See [Simulator & Xcode Setup](/docs/guides/simulator-and-xcode/) for full details.
+
+## Quick CLI smoke test
+
+If you installed the `simcam` command-line tool, you can drive the exact same workflow from Terminal:
+
+```bash
+# Boot a simulator with injection enabled
+simcam boot "iPhone 17 Pro" --inject --wait
+
+# Stream a QR code to the back camera
+simcam source qr "https://simcamlite.ifateam.dev"
+
+# Launch your app
+simcam launch com.example.app
+```
+
+## Background menu bar mode
+
+SimCam Lite includes a menu bar status item so you can close the main window and keep streaming in the background. From the menu bar you can:
+
+- Start or stop streaming and toggle **30 fps / 60 fps**
+- Switch back or front sources, or trigger **QR Code from Clipboard**
+- Toggle injection for simulators or jump straight to **Set Up Xcode Project…**

@@ -1,0 +1,106 @@
+---
+title: CLI Reference
+description: Complete reference for all 18 simcam subcommands, flags, JSON output, and shell completion.
+section: Reference
+order: 9
+badge: 18 cmds
+---
+
+The `simcam` CLI controls the running `SimCamLite.app` (opening it in the background when needed) and shares its live state with the macOS UI.
+
+Run `simcam help <command>` anytime for built-in flag help.
+
+## Streaming & lifecycle
+
+| Command | Arguments / Flags | Description |
+| --- | --- | --- |
+| `simcam start` | `[--fps <30\|60>]` | Open SimCam Lite if needed and start streaming. |
+| `simcam stop` | — | Stop streaming while keeping SimCam Lite running. |
+| `simcam quit` | — | Quit `SimCamLite.app`. |
+| `simcam status` | `[--json]` | Show streaming state, sources, fps, profile, and connected apps. |
+| `simcam fps` | `<30 \| 60>` | Set the frame rate sent to the simulator. |
+| `simcam profile` | `<triple \| dual \| single>` | Set the emulated iPhone camera topology (applies to newly opened apps). |
+
+```bash
+simcam start --fps 60
+simcam profile triple
+simcam status --json
+```
+
+## Sources & adjustments
+
+| Command | Arguments / Flags | Description |
+| --- | --- | --- |
+| `simcam source` | `[--back \| --front] <pattern \| camera \| qr \| follow \| path> [text] [--device <query>]` | Set the back or front camera source. Setting a front source turns off *Same as back*. |
+| `simcam adjust` | `[--back \| --front] [--fill \| --fit] [--rotate <0\|90\|180\|270>] [--mirror \| --no-mirror]` | Change render fit, rotation, or mirroring for a stream. |
+| `simcam pause` | `[--back \| --front]` | Pause a video source on its current frame. |
+| `simcam resume` | `[--back \| --front]` | Resume a paused video source. |
+| `simcam cameras` | `[--json]` | List Mac cameras available as live sources. |
+
+```bash
+# Back camera from a local image or video
+simcam source ~/Pictures/receipt.jpg
+
+# Back camera as a generated QR code
+simcam source qr "https://example.com/invite?code=42"
+
+# Front camera from a specific Mac webcam
+simcam source --front camera --device "FaceTime"
+
+# Make front camera reuse the back camera source again
+simcam source --front follow
+
+# Adjust front stream geometry
+simcam adjust --front --fit --rotate 90 --mirror
+```
+
+## Simulators & injection
+
+Simulator commands accept `--device <name|UDID>` (or `-d`) whenever multiple simulators are booted simultaneously.
+
+| Command | Arguments / Flags | Description |
+| --- | --- | --- |
+| `simcam devices` | `[--booted] [--json]` | List iOS simulators with runtime, state, and injection status. |
+| `simcam boot` | `[device] [--runtime <ver>] [--wait] [--inject]` | Boot a simulator (or open Simulator.app if no device is given). |
+| `simcam apps` | `[--device <name\|UDID>] [--json]` | List user apps installed on a booted simulator. |
+| `simcam launch` | `<bundle-id \| app-name> [--device <name\|UDID>]` | Launch (or relaunch) an app with SimCam Lite injected. |
+| `simcam inject` | `<on \| off \| status \| auto> [on \| off \| status] [--device <q>] [--all] [--persist]` | Manage simulator-wide `DYLD_INSERT_LIBRARIES` injection. |
+
+```bash
+# Boot iOS 26.5 simulator, wait for boot, and turn on injection
+simcam boot "iPhone 17 Pro" --runtime 26.5 --wait --inject
+
+# Persist injection across simulator restarts for a specific device
+simcam inject on --persist --device "iPhone 17 Pro"
+
+# Auto-inject every simulator as it boots
+simcam inject auto on
+
+# Launch an app by bundle ID or display name
+simcam launch com.example.scanner
+```
+
+## Permissions & Xcode
+
+| Command | Arguments / Flags | Description |
+| --- | --- | --- |
+| `simcam permission` | `<ask \| allow>` or `<app> <case> [--device <q>]` | Toggle global permission prompts or restart an app with a TCC preset (`fresh`, `camera-denied`, `mic-not-asked`, `mic-denied`, `allowed`). |
+| `simcam xcode` | `[setup \| remove \| status] [path] [--scheme <name>] [--force]` | Add, inspect, or remove `DYLD_INSERT_LIBRARIES` on iOS app schemes in an `.xcworkspace` or `.xcodeproj`. |
+
+```bash
+# Restart an app with camera denied
+simcam permission com.example.scanner camera-denied
+
+# Configure Xcode Run schemes in the current folder
+simcam xcode setup
+simcam xcode status
+simcam xcode remove
+```
+
+## Shell completion (zsh)
+
+Generate completions for `zsh` using ArgumentParser’s built-in flag:
+
+```bash
+simcam --generate-completion-script zsh > ~/.zsh/completions/_simcam
+```

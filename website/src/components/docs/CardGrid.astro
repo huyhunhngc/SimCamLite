@@ -1,0 +1,21 @@
+---
+---
+
+<div class="mdx-card-grid">
+  <slot />
+</div>
+
+<style>
+  .mdx-card-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin: 20px 0;
+  }
+
+  @media (max-width: 640px) {
+    .mdx-card-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

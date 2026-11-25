@@ -1,0 +1,92 @@
+---
+import '@styles/tokens.css';
+import '@styles/global.css';
+import Navbar from '@components/Navbar.astro';
+import Footer from '@components/Footer.astro';
+import SearchModal from '@components/SearchModal.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  isDocs?: boolean;
+  hasSidebar?: boolean;
+}
+
+const {
+  title,
+  description = 'A free, open-source macOS app that gives the iOS Simulator a working camera. Stream photos, 4K video, QR codes, or your Mac webcam with zero changes to your app code.',
+  isDocs = false,
+  hasSidebar = false,
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://simcamlite.ifateam.dev');
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <script is:inline>
+      try {
+        const saved = localStorage.getItem('color-scheme');
+        if (saved === 'light' || saved === 'dark') {
+          document.querySelector('meta[name="color-scheme"]').content = saved;
+        }
+      } catch {}
+    </script>
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL.toString()} />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/app-icon.png" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL.toString()} />
+    <meta property="og:site_name" content="SimCam Lite" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,500..700;1,9..40,500..700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body data-docs={isDocs ? 'true' : undefined}>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <Navbar isDocs={isDocs} hasSidebar={hasSidebar} />
+    <main id="main-content">
+      <slot />
+    </main>
+    {!isDocs && <Footer />}
+    <SearchModal />
+  </body>
+</html>
+
+<style>
+  .skip-link {
+    position: fixed;
+    top: -100px;
+    left: 16px;
+    z-index: 200;
+    padding: 8px 14px;
+    border-radius: var(--radius-sm);
+    background-color: var(--brand-blue);
+    color: #ffffff;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .skip-link:focus {
+    top: 12px;
+  }
+</style>

@@ -1,0 +1,318 @@
+:root {
+  color-scheme: light dark;
+
+  --font-display: 'DM Sans', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Raw palette tokens */
+  --bg-canvas-light: #ffffff;
+  --bg-canvas-dark: #0a0a0a;
+
+  --bg-soft-light: #fafafa;
+  --bg-soft-dark: #111111;
+
+  --bg-elevated-light: #f4f4f5;
+  --bg-elevated-dark: #171717;
+
+  --bg-card-light: #ffffff;
+  --bg-card-dark: #121212;
+
+  --border-light: #e5e5e5;
+  --border-dark: #262626;
+
+  --border-strong-light: #d4d4d4;
+  --border-strong-dark: #3a3a3a;
+
+  --text-primary-light: #111111;
+  --text-primary-dark: #f5f5f5;
+
+  --text-secondary-light: #525252;
+  --text-secondary-dark: #a3a3a3;
+
+  --text-muted-light: #737373;
+  --text-muted-dark: #7a7a7a;
+
+  --brand-blue-light: #0071e3;
+  --brand-blue-dark: #3b9eff;
+
+  --brand-blue-hover-light: #005ec2;
+  --brand-blue-hover-dark: #5cb0ff;
+
+  --brand-blue-soft-light: rgba(0, 113, 227, 0.08);
+  --brand-blue-soft-dark: rgba(59, 158, 255, 0.14);
+
+  --brand-gold-light: #b88228;
+  --brand-gold-dark: #e5b567;
+
+  --brand-gold-soft-light: rgba(184, 130, 40, 0.1);
+  --brand-gold-soft-dark: rgba(229, 181, 103, 0.14);
+
+  --header-bg-light: rgba(255, 255, 255, 0.84);
+  --header-bg-dark: rgba(10, 10, 10, 0.84);
+
+  /* Landing tonal surface system (borderless surface contrast, cooldock-inspired) */
+  --landing-canvas-light: #edeceb;
+  --landing-canvas-dark: #0a0a0b;
+
+  --landing-surface-light: #f7f7f7;
+  --landing-surface-dark: #151517;
+
+  --landing-surface-strong-light: #ffffff;
+  --landing-surface-strong-dark: #1f1f23;
+
+  --landing-surface-muted-light: #e2e1df;
+  --landing-surface-muted-dark: #252529;
+
+  --landing-ink-light: #0d0d0e;
+  --landing-ink-dark: #f5f5f7;
+
+  --landing-ink-secondary-light: #55555a;
+  --landing-ink-secondary-dark: #a0a0a8;
+
+  --landing-header-bg-light: rgba(237, 236, 235, 0.85);
+  --landing-header-bg-dark: rgba(10, 10, 11, 0.85);
+
+  /* Tapflow-style open-source docs tokens */
+  --docs-bg-light: #ffffff;
+  --docs-bg-dark: #0a0a0a;
+
+  --docs-sidebar-bg-light: #fafafa;
+  --docs-sidebar-bg-dark: #111111;
+
+  --docs-bg-soft-light: #f5f5f5;
+  --docs-bg-soft-dark: #171717;
+
+  --docs-code-bg-light: #f5f5f5;
+  --docs-code-bg-dark: #1a1a1a;
+
+  --docs-code-color-light: #171717;
+  --docs-code-color-dark: #e5e5e5;
+
+  --docs-divider-light: #ebebeb;
+  --docs-divider-dark: #2a2a2a;
+
+  --docs-text-1-light: #171717;
+  --docs-text-1-dark: #f5f5f5;
+
+  --docs-text-2-light: #4d4d4d;
+  --docs-text-2-dark: #a8a8a8;
+
+  --docs-text-3-light: #888888;
+  --docs-text-3-dark: #717171;
+
+  --docs-link-light: #0070f3;
+  --docs-link-dark: #60a5fa;
+
+  --docs-brand-soft-light: rgba(23, 23, 23, 0.06);
+  --docs-brand-soft-dark: rgba(245, 245, 245, 0.08);
+
+  --code-bg-light: #f7f7f8;
+  --code-bg-dark: #141416;
+
+  --inline-code-bg-light: #f1f2f4;
+  --inline-code-bg-dark: #1e1e22;
+
+  --scrollbar-thumb-light: #c4c4c8;
+  --scrollbar-thumb-dark: #3c3c42;
+
+  --scrollbar-track-light: #f4f4f5;
+  --scrollbar-track-dark: #111111;
+
+  /* Semantic callouts */
+  --callout-note-bg-light: rgba(0, 113, 227, 0.06);
+  --callout-note-bg-dark: rgba(59, 158, 255, 0.1);
+  --callout-note-border-light: rgba(0, 113, 227, 0.28);
+  --callout-note-border-dark: rgba(59, 158, 255, 0.32);
+
+  --callout-tip-bg-light: rgba(16, 185, 129, 0.07);
+  --callout-tip-bg-dark: rgba(52, 211, 153, 0.1);
+  --callout-tip-border-light: rgba(16, 185, 129, 0.3);
+  --callout-tip-border-dark: rgba(52, 211, 153, 0.32);
+  --callout-tip-text-light: #047857;
+  --callout-tip-text-dark: #34d399;
+
+  --callout-warning-bg-light: rgba(217, 119, 6, 0.07);
+  --callout-warning-bg-dark: rgba(229, 181, 103, 0.11);
+  --callout-warning-border-light: rgba(217, 119, 6, 0.3);
+  --callout-warning-border-dark: rgba(229, 181, 103, 0.34);
+
+  --callout-caution-bg-light: rgba(225, 29, 72, 0.07);
+  --callout-caution-bg-dark: rgba(251, 113, 133, 0.1);
+  --callout-caution-border-light: rgba(225, 29, 72, 0.28);
+  --callout-caution-border-dark: rgba(251, 113, 133, 0.32);
+  --callout-caution-text-light: #be123c;
+  --callout-caution-text-dark: #fb7185;
+
+  /* Default (light) assignments for browsers without light-dark() */
+  --bg-canvas: var(--bg-canvas-light);
+  --bg-soft: var(--bg-soft-light);
+  --bg-elevated: var(--bg-elevated-light);
+  --bg-card: var(--bg-card-light);
+  --border: var(--border-light);
+  --border-strong: var(--border-strong-light);
+  --text-primary: var(--text-primary-light);
+  --text-secondary: var(--text-secondary-light);
+  --text-muted: var(--text-muted-light);
+  --brand-blue: var(--brand-blue-light);
+  --brand-blue-hover: var(--brand-blue-hover-light);
+  --brand-blue-soft: var(--brand-blue-soft-light);
+  --brand-gold: var(--brand-gold-light);
+  --brand-gold-soft: var(--brand-gold-soft-light);
+  --header-bg: var(--header-bg-light);
+  --landing-canvas: var(--landing-canvas-light);
+  --landing-surface: var(--landing-surface-light);
+  --landing-surface-strong: var(--landing-surface-strong-light);
+  --landing-surface-muted: var(--landing-surface-muted-light);
+  --landing-ink: var(--landing-ink-light);
+  --landing-ink-secondary: var(--landing-ink-secondary-light);
+  --landing-header-bg: var(--landing-header-bg-light);
+  --docs-bg: var(--docs-bg-light);
+  --docs-sidebar-bg: var(--docs-sidebar-bg-light);
+  --docs-bg-soft: var(--docs-bg-soft-light);
+  --docs-code-bg: var(--docs-code-bg-light);
+  --docs-code-color: var(--docs-code-color-light);
+  --docs-divider: var(--docs-divider-light);
+  --docs-text-1: var(--docs-text-1-light);
+  --docs-text-2: var(--docs-text-2-light);
+  --docs-text-3: var(--docs-text-3-light);
+  --docs-link: var(--docs-link-light);
+  --docs-brand-soft: var(--docs-brand-soft-light);
+  --code-bg: var(--code-bg-light);
+  --inline-code-bg: var(--inline-code-bg-light);
+  --scrollbar-thumb: var(--scrollbar-thumb-light);
+  --scrollbar-track: var(--scrollbar-track-light);
+
+  --callout-note-bg: var(--callout-note-bg-light);
+  --callout-note-border: var(--callout-note-border-light);
+  --callout-tip-bg: var(--callout-tip-bg-light);
+  --callout-tip-border: var(--callout-tip-border-light);
+  --callout-tip-text: var(--callout-tip-text-light);
+  --callout-warning-bg: var(--callout-warning-bg-light);
+  --callout-warning-border: var(--callout-warning-border-light);
+  --callout-caution-bg: var(--callout-caution-bg-light);
+  --callout-caution-border: var(--callout-caution-border-light);
+  --callout-caution-text: var(--callout-caution-text-light);
+
+  /* Layout metrics */
+  --nav-height: 64px;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
+
+  @media (prefers-color-scheme: dark) {
+    --bg-canvas: var(--bg-canvas-dark);
+    --bg-soft: var(--bg-soft-dark);
+    --bg-elevated: var(--bg-elevated-dark);
+    --bg-card: var(--bg-card-dark);
+    --border: var(--border-dark);
+    --border-strong: var(--border-strong-dark);
+    --text-primary: var(--text-primary-dark);
+    --text-secondary: var(--text-secondary-dark);
+    --text-muted: var(--text-muted-dark);
+    --brand-blue: var(--brand-blue-dark);
+    --brand-blue-hover: var(--brand-blue-hover-dark);
+    --brand-blue-soft: var(--brand-blue-soft-dark);
+    --brand-gold: var(--brand-gold-dark);
+    --brand-gold-soft: var(--brand-gold-soft-dark);
+    --header-bg: var(--header-bg-dark);
+    --landing-canvas: var(--landing-canvas-dark);
+    --landing-surface: var(--landing-surface-dark);
+    --landing-surface-strong: var(--landing-surface-strong-dark);
+    --landing-surface-muted: var(--landing-surface-muted-dark);
+    --landing-ink: var(--landing-ink-dark);
+    --landing-ink-secondary: var(--landing-ink-secondary-dark);
+    --landing-header-bg: var(--landing-header-bg-dark);
+    --docs-bg: var(--docs-bg-dark);
+    --docs-sidebar-bg: var(--docs-sidebar-bg-dark);
+    --docs-bg-soft: var(--docs-bg-soft-dark);
+    --docs-code-bg: var(--docs-code-bg-dark);
+    --docs-code-color: var(--docs-code-color-dark);
+    --docs-divider: var(--docs-divider-dark);
+    --docs-text-1: var(--docs-text-1-dark);
+    --docs-text-2: var(--docs-text-2-dark);
+    --docs-text-3: var(--docs-text-3-dark);
+    --docs-link: var(--docs-link-dark);
+    --docs-brand-soft: var(--docs-brand-soft-dark);
+    --code-bg: var(--code-bg-dark);
+    --inline-code-bg: var(--inline-code-bg-dark);
+    --scrollbar-thumb: var(--scrollbar-thumb-dark);
+    --scrollbar-track: var(--scrollbar-track-dark);
+
+    --callout-note-bg: var(--callout-note-bg-dark);
+    --callout-note-border: var(--callout-note-border-dark);
+    --callout-tip-bg: var(--callout-tip-bg-dark);
+    --callout-tip-border: var(--callout-tip-border-dark);
+    --callout-tip-text: var(--callout-tip-text-dark);
+    --callout-warning-bg: var(--callout-warning-bg-dark);
+    --callout-warning-border: var(--callout-warning-border-dark);
+    --callout-caution-bg: var(--callout-caution-bg-dark);
+    --callout-caution-border: var(--callout-caution-border-dark);
+    --callout-caution-text: var(--callout-caution-text-dark);
+  }
+
+  @supports (color: light-dark(white, black)) {
+    --bg-canvas: light-dark(var(--bg-canvas-light), var(--bg-canvas-dark));
+    --bg-soft: light-dark(var(--bg-soft-light), var(--bg-soft-dark));
+    --bg-elevated: light-dark(var(--bg-elevated-light), var(--bg-elevated-dark));
+    --bg-card: light-dark(var(--bg-card-light), var(--bg-card-dark));
+    --border: light-dark(var(--border-light), var(--border-dark));
+    --border-strong: light-dark(var(--border-strong-light), var(--border-strong-dark));
+    --text-primary: light-dark(var(--text-primary-light), var(--text-primary-dark));
+    --text-secondary: light-dark(var(--text-secondary-light), var(--text-secondary-dark));
+    --text-muted: light-dark(var(--text-muted-light), var(--text-muted-dark));
+    --brand-blue: light-dark(var(--brand-blue-light), var(--brand-blue-dark));
+    --brand-blue-hover: light-dark(var(--brand-blue-hover-light), var(--brand-blue-hover-dark));
+    --brand-blue-soft: light-dark(var(--brand-blue-soft-light), var(--brand-blue-soft-dark));
+    --brand-gold: light-dark(var(--brand-gold-light), var(--brand-gold-dark));
+    --brand-gold-soft: light-dark(var(--brand-gold-soft-light), var(--brand-gold-soft-dark));
+    --header-bg: light-dark(var(--header-bg-light), var(--header-bg-dark));
+    --landing-canvas: light-dark(var(--landing-canvas-light), var(--landing-canvas-dark));
+    --landing-surface: light-dark(var(--landing-surface-light), var(--landing-surface-dark));
+    --landing-surface-strong: light-dark(var(--landing-surface-strong-light), var(--landing-surface-strong-dark));
+    --landing-surface-muted: light-dark(var(--landing-surface-muted-light), var(--landing-surface-muted-dark));
+    --landing-ink: light-dark(var(--landing-ink-light), var(--landing-ink-dark));
+    --landing-ink-secondary: light-dark(var(--landing-ink-secondary-light), var(--landing-ink-secondary-dark));
+    --landing-header-bg: light-dark(var(--landing-header-bg-light), var(--landing-header-bg-dark));
+    --docs-bg: light-dark(var(--docs-bg-light), var(--docs-bg-dark));
+    --docs-sidebar-bg: light-dark(var(--docs-sidebar-bg-light), var(--docs-sidebar-bg-dark));
+    --docs-bg-soft: light-dark(var(--docs-bg-soft-light), var(--docs-bg-soft-dark));
+    --docs-code-bg: light-dark(var(--docs-code-bg-light), var(--docs-code-bg-dark));
+    --docs-code-color: light-dark(var(--docs-code-color-light), var(--docs-code-color-dark));
+    --docs-divider: light-dark(var(--docs-divider-light), var(--docs-divider-dark));
+    --docs-text-1: light-dark(var(--docs-text-1-light), var(--docs-text-1-dark));
+    --docs-text-2: light-dark(var(--docs-text-2-light), var(--docs-text-2-dark));
+    --docs-text-3: light-dark(var(--docs-text-3-light), var(--docs-text-3-dark));
+    --docs-link: light-dark(var(--docs-link-light), var(--docs-link-dark));
+    --docs-brand-soft: light-dark(var(--docs-brand-soft-light), var(--docs-brand-soft-dark));
+    --code-bg: light-dark(var(--code-bg-light), var(--code-bg-dark));
+    --inline-code-bg: light-dark(var(--inline-code-bg-light), var(--inline-code-bg-dark));
+    --scrollbar-thumb: light-dark(var(--scrollbar-thumb-light), var(--scrollbar-thumb-dark));
+    --scrollbar-track: light-dark(var(--scrollbar-track-light), var(--scrollbar-track-dark));
+
+    --callout-note-bg: light-dark(var(--callout-note-bg-light), var(--callout-note-bg-dark));
+    --callout-note-border: light-dark(var(--callout-note-border-light), var(--callout-note-border-dark));
+    --callout-tip-bg: light-dark(var(--callout-tip-bg-light), var(--callout-tip-bg-dark));
+    --callout-tip-border: light-dark(var(--callout-tip-border-light), var(--callout-tip-border-dark));
+    --callout-tip-text: light-dark(var(--callout-tip-text-light), var(--callout-tip-text-dark));
+    --callout-warning-bg: light-dark(var(--callout-warning-bg-light), var(--callout-warning-bg-dark));
+    --callout-warning-border: light-dark(var(--callout-warning-border-light), var(--callout-warning-border-dark));
+    --callout-caution-bg: light-dark(var(--callout-caution-bg-light), var(--callout-caution-bg-dark));
+    --callout-caution-border: light-dark(var(--callout-caution-border-light), var(--callout-caution-border-dark));
+    --callout-caution-text: light-dark(var(--callout-caution-text-light), var(--callout-caution-text-dark));
+  }
+
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+  accent-color: var(--brand-blue);
+}
+
+/* Reflect meta[name="color-scheme"] override back into CSS */
+:root:has(> head > meta[name="color-scheme"][content="dark"]) {
+  color-scheme: dark;
+}
+
+:root:has(> head > meta[name="color-scheme"][content="light"]) {
+  color-scheme: light;
+}

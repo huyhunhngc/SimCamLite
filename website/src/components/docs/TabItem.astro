@@ -1,0 +1,16 @@
+---
+---
+
+<div class="mdx-tab-item">
+  <slot />
+</div>
+
+<style>
+  .mdx-tab-item :global(> *:first-child) {
+    margin-top: 0;
+  }
+
+  .mdx-tab-item :global(> *:last-child) {
+    margin-bottom: 0;
+  }
+</style>

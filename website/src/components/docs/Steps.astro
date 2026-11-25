@@ -1,0 +1,49 @@
+---
+---
+
+<div class="mdx-steps">
+  <slot />
+</div>
+
+<style>
+  .mdx-steps {
+    margin: 22px 0;
+  }
+
+  .mdx-steps :global(> ol) {
+    list-style: none;
+    counter-reset: step-counter;
+    padding-left: 34px;
+    margin: 0;
+    border-left: 1px solid var(--docs-divider);
+  }
+
+  .mdx-steps :global(> ol > li) {
+    counter-increment: step-counter;
+    position: relative;
+    margin: 0 0 22px;
+    padding-bottom: 4px;
+  }
+
+  .mdx-steps :global(> ol > li:last-child) {
+    margin-bottom: 0;
+  }
+
+  .mdx-steps :global(> ol > li::before) {
+    content: counter(step-counter);
+    position: absolute;
+    left: -47px;
+    top: 1px;
+    width: 24px;
+    height: 24px;
+    border-radius: 999px;
+    background-color: var(--docs-bg-soft);
+    color: var(--docs-text-1);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+</style>

@@ -1,0 +1,384 @@
+---
+---
+
+<dialog id="search-dialog" class="search-dialog" closedby="any" aria-labelledby="search-dialog-title">
+  <div class="search-panel">
+    <h1 id="search-dialog-title" class="sr-only">Search SimCam Lite documentation</h1>
+    <div class="search-input-row">
+      <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="11" cy="11" r="8"></circle>
+        <path d="m21 21-4.3-4.3"></path>
+      </svg>
+      <input
+        id="search-input"
+        class="search-input"
+        type="search"
+        placeholder="Search docs, CLI commands, guides..."
+        autocomplete="off"
+        spellcheck="false"
+        autofocus
+      />
+      <form method="dialog">
+        <button type="submit" class="search-close-btn" aria-label="Close search">Esc</button>
+      </form>
+    </div>
+
+    <div id="search-results" class="search-results" role="listbox" aria-label="Search results">
+      <div class="search-empty">Type to search documentation...</div>
+    </div>
+
+    <div class="search-footer">
+      <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+      <span><kbd>↵</kbd> open</span>
+      <span><kbd>Esc</kbd> close</span>
+    </div>
+  </div>
+</dialog>
+
+<style>
+  .search-dialog {
+    padding: 0;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-lg);
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+    width: min(620px, calc(100vw - 32px));
+    max-height: min(540px, 80svh);
+    margin: min(11vh, 96px) auto auto;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+    overflow: hidden;
+  }
+
+  .search-dialog[open] {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .search-dialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.52);
+    backdrop-filter: blur(4px);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .search-dialog {
+      opacity: 0;
+      transform: scale(0.98) translateY(-6px);
+      transition:
+        opacity 0.18s var(--ease-out-expo),
+        transform 0.18s var(--ease-out-expo),
+        display 0.18s,
+        overlay 0.18s;
+      transition-behavior: allow-discrete;
+    }
+
+    .search-dialog[open] {
+      opacity: 1;
+      transform: none;
+    }
+
+    @starting-style {
+      .search-dialog[open] {
+        opacity: 0;
+        transform: scale(0.98) translateY(-6px);
+      }
+    }
+  }
+
+  .search-panel {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    height: 100%;
+  }
+
+  .search-input-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .search-icon {
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  .search-input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    background: transparent;
+    color: var(--text-primary);
+    font-size: 0.96875rem;
+    outline: none;
+  }
+
+  .search-input::placeholder {
+    color: var(--text-muted);
+  }
+
+  .search-close-btn {
+    padding: 3px 8px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background-color: var(--bg-soft);
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    cursor: pointer;
+  }
+
+  .search-close-btn:hover {
+    color: var(--text-primary);
+    border-color: var(--border-strong);
+  }
+
+  .search-results {
+    overflow-y: auto;
+    padding: 8px;
+    max-height: 390px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .search-empty {
+    padding: 28px 16px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+  }
+
+  :global(.search-item) {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    border: 1px solid transparent;
+  }
+
+  :global(.search-item:hover),
+  :global(.search-item[aria-selected='true']) {
+    background-color: var(--bg-soft);
+    border-color: var(--border);
+  }
+
+  :global(.search-item-top) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  :global(.search-item-title) {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  :global(.search-item-section) {
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    padding: 2px 7px;
+    border-radius: 999px;
+    background-color: var(--bg-elevated);
+  }
+
+  :global(.search-item-desc) {
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .search-footer {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 9px 16px;
+    border-top: 1px solid var(--border);
+    background-color: var(--bg-soft);
+    color: var(--text-muted);
+    font-size: 0.75rem;
+  }
+
+  .search-footer kbd {
+    display: inline-block;
+    padding: 1px 5px;
+    margin-right: 4px;
+    border-radius: 4px;
+    border: 1px solid var(--border-strong);
+    background-color: var(--bg-card);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+  }
+</style>
+
+<script>
+  interface SearchEntry {
+    title: string;
+    description: string;
+    section: string;
+    url: string;
+    headings: string[];
+    excerpt: string;
+  }
+
+  const dialog = document.getElementById('search-dialog') as HTMLDialogElement | null;
+  const input = document.getElementById('search-input') as HTMLInputElement | null;
+  const resultsEl = document.getElementById('search-results');
+
+  let indexCache: SearchEntry[] | null = null;
+  let activeIdx = 0;
+  let currentMatches: SearchEntry[] = [];
+
+  async function loadIndex(): Promise<SearchEntry[]> {
+    if (indexCache) return indexCache;
+    try {
+      const res = await fetch('/search-index.json');
+      if (!res.ok) return [];
+      indexCache = (await res.json()) as SearchEntry[];
+      return indexCache;
+    } catch {
+      return [];
+    }
+  }
+
+  function escapeHtml(text: string): string {
+    return text
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;');
+  }
+
+  function renderResults(entries: SearchEntry[], query: string) {
+    if (!resultsEl) return;
+    currentMatches = entries;
+    activeIdx = 0;
+
+    if (entries.length === 0) {
+      resultsEl.innerHTML = `<div class="search-empty">No results found for “${escapeHtml(query)}”.</div>`;
+      return;
+    }
+
+    resultsEl.innerHTML = entries
+      .slice(0, 10)
+      .map(
+        (item, i) => `
+      <a class="search-item" href="${escapeHtml(item.url)}" role="option" aria-selected="${i === 0 ? 'true' : 'false'}">
+        <div class="search-item-top">
+          <span class="search-item-title">${escapeHtml(item.title)}</span>
+          <span class="search-item-section">${escapeHtml(item.section)}</span>
+        </div>
+        <span class="search-item-desc">${escapeHtml(item.description)}</span>
+      </a>`
+      )
+      .join('');
+  }
+
+  async function updateSearch(query: string) {
+    const entries = await loadIndex();
+    const q = query.trim().toLowerCase();
+    if (!q) {
+      renderResults(entries.slice(0, 6), '');
+      return;
+    }
+
+    const terms = q.split(/\s+/).filter(Boolean);
+    const scored = entries
+      .map((entry) => {
+        const title = entry.title.toLowerCase();
+        const headings = entry.headings.join(' ').toLowerCase();
+        const body = `${entry.description} ${entry.excerpt}`.toLowerCase();
+        let score = 0;
+        for (const t of terms) {
+          if (title.includes(t)) score += 10;
+          else if (headings.includes(t)) score += 5;
+          else if (body.includes(t)) score += 2;
+          else return { entry, score: -1 };
+        }
+        return { entry, score };
+      })
+      .filter((item) => item.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .map((item) => item.entry);
+
+    renderResults(scored, query);
+  }
+
+  function openSearch() {
+    if (!dialog) return;
+    if (!dialog.open) {
+      dialog.showModal();
+    }
+    input?.focus();
+    updateSearch(input?.value ?? '');
+  }
+
+  document.querySelectorAll('[data-open-search]').forEach((trigger) => {
+    trigger.addEventListener('click', openSearch);
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+      event.preventDefault();
+      if (dialog?.open) {
+        dialog.close();
+      } else {
+        openSearch();
+      }
+    }
+  });
+
+  input?.addEventListener('input', () => {
+    updateSearch(input.value);
+  });
+
+  input?.addEventListener('keydown', (event) => {
+    if (!resultsEl || currentMatches.length === 0) return;
+    const links = resultsEl.querySelectorAll<HTMLAnchorElement>('.search-item');
+    if (links.length === 0) return;
+
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      links[activeIdx]?.setAttribute('aria-selected', 'false');
+      activeIdx = (activeIdx + 1) % links.length;
+      links[activeIdx]?.setAttribute('aria-selected', 'true');
+      links[activeIdx]?.scrollIntoView({ block: 'nearest' });
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      links[activeIdx]?.setAttribute('aria-selected', 'false');
+      activeIdx = (activeIdx - 1 + links.length) % links.length;
+      links[activeIdx]?.setAttribute('aria-selected', 'true');
+      links[activeIdx]?.scrollIntoView({ block: 'nearest' });
+    } else if (event.key === 'Enter') {
+      const target = links[activeIdx];
+      if (target) {
+        event.preventDefault();
+        window.location.href = target.href;
+      }
+    }
+  });
+
+  // Fallback for browsers without native dialog closedby="any" (e.g. Safari)
+  if (dialog && !('closedBy' in HTMLDialogElement.prototype)) {
+    const outside = (e: PointerEvent) => {
+      const r = dialog.getBoundingClientRect();
+      return e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
+    };
+    let pressedOutside = false;
+    dialog.addEventListener('pointerdown', (e) => {
+      pressedOutside = outside(e);
+    });
+    dialog.addEventListener('pointerup', (e) => {
+      if (pressedOutside && outside(e)) dialog.close();
+    });
+  }
+</script>

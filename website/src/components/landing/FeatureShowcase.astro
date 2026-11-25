@@ -1,0 +1,243 @@
+---
+import { Image } from 'astro:assets';
+import simulatorAndSettings from '@assets/simulator-and-settings.png';
+
+const bentoCards = [
+  {
+    title: 'Any source becomes the camera',
+    body: 'Feed a still photo, a looping video up to 4K, a generated QR code (remembers your 8 most recent codes and pre-fills from clipboard), your Mac’s live webcam, or a built-in test pattern.',
+    includes: 'Includes: Photos, 4K video loop, QR generator, Mac webcam, drag & drop.',
+  },
+  {
+    title: 'Independent Back & Front cameras',
+    body: 'Assign separate sources to the back and front cameras—or toggle “Same as back” to mirror one feed. Adjust fill vs. fit, rotate in 90° steps, mirror, and pause video on any frame.',
+    includes: 'Includes: Same as back, fit/fill, 90° rotation, mirror, frame-exact pause.',
+  },
+  {
+    title: 'Realistic iPhone camera profiles',
+    body: 'Emulate Triple (0.5× · 1× · 3×), Dual Wide, or Single camera devices at 30 or 60 fps. Video frames, still photo captures, preview layers, and device rotation follow real hardware.',
+    includes: 'Includes: Triple, Dual Wide, Single profiles, 30/60 fps, rotation coordinator.',
+  },
+  {
+    title: 'Permissions & audio edge cases',
+    body: 'Switch between Ask and Allow modes, or jump to 5 deterministic TCC presets to test onboarding and denied states. Streams 48 kHz mono 16-bit PCM audio via AVCaptureAudioDataOutput.',
+    includes: 'Includes: fresh, camera-denied, mic-not-asked, mic-denied, allowed, 48 kHz PCM.',
+  },
+];
+---
+
+<section id="features" class="features-section">
+  <div class="container">
+    <header class="section-header" data-reveal>
+      <h2 class="section-title">Everything your camera screen needs.</h2>
+      <p class="section-subtitle">
+        Built for fast iteration in SwiftUI, UIKit, AVFoundation, and Vision without reaching for a physical iPhone.
+      </p>
+    </header>
+
+    <div class="bento-grid">
+      {bentoCards.map((card, i) => (
+        <article class="bento-card" data-reveal style={`--reveal-delay: ${i * 70}ms;`}>
+          <h3>{card.title}</h3>
+          <p class="card-body">{card.body}</p>
+          <p class="card-includes">{card.includes}</p>
+        </article>
+      ))}
+    </div>
+
+    <div class="spotlight-card" data-reveal>
+      <div class="spotlight-copy">
+        <h3>Simulator manager, Xcode setup, and menu bar streaming</h3>
+        <p>
+          Turn injection on for every app on a simulator (automatically restored when that simulator reboots), enable <strong>Inject into Every Simulator</strong> as devices boot, or launch a single app directly.
+        </p>
+        <ul class="spotlight-list">
+          <li><strong>Run from Xcode:</strong> One-click scheme setup preserves LLDB breakpoints and skips macOS/Catalyst targets safely.</li>
+          <li><strong>Connected Apps Telemetry:</strong> Inspect active PIDs, camera in use, resolution, streamed frames, and captured photo counts.</li>
+          <li><strong>Menu Bar & Sparkle Updates:</strong> Keep streaming in the background and receive signed automatic updates with release notes.</li>
+        </ul>
+        <a href="/docs/guides/simulator-and-xcode/" class="spotlight-link">
+          Explore Simulator & Xcode setup →
+        </a>
+      </div>
+      <div class="spotlight-media">
+        <Image
+          src={simulatorAndSettings}
+          alt="SimCam Lite Simulator manager and Settings views showing per-simulator injection toggles, app launcher, and CLI setup"
+          class="spotlight-img"
+        />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .features-section {
+    padding: 56px 0;
+    scroll-margin-top: calc(var(--nav-height) + 16px);
+  }
+
+  .section-header {
+    max-width: 720px;
+    margin: 0 auto 48px;
+    text-align: center;
+  }
+
+  .section-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(2.1rem, 4.4vw, 3.4rem);
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    line-height: 1.06;
+    color: var(--landing-ink);
+  }
+
+  .section-subtitle {
+    margin: 16px auto 0;
+    max-width: 580px;
+    font-size: 1.09375rem;
+    line-height: 1.55;
+    color: var(--landing-ink-secondary);
+  }
+
+  .bento-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+  }
+
+  .bento-card {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    padding: 38px 36px;
+    border-radius: 30px;
+    background-color: var(--landing-surface);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .bento-card h3 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 1.55rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    color: var(--landing-ink);
+  }
+
+  .card-body {
+    margin: 0;
+    font-size: 0.96875rem;
+    line-height: 1.62;
+    color: var(--landing-ink-secondary);
+    flex: 1;
+  }
+
+  .card-includes {
+    margin: 4px 0 0;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--landing-ink);
+    opacity: 0.72;
+  }
+
+  .spotlight-card {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    margin-top: 20px;
+    padding: 44px;
+    border-radius: 32px;
+    background-color: var(--landing-surface-strong);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    gap: 36px;
+    align-items: center;
+  }
+
+  .spotlight-copy {
+    min-width: 0;
+  }
+
+  .spotlight-copy h3 {
+    margin: 0 0 14px;
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.16;
+    color: var(--landing-ink);
+  }
+
+  .spotlight-copy p {
+    margin: 0 0 18px;
+    font-size: 0.96875rem;
+    line-height: 1.62;
+    color: var(--landing-ink-secondary);
+  }
+
+  .spotlight-copy strong {
+    color: var(--landing-ink);
+  }
+
+  .spotlight-list {
+    margin: 0 0 24px;
+    padding-left: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: var(--landing-ink-secondary);
+  }
+
+  .spotlight-list strong {
+    color: var(--landing-ink);
+  }
+
+  .spotlight-link {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--landing-ink);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 1.5px;
+  }
+
+  .spotlight-link:hover {
+    opacity: 0.72;
+  }
+
+  .spotlight-media {
+    min-width: 0;
+    border-radius: 20px;
+    overflow: hidden;
+    background-color: var(--landing-surface);
+  }
+
+  .spotlight-img {
+    width: 100%;
+    height: auto;
+  }
+
+  @media (max-width: 900px) {
+    .bento-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .bento-card {
+      padding: 26px 20px;
+      border-radius: 22px;
+    }
+
+    .spotlight-card {
+      grid-template-columns: 1fr;
+      padding: 26px 20px;
+      border-radius: 24px;
+    }
+  }
+</style>
