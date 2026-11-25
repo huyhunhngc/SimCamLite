@@ -1,0 +1,298 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import { CHANGELOG_RELEASES } from '@data/changelog';
+import { GITHUB_REPO, LATEST_RELEASE_URL } from '@data/navigation';
+
+function formatInlineCode(text: string): string {
+  const escaped = text
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;');
+  return escaped.replace(/`([^`]+)`/g, '<code>$1</code>');
+}
+---
+
+<BaseLayout
+  title="Changelog — SimCam Lite"
+  description="Release notes and version history for SimCam Lite, from 4K back-camera support and simulator rotation to permission presets and audio."
+>
+  <section class="changelog-page">
+    <div class="container changelog-container">
+      <header class="changelog-header" data-hero-enter style="--hero-delay: 0ms;">
+        <p class="changelog-eyebrow">Release history · Automatic updates via Sparkle</p>
+        <h1 class="changelog-title">Changelog</h1>
+        <p class="changelog-subtitle">
+          Every update ships with release notes inside the app’s What’s New sheet and on GitHub.
+        </p>
+        <a href={`${GITHUB_REPO}/releases`} target="_blank" rel="noopener noreferrer" class="changelog-gh-link">
+          View all releases on GitHub →
+        </a>
+      </header>
+
+      <div class="release-list">
+        {CHANGELOG_RELEASES.map((release, i) => (
+          <article class="release-row" data-reveal style={`--reveal-delay: ${Math.min(i, 3) * 60}ms;`}>
+            <div class="release-meta">
+              <a
+                href={release.latest ? LATEST_RELEASE_URL : `${GITHUB_REPO}/releases/tag/v${release.version}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="release-version"
+              >
+                v{release.version}
+              </a>
+              <time class="release-date">{release.date}</time>
+              {release.latest && <span class="release-latest">Latest</span>}
+            </div>
+
+            <div class:list={['release-card', { 'release-card--latest': release.latest }]}>
+              <h2 class="release-summary">{release.summary}</h2>
+
+              <ul class="release-highlights">
+                {release.highlights.map((item) => (
+                  <li>
+                    <strong>{item.title}:</strong> <span set:html={formatInlineCode(item.description)} />
+                  </li>
+                ))}
+              </ul>
+
+              {release.fixes && release.fixes.length > 0 && (
+                <div class="release-fixes">
+                  <h3>Fixes</h3>
+                  <ul>
+                    {release.fixes.map((fix) => (
+                      <li set:html={formatInlineCode(fix)} />
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .changelog-page {
+    padding: 64px 0 32px;
+  }
+
+  .changelog-container {
+    max-width: 940px;
+  }
+
+  .changelog-header {
+    margin-bottom: 56px;
+  }
+
+  .changelog-eyebrow {
+    margin: 0 0 14px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--landing-ink-secondary);
+  }
+
+  .changelog-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(2.4rem, 5vw, 3.6rem);
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+    color: var(--landing-ink);
+  }
+
+  .changelog-subtitle {
+    margin: 16px 0 18px;
+    max-width: 560px;
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    color: var(--landing-ink-secondary);
+  }
+
+  .changelog-gh-link {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--landing-ink);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 1.5px;
+  }
+
+  .changelog-gh-link:hover {
+    opacity: 0.72;
+  }
+
+  .release-list {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .release-row {
+    display: grid;
+    grid-template-columns: 160px minmax(0, 1fr);
+    gap: 24px;
+    align-items: start;
+  }
+
+  .release-meta {
+    padding-top: 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .release-version {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: var(--landing-ink);
+    text-decoration: none;
+    width: fit-content;
+  }
+
+  .release-version:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .release-date {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--landing-ink-secondary);
+  }
+
+  .release-latest {
+    margin-top: 4px;
+    font-size: 0.78125rem;
+    font-weight: 600;
+    color: var(--landing-ink);
+    opacity: 0.7;
+  }
+
+  .release-card {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    padding: 30px 32px;
+    border-radius: 26px;
+    background-color: var(--landing-surface);
+  }
+
+  .release-card--latest {
+    background-color: var(--landing-surface-strong);
+  }
+
+  .release-summary {
+    margin: 0 0 16px;
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1.28;
+    color: var(--landing-ink);
+  }
+
+  .release-highlights {
+    margin: 0;
+    padding-left: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 0.95rem;
+    line-height: 1.62;
+    color: var(--landing-ink-secondary);
+  }
+
+  .release-highlights strong {
+    color: var(--landing-ink);
+  }
+
+  .release-fixes {
+    margin-top: 20px;
+    padding-top: 18px;
+  }
+
+  .release-fixes h3 {
+    margin: 0 0 8px;
+    font-size: 0.875rem;
+    font-weight: 650;
+    color: var(--landing-ink);
+  }
+
+  .release-fixes ul {
+    margin: 0;
+    padding-left: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 0.9125rem;
+    line-height: 1.58;
+    color: var(--landing-ink-secondary);
+  }
+
+  .release-card :global(code) {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    padding: 2px 6px;
+    border-radius: 5px;
+    background-color: var(--landing-canvas);
+    color: var(--landing-ink);
+  }
+
+  @media (max-width: 720px) {
+    .changelog-page {
+      padding: 40px 0 20px;
+    }
+
+    .changelog-header {
+      margin-bottom: 36px;
+    }
+
+    .release-row {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .release-meta {
+      padding-top: 0;
+      flex-direction: row;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .release-card {
+      padding: 22px 20px;
+      border-radius: 22px;
+    }
+  }
+</style>
+
+<script is:inline>
+  if (window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+    document.documentElement.dataset.motion = 'ready';
+    const revealEls = document.querySelectorAll('[data-reveal]');
+    if ('IntersectionObserver' in window && revealEls.length > 0) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.setAttribute('data-reveal', 'visible');
+              io.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.12, rootMargin: '0px 0px -30px 0px' }
+      );
+      revealEls.forEach((el) => io.observe(el));
+    } else {
+      revealEls.forEach((el) => el.setAttribute('data-reveal', 'visible'));
+    }
+  }
+</script>

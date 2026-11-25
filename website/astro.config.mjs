@@ -3,7 +3,7 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  site: 'https://simcamlite.ifateam.dev',
+  site: 'https://simcam.ifateam.dev',
   output: 'static',
   trailingSlash: 'always',
   build: {

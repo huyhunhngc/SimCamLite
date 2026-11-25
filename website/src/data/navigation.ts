@@ -14,6 +14,7 @@ export const TOP_NAV: TopNavItem[] = [
   { label: 'Features', href: '/#features' },
   { label: 'CLI', href: '/#cli' },
   { label: 'Docs', href: '/docs/get-started/introduction/', matchPrefix: '/docs/' },
+  { label: 'Changelog', href: '/changelog/', matchPrefix: '/changelog/' },
   { label: 'FAQ', href: '/#faq' },
 ];
 
