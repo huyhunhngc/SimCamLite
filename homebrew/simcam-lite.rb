@@ -2,10 +2,10 @@ cask "simcam-lite" do
   version "{{VERSION}}"
   sha256 "{{SHA256}}"
 
-  url "https://github.com/huyhunhngc/SimCamLite/releases/download/v#{version}/SimCamLite-#{version}.dmg"
+  url "https://github.com/huyhunhngc/simulator-camera/releases/download/v#{version}/SimCamLite-#{version}.dmg"
   name "SimCam Lite"
   desc "Camera for the iOS Simulator"
-  homepage "https://github.com/huyhunhngc/SimCamLite"
+  homepage "https://github.com/huyhunhngc/simulator-camera"
 
   livecheck do
     url "https://simcamupdates.ifateam.dev/appcast.xml"

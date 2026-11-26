@@ -44,7 +44,7 @@ Choose **one** of these options. Most people only need option 1.
 
 ### Option 1: Download the app (recommended)
 
-1. Download `SimCamLite-<version>.dmg` from the [latest release](https://github.com/huyhunhngc/SimCamLite/releases/latest).
+1. Download `SimCamLite-<version>.dmg` from the [latest release](https://github.com/huyhunhngc/simulator-camera/releases/latest).
 2. Open the DMG and drag **SimCam Lite** to Applications.
 3. Open SimCam Lite from Applications. It updates itself from then on.
 
@@ -61,7 +61,7 @@ For contributors, or if you want to change the code. You need Xcode 26 or newer 
 2. Clone the repository:
 
    ```bash
-   git clone https://github.com/huyhunhngc/SimCamLite.git
+   git clone https://github.com/huyhunhngc/simulator-camera.git
    ```
 
 3. Copy `Config/Environment.example.xcconfig` to `Config/Environment.xcconfig` and set `SIMCAM_DEVELOPMENT_TEAM` to
