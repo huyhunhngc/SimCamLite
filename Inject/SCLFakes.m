@@ -94,6 +94,7 @@ static CMTime SCLClampedFrameDuration(CMTime duration) {
 - (BOOL)isBackgroundReplacementSupported { return NO; }
 - (BOOL)reactionEffectsSupported { return NO; }
 - (BOOL)isSpatialVideoCaptureSupported { return NO; }
+- (BOOL)isCinematicVideoCaptureSupported { return NO; }
 - (CGFloat)videoMinZoomFactorForDepthDataDelivery { return 1; }
 - (CGFloat)videoMaxZoomFactorForDepthDataDelivery { return _maxZoom; }
 - (NSArray *)supportedVideoZoomFactorsForDepthDataDelivery { return @[]; }
@@ -156,7 +157,8 @@ static CMTime SCLClampedFrameDuration(CMTime duration) {
     _constituents = [constituents copy];
     _displayMultiplier = displayMultiplier;
     _format = [[SCLFakeFormat alloc] sclInitWithMaxZoom:maxZoom width:SCL_SENSOR_WIDTH height:SCL_SENSOR_HEIGHT];
-    _formats = @[[[SCLFakeFormat alloc] sclInitWithMaxZoom:maxZoom width:1920 height:1080], _format,
+    _formats = @[[[SCLFakeFormat alloc] sclInitWithMaxZoom:maxZoom width:1280 height:720],
+                 [[SCLFakeFormat alloc] sclInitWithMaxZoom:maxZoom width:1920 height:1080], _format,
                  [[SCLFakeFormat alloc] sclInitWithMaxZoom:maxZoom width:3840 height:2160],
                  [[SCLFakeFormat alloc] sclInitWithMaxZoom:maxZoom width:4032 height:3024]];
     _zoom = 1;
