@@ -757,7 +757,7 @@
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 10;
 				DEVELOPMENT_TEAM = "$(SIMCAM_DEVELOPMENT_TEAM)";
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -771,7 +771,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.2.7;
+				MARKETING_VERSION = 0.2.8;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.ifateam.simcamlite;
 				PRODUCT_NAME = SimCamLite;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1039,7 +1039,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 10;
 				DEVELOPMENT_TEAM = "$(SIMCAM_DEVELOPMENT_TEAM)";
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1053,7 +1053,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.2.7;
+				MARKETING_VERSION = 0.2.8;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.ifateam.simcamlite;
 				PRODUCT_NAME = SimCamLite;
 				PROVISIONING_PROFILE_SPECIFIER = "";

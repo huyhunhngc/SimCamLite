@@ -1,12 +1,11 @@
-# SimCam Lite 0.2.7
+# SimCam Lite 0.2.8
 
-See and use the simulator right next to your cameras.
+Better support for camera apps that check device features.
 
 ### What's New
 
-- **Simulator screen:** The Camera screen now shows the selected simulator's live screen on the right. Click to tap, drag to swipe, and type while it's selected. Home and Lock buttons sit below it. No screen recording permission needed.
-- **Show or hide it:** The new iPhone button in the toolbar shows or hides the simulator screen. SimCam Lite remembers your choice.
-- **Fits any window:** The two camera cards sit side by side when there's room and stack when the window is narrow. New windows open larger, at 1440 × 880.
+- **No more crash on Cinematic checks:** Apps that ask whether the camera supports Cinematic video now get a clear "no" instead of crashing.
+- **720p format:** The simulated cameras now offer 1280 × 720 next to 1080p and 4K, so apps with 720p modes can pick it.
 
 ### System Requirements
 
